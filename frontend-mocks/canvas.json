@@ -1,0 +1,66 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-02T17:00:00Z" },
+  "title": "Quest City Tour — Player App Mocks",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html":            { "x": 0,    "y": 0,    "w": 390, "h": 844,  "title": "5.1 Welcome" },
+    "WelcomeFull.dc.html":     { "x": 470,  "y": 0,    "w": 390, "h": 1240, "title": "5.1 Welcome — full scroll" },
+    "StartConfirm.dc.html":    { "x": 940,  "y": 0,    "w": 390, "h": 844,  "title": "5.2 Start confirmation" },
+    "Loading.dc.html":         { "x": 1410, "y": 0,    "w": 390, "h": 844,  "title": "5.13 Loading" },
+    "LinkExpired.dc.html":     { "x": 1880, "y": 0,    "w": 390, "h": 844,  "title": "5.11 Link not valid — expired" },
+    "LinkNotYet.dc.html":      { "x": 2350, "y": 0,    "w": 390, "h": 844,  "title": "5.11 Link not valid — not started yet" },
+    "NotFound.dc.html":        { "x": 2820, "y": 0,    "w": 390, "h": 844,  "title": "5.12 404 Not found" },
+
+    "TaskPicture.dc.html":     { "x": 0,    "y": 1600, "w": 390, "h": 844,  "title": "5.3-1 Task — with picture" },
+    "TaskNoPicture.dc.html":   { "x": 470,  "y": 1600, "w": 390, "h": 844,  "title": "5.3-2 Task — no picture, no penalty yet" },
+    "TaskWrong.dc.html":       { "x": 940,  "y": 1600, "w": 390, "h": 844,  "title": "5.3-3 Task — wrong answer" },
+    "Hint1Confirm.dc.html":    { "x": 1410, "y": 1600, "w": 390, "h": 844,  "title": "5.4 Hint 1 confirmation" },
+    "Hint1Open.dc.html":       { "x": 1880, "y": 1600, "w": 390, "h": 844,  "title": "5.3-4 Task — hint 1 opened" },
+    "Hint2Confirm.dc.html":    { "x": 2350, "y": 1600, "w": 390, "h": 844,  "title": "5.4 Hint 2 confirmation" },
+    "HintsBoth.dc.html":       { "x": 2820, "y": 1600, "w": 390, "h": 844,  "title": "5.3-5 Task — both hints opened" },
+    "RevealUnlocked.dc.html":  { "x": 3290, "y": 1600, "w": 390, "h": 844,  "title": "5.3-6 Task — reveal answer unlocked" },
+
+    "RevealConfirm.dc.html":   { "x": 0,    "y": 2804, "w": 390, "h": 844,  "title": "5.5 Reveal confirmation" },
+    "Revealed.dc.html":        { "x": 470,  "y": 2804, "w": 390, "h": 844,  "title": "5.5 Revealed answer" },
+    "TaskWarning.dc.html":     { "x": 940,  "y": 2804, "w": 390, "h": 844,  "title": "5.3-7 Task — time warning" },
+    "TaskOffline.dc.html":     { "x": 1410, "y": 2804, "w": 390, "h": 844,  "title": "5.3-8 Task — offline banner" },
+    "TeammateToast.dc.html":   { "x": 1880, "y": 2804, "w": 390, "h": 844,  "title": "5.3-9 Updated by a teammate" },
+
+    "Correct.dc.html":         { "x": 0,    "y": 4008, "w": 390, "h": 844,  "title": "5.6 Correct answer" },
+    "PhotoPrompt.dc.html":     { "x": 470,  "y": 4008, "w": 390, "h": 844,  "title": "5.7-1 Photo — prompt" },
+    "PhotoUploading.dc.html":  { "x": 940,  "y": 4008, "w": 390, "h": 844,  "title": "5.7-2 Photo — uploading" },
+    "PhotoSaved.dc.html":      { "x": 1410, "y": 4008, "w": 390, "h": 844,  "title": "5.7-3 Photo — saved" },
+    "PhotoFailed.dc.html":     { "x": 1880, "y": 4008, "w": 390, "h": 844,  "title": "5.7-4 Photo — upload failed" },
+    "Landmark.dc.html":        { "x": 2350, "y": 4008, "w": 390, "h": 844,  "title": "5.8 Landmark info" },
+    "LandmarkLast.dc.html":    { "x": 2820, "y": 4008, "w": 390, "h": 844,  "title": "5.8 Landmark info — last task, scrolled" },
+
+    "Finish.dc.html":          { "x": 0,    "y": 5212, "w": 390, "h": 844,  "title": "5.9 Finish" },
+    "FinishFull.dc.html":      { "x": 470,  "y": 5212, "w": 390, "h": 1360, "title": "5.9 Finish — full scroll" },
+    "TimesUp.dc.html":         { "x": 940,  "y": 5212, "w": 390, "h": 844,  "title": "5.10 Time is up" },
+
+    "SmallTask.dc.html":       { "x": 0,    "y": 6932, "w": 360, "h": 740,  "title": "360 × 740 — Task" },
+    "SmallPhoto.dc.html":      { "x": 440,  "y": 6932, "w": 360, "h": 740,  "title": "360 × 740 — Photo saved" },
+    "SmallFinish.dc.html":     { "x": 880,  "y": 6932, "w": 360, "h": 740,  "title": "360 × 740 — Finish" }
+  },
+  "order": [
+    "Main.dc.html", "WelcomeFull.dc.html", "StartConfirm.dc.html", "Loading.dc.html", "LinkExpired.dc.html", "LinkNotYet.dc.html", "NotFound.dc.html",
+    "TaskPicture.dc.html", "TaskNoPicture.dc.html", "TaskWrong.dc.html", "Hint1Confirm.dc.html", "Hint1Open.dc.html", "Hint2Confirm.dc.html", "HintsBoth.dc.html", "RevealUnlocked.dc.html",
+    "RevealConfirm.dc.html", "Revealed.dc.html", "TaskWarning.dc.html", "TaskOffline.dc.html", "TeammateToast.dc.html",
+    "Correct.dc.html", "PhotoPrompt.dc.html", "PhotoUploading.dc.html", "PhotoSaved.dc.html", "PhotoFailed.dc.html", "Landmark.dc.html", "LandmarkLast.dc.html",
+    "Finish.dc.html", "FinishFull.dc.html", "TimesUp.dc.html",
+    "SmallTask.dc.html", "SmallPhoto.dc.html", "SmallFinish.dc.html"
+  ],
+  "notes": {
+    "rowEntry":   { "x": 0, "y": -260, "text": "Before the clock: welcome, start, loading and dead ends", "kind": "title1", "maxW": 3210 },
+    "rowTask":    { "x": 0, "y": 1340, "text": "Task: riddle, answer, hints", "kind": "title1", "maxW": 3680 },
+    "rowGiveUp":  { "x": 0, "y": 2544, "text": "Task: giving up, time warning, offline, team sync", "kind": "title1", "maxW": 2270 },
+    "rowPhoto":   { "x": 0, "y": 3748, "text": "Correct answer → photo → landmark", "kind": "title1", "maxW": 3210 },
+    "rowEnd":     { "x": 0, "y": 4952, "text": "Endings", "kind": "title1", "maxW": 1330 },
+    "rowSmall":   { "x": 0, "y": 6672, "text": "Small Android check — 360 × 740", "kind": "title1", "maxW": 1240 }
+  },
+  "designSystems": [
+    { "title": "Quest City Tour", "namespace": "questcity", "artifact": "https://claude.ai/artifact/EZorDtth41MxdkBwtkt8CP", "version": "1790957256-3bd2", "copiedAt": "2026-10-02T17:00:00Z" }
+  ]
+}

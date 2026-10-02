@@ -1,6 +1,8 @@
 # Quest City Tour — Frontend Design Brief
 
 > Purpose: instructions for producing screen mock-ups of the player app. Derived from [requirements.md](requirements.md) (rule numbers R-n refer to it). This brief stands on its own; no other document is needed to design the screens.
+>
+> Mocks: [frontend-mocks/](../frontend-mocks/README.md), built with the Quest City Tour design system (https://claude.ai/artifact/EZorDtth41MxdkBwtkt8CP).
 
 ## 1. Product in one paragraph
 
@@ -29,7 +31,7 @@ No brand identity is defined yet. Propose a visual direction (colour palette, ty
 - Design at **390 × 844** (iPhone 14/15) as the primary frame; check that nothing breaks at **360 × 740** (small Android).
 - Portrait only.
 
-**Persistent in-game header** (on every screen from Start to the finish; R-14, R-15):
+**Persistent in-game header** (on every screen from Start until the last landmark's info; R-14, R-15). The Finish and Time is up screens have no header: the clock has stopped, and they show the final totals instead.
 - **Timer**: elapsed time `hh:mm:ss`, always visible, ticking.
 - **Penalty total** next to the timer, e.g. `+25 min`, shown once any penalty exists.
 - **Progress**: `Task 3 of 8` plus a progress bar.
@@ -82,7 +84,7 @@ The main screen; players spend most of their time here.
 - Then a revealed-answer state: shows the answer and a **Continue** button that leads to the photo step.
 
 ### 5.6 Correct answer
-- Short celebratory moment (e.g. a check mark or confetti), then the landmark name and **"Take your photo"** call to action. This can be a screen or a transition state.
+- Short celebratory moment (e.g. a check mark or confetti), then the landmark name and **"Take a photo, create a memory"** call to action. This can be a screen or a transition state.
 
 ### 5.7 Photo upload
 - Prompt: "Take a photo of your team at {Landmark name}." Players can take a new photo with the camera or choose one from the gallery. More than one photo is allowed.

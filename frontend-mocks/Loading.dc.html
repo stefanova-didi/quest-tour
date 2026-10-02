@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Loading</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/questcity/components/bundle.css">
+<link rel="stylesheet" href="quest-mocks.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="qs" style="width: 390px; height: 844px">
+<main class="qs-main qs-main--center" style="gap: 24px" role="status">
+<svg viewBox="0 0 96 96" width="112" height="112" aria-hidden="true">
+<circle cx="48" cy="48" r="44" fill="none" stroke="#efe9dc" stroke-width="6"></circle>
+<g class="qs-spinner"><path d="M48 4 a44 44 0 0 1 44 44" fill="none" stroke="#2f6a55" stroke-width="6" stroke-linecap="round"></path></g>
+<path d="M28 70 V54 a20 20 0 0 1 40 0 V70 Z" fill="#d6a836"></path>
+<rect x="46" y="22" width="4" height="12" fill="#7d5c12"></rect>
+<rect x="42" y="26" width="12" height="3" fill="#7d5c12"></rect>
+<rect x="24" y="70" width="48" height="6" rx="2" fill="#2f6a55"></rect>
+</svg>
+<div style="display: grid; gap: 8px">
+<p class="t-title">Loading your quest…</p>
+<p class="t-caption">On a weak signal this can take a few seconds.</p>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

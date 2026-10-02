@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Task — wrong answer</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/questcity/components/bundle.css">
+<link rel="stylesheet" href="quest-mocks.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="qs" style="width: 390px; height: 844px">
+<header class="qc-header" aria-label="Game status" style="flex: none">
+<div class="qc-header__top">
+<span class="qc-header__clock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>01:14:10</span>
+<span class="qc-tag qc-tag--on-dark">+25 min</span>
+</div>
+<div class="qc-header__progress"><span>Task 3 of 8</span><div class="qc-progress" role="progressbar" aria-label="Quest progress" aria-valuenow="3" aria-valuemin="0" aria-valuemax="8"><span style="width: 37.5%"></span></div></div>
+</header>
+<main class="qs-main">
+<img class="qs-pic" src="img/task-domes.svg" alt="Task picture: three golden domes against the sky">
+<div class="qs-group" style="gap: 8px">
+<p class="qs-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"></circle><path d="M11 12l9-9M17 6l3 3M15 8l2 2"></path></svg>Riddle</p>
+<p class="t-riddle">Golden domes shine over the square that bears my name. I was built to honour soldiers who fell for this land's freedom. Who am I?</p>
+</div>
+</main>
+<div class="qs-actions">
+<div class="qc-field qc-field--error">
+<label class="qc-field__label" for="answer">Your answer</label>
+<input class="qc-input" id="answer" value="Saint Sofia Church" aria-describedby="answer-error" aria-invalid="true">
+<div class="qc-field__error" id="answer-error" role="status"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg>Not quite – try again</div>
+</div>
+<button class="qc-btn qc-btn--primary qc-btn--block">Submit</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

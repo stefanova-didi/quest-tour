@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Landmark info</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/questcity/components/bundle.css">
+<link rel="stylesheet" href="quest-mocks.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="qs" style="width: 390px; height: 844px">
+<header class="qc-header" aria-label="Game status" style="flex: none">
+<div class="qc-header__top">
+<span class="qc-header__clock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>01:28:05</span>
+<span class="qc-tag qc-tag--on-dark">+25 min</span>
+</div>
+<div class="qc-header__progress"><span>Task 3 of 8</span><div class="qc-progress" role="progressbar" aria-label="Quest progress" aria-valuenow="3" aria-valuemin="0" aria-valuemax="8"><span style="width: 37.5%"></span></div></div>
+</header>
+<main class="qs-main">
+<img class="qs-pic" src="img/landmark-nevsky.svg" alt="Alexander Nevsky Cathedral with its golden central dome and green side domes">
+<article class="qs-group">
+<div style="display: grid; gap: 4px">
+<p class="qs-eyebrow">Landmark 3 of 8</p>
+<h1 class="t-display-l">Alexander Nevsky Cathedral</h1>
+</div>
+<p class="t-body">The cathedral was built between 1882 and 1912 in memory of the soldiers who died in the Russo-Turkish War of 1877–78. That war led to Bulgaria's liberation after nearly five centuries of Ottoman rule.</p>
+<p class="t-body">It is one of the largest Eastern Orthodox cathedrals in Europe, and it is named after Saint Alexander Nevsky, a Russian prince and saint.</p>
+<p class="t-body">Step inside to see walls of Italian marble, onyx and alabaster, and murals by Russian and Bulgarian artists. The crypt holds a museum of Orthodox icons.</p>
+</article>
+</main>
+<div class="qs-actions">
+<button class="qc-btn qc-btn--primary qc-btn--block">Next riddle<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -127,6 +127,8 @@
 
 ## 4. Screens
 
+Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.md).
+
 | Screen | Content |
 |---|---|
 | Welcome | Game intro, rules, photo privacy notice, Start button. If the team has already started, players go straight to the current state. |
@@ -134,7 +136,7 @@
 | Task | Task picture and text, answer input, hint buttons, reveal button (when unlocked), timer, progress bar. Wrong answers show a short "Not quite – try again". |
 | Hint / Reveal confirmation | Shows the penalty and asks to confirm; then shows the hint or the answer. |
 | Photo upload | Take or choose a photo; "Photo saved" confirmation; retry on failure. |
-| Landmark info | Tourist information, picture, Continue button. |
+| Landmark info | Tourist information, picture, Next riddle button (See results after the last task). |
 | Finish | Total time, leaderboard, exit message. |
 | Time is up | Message that time ran out, exit message, leaderboard. |
 | Link not valid | Shown for unknown or reissued tokens and outside the validity window. |

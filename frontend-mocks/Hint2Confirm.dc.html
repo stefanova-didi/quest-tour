@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hint 2 confirmation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/questcity/components/bundle.css">
+<link rel="stylesheet" href="quest-mocks.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="qs" style="width: 390px; height: 844px">
+<header class="qc-header" aria-label="Game status" style="flex: none">
+<div class="qc-header__top">
+<span class="qc-header__clock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>01:18:02</span>
+<span class="qc-tag qc-tag--on-dark">+35 min</span>
+</div>
+<div class="qc-header__progress"><span>Task 3 of 8</span><div class="qc-progress" role="progressbar" aria-label="Quest progress" aria-valuenow="3" aria-valuemin="0" aria-valuemax="8"><span style="width: 37.5%"></span></div></div>
+</header>
+<main class="qs-main" aria-hidden="true">
+<img class="qs-pic" src="img/task-domes.svg" alt="" style="margin-top: -176px">
+<div class="qs-group" style="gap: 8px">
+<p class="qs-eyebrow">Riddle</p>
+<p class="t-riddle">Golden domes shine over the square that bears my name. I was built to honour soldiers who fell for this land's freedom. Who am I?</p>
+</div>
+<div class="qs-group">
+<div class="qs-group-head"><h2 class="t-label">Need help?</h2><p class="t-caption">Hints add time to your total.</p></div>
+<div class="qc-hint"><div class="qc-hint__head"><span>Hint 1</span><span>+10 min added</span></div><p class="qc-hint__text">Look for the largest golden domes in the city centre.</p></div>
+<button class="qc-hint-btn" tabindex="-1"><span>Hint 2</span><span class="qc-tag">+15 min</span></button>
+</div>
+</main>
+<div class="qs-actions" aria-hidden="true">
+<div class="qc-field"><label class="qc-field__label" for="answer">Your answer</label><input class="qc-input" id="answer" placeholder="Type the landmark's name" tabindex="-1"></div>
+<button class="qc-btn qc-btn--primary qc-btn--block" tabindex="-1">Submit</button>
+</div>
+<div class="qs-overlay qc-scrim">
+<div class="qc-sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+<h2 class="qc-sheet__title" id="sheet-title">Open hint 2?</h2>
+<p class="qc-sheet__body">This adds <span class="qc-tag">+15 min</span> to your time.</p>
+<div class="qc-sheet__actions">
+<button class="qc-btn qc-btn--primary qc-btn--block">Open hint</button>
+<button class="qc-btn qc-btn--secondary qc-btn--block">Cancel</button>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

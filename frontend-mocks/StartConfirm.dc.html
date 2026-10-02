@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Start confirmation</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/questcity/components/bundle.css">
+<link rel="stylesheet" href="quest-mocks.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@400;700&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Fraunces:opsz,wght@9..144,600;9..144,700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="qs" style="width: 390px; height: 844px">
+<div style="flex: 1 1 auto; min-height: 0; overflow: hidden; display: flex; flex-direction: column" aria-hidden="true">
+<section class="qs-hero">
+<svg viewBox="0 0 358 64" width="358" height="64" style="display: block">
+<path d="M0 64 V46 a14 14 0 0 1 28 0 V64 Z" fill="#2f6a55"></path>
+<rect x="40" y="22" width="26" height="42" fill="#2f6a55"></rect>
+<path d="M40 22 a13 13 0 0 1 26 0 Z" fill="#2f6a55"></path>
+<rect x="51" y="2" width="4" height="10" fill="#d6a836"></rect>
+<path d="M78 64 V36 a28 28 0 0 1 56 0 V64 Z" fill="#d6a836"></path>
+<rect x="104" y="0" width="4" height="10" fill="#d6a836"></rect>
+<rect x="146" y="26" width="76" height="38" fill="#a5524b"></rect>
+<path d="M154 64 V52 a6 6 0 0 1 12 0 V64 Z" fill="#1f4a3b"></path>
+<path d="M178 64 V52 a6 6 0 0 1 12 0 V64 Z" fill="#1f4a3b"></path>
+<path d="M202 64 V52 a6 6 0 0 1 12 0 V64 Z" fill="#1f4a3b"></path>
+<path d="M146 26 L184 12 L222 26 Z" fill="#a5524b"></path>
+<path d="M234 64 V44 a16 16 0 0 1 32 0 V64 Z" fill="#86aa92"></path>
+<rect x="278" y="30" width="34" height="34" fill="#e8d390"></rect>
+<path d="M324 64 V40 a17 17 0 0 1 34 0 V64 Z" fill="#2f6a55"></path>
+</svg>
+<p class="qs-hero__kicker">A city quest in 8 riddles</p>
+<h1 class="t-display-l" style="color: #ffffff">Sofia Old Town Quest</h1>
+<span class="qs-team">Welcome, The Explorers</span>
+</section>
+<main class="qs-main" style="overflow: visible">
+<div class="qs-group">
+<p class="t-body">Welcome to Sofia Old Town Quest! Over the next few hours your team will uncover eight landmarks hidden in riddles – from golden domes to Roman streets under your feet.</p>
+<p class="t-body">Solve each riddle, walk to the place it describes, take a team photo and learn its story. Wear comfortable shoes and keep your phone charged.</p>
+</div>
+</main>
+</div>
+<div class="qs-actions" aria-hidden="true">
+<button class="qc-btn qc-btn--primary qc-btn--block" tabindex="-1">Start the quest</button>
+<p class="t-caption" style="text-align: center">You'll confirm before the clock starts.</p>
+</div>
+<div class="qs-overlay qc-scrim">
+<div class="qc-sheet" role="dialog" aria-modal="true" aria-labelledby="start-title">
+<h2 class="qc-sheet__title" id="start-title">Start the clock?</h2>
+<p class="qc-sheet__body">It can't be paused. Every team member's phone will start too.</p>
+<div class="qc-sheet__cost"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>You have up to 4 hours to finish.</div>
+<div class="qc-sheet__actions">
+<button class="qc-btn qc-btn--primary qc-btn--block">Start</button>
+<button class="qc-btn qc-btn--secondary qc-btn--block">Cancel</button>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
