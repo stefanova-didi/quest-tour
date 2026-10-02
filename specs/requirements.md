@@ -1,6 +1,6 @@
 # Quest City Tour — Requirements
 
-> Status: ready for review. Technical design: [technical.md](technical.md).
+> Status: **Reviewed** (2026-10-02). Technical design: [technical.md](technical.md).
 
 ## 1. Overview
 
@@ -80,7 +80,7 @@
 | Field | Notes |
 |---|---|
 | Team ID, Game ID | Unique pair |
-| Access token | Secret, random, can be reissued (R-21) |
+| Access token | Secret, random, can be reissued (R-21). Generated automatically and stored in the YAML configuration, so the link can always be looked up and resent. |
 | Valid from / Valid until | The link works only in this window |
 | Exit message | Custom message shown with the leaderboard at the end of this game |
 
@@ -90,7 +90,7 @@
 1. The admin defines a team and assigns it to a game.
 2. The admin gives the team its game link (R-21).
 3. Each team member opens the link and lands on the welcome page: game intro, rules, and the photo privacy notice.
-4. Any player presses Start. The game clock starts and the first task is shown on every team phone (R-18).
+4. Any player presses Start and confirms that the clock can't be paused. The game clock starts and the first task is shown on every team phone (R-18).
 5. The team enters answers until one is correct (R-5, R-9), using hints (R-4) or revealing the answer (R-6) if needed.
 6. The team uploads at least one photo taken at the landmark (R-10).
 7. The team sees the tourist information about the landmark and continues.
@@ -130,6 +130,7 @@
 | Screen | Content |
 |---|---|
 | Welcome | Game intro, rules, photo privacy notice, Start button. If the team has already started, players go straight to the current state. |
+| Start confirmation | "Start the clock? It can't be paused. Every team member's phone will start too." Start / Cancel. Prevents one player starting the game for the whole team by accident. |
 | Task | Task picture and text, answer input, hint buttons, reveal button (when unlocked), timer, progress bar. Wrong answers show a short "Not quite – try again". |
 | Hint / Reveal confirmation | Shows the penalty and asks to confirm; then shows the hint or the answer. |
 | Photo upload | Take or choose a photo; "Photo saved" confirmation; retry on failure. |
@@ -137,9 +138,10 @@
 | Finish | Total time, leaderboard, exit message. |
 | Time is up | Message that time ran out, exit message, leaderboard. |
 | Link not valid | Shown for unknown or reissued tokens and outside the validity window. |
+| 404 Not found | Shown for any URL that doesn't match a page in the app (e.g. a mistyped or truncated link). Friendly "Page not found" message telling players to open the exact link they received from the host. Shows no game data, and the server returns HTTP 404. |
 
 **On every in-game screen**
-- **R-14** The game timer is visible at all times, with a warning in the last 15 minutes before the maximum duration (R-8).
+- **R-14** The game timer (elapsed time, `hh:mm:ss`) is visible at all times. Next to it, the running penalty total (e.g. `+25 min`) is shown once any hint or reveal penalty applies. In the last 15 minutes before the maximum duration (R-8), the timer switches to a warning style showing the remaining time.
 - **R-15** A progress bar shows the current task out of the total.
 
 ## 5. Quality requirements
@@ -150,7 +152,7 @@
   - Any member can start the game, answer, open a hint, reveal an answer or upload a photo. The action applies to the whole team.
   - The first correct answer (or reveal) completes the task, and later submissions for that task are ignored.
   - Each hint or reveal is charged to the team at most once per task, even if several members press it at the same moment.
-  - The other phones show the new state (next task, opened hint, etc.) within **1 minute**. A phone also refreshes straight away whenever its player acts (answer, hint, reveal, upload) and when the app comes back to the foreground. An action on a task the team has already completed is rejected, and the phone moves to the current task.
+  - The other phones show the new state (next task, opened hint, etc.) within **1 minute**. A phone also refreshes straight away whenever its player acts (answer, hint, reveal, upload) and when the app comes back to the foreground. An action on a task the team has already completed is rejected, and the phone moves to the current task. When a phone moves on because of a teammate's action, it shows a short notice (e.g. "A teammate solved this task").
 - **R-19 Platform.** v1 is a website used in a mobile browser; no installation is needed.
 - **R-20 Extensibility.** The data model and backend must allow a CMS and multiple hosts to be added later without a rewrite.
 - **R-21 Access.** Each assignment has its own secret link containing a long random token (at least 128 bits, not guessable). Players do not log in; anyone with the link plays as that team.

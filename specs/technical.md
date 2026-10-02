@@ -39,8 +39,9 @@ Estimated cost: about €25–40/month (to be confirmed in the Azure pricing cal
 - **Concurrency.** Answer, hint, reveal and photo actions run in a database transaction that locks the game run row. This guarantees "first correct answer wins" and "each penalty charged once" (R-18).
 - **Team sync by polling.** Each phone fetches the game run state every **60 seconds**, and also immediately after its own action and when the page becomes visible again (R-18). No real-time service (SignalR/WebSockets) is needed in v1.
 - **Session persistence.** The access token in the URL identifies the assignment, and the browser stores the token and an anonymous device ID in `localStorage`. Reopening the page reloads the state from the server (R-17).
-- **Access tokens.** At least 128 bits of randomness, URL-safe; only a hash is stored in the database. Requests outside the validity window or with a reissued token get a friendly "Link not valid" page (R-21).
+- **Access tokens.** At least 128 bits of randomness, URL-safe. The issued token is stored in plain text in the YAML configuration (section 4), so the admin can always look up and resend a team's link. The database stores only a hash of it. Requests outside the validity window or with a reissued token get a friendly "Link not valid" page (R-21).
 - **Accepted answers are never sent to the client.**
+- **404 handling.** FastAPI serves the React app only for known routes (e.g. `/`, `/play/{token}`). Any other path gets the 404 page with a real HTTP 404 status, not the usual single-page-app fallback that returns 200.
 - **Time limits are enforced on the server.** The maximum duration and validity window (R-8) are checked on every request, so the game ends correctly even if no phone is open.
 - **Multi-host readiness.** Every configuration table has a `host_id` column (R-20); v1 uses a single value.
 
@@ -50,8 +51,9 @@ Estimated cost: about €25–40/month (to be confirmed in the Azure pricing cal
 - A command-line script `sync-config`:
   1. validates the files (unique IDs, landmark references exist, Hint 2 only with Hint 1, at least one accepted answer, unique team names, valid time zone, etc.);
   2. upserts them into PostgreSQL and uploads the pictures to Blob storage;
-  3. generates missing access tokens and prints each team's game link;
-  4. can reissue a token (`--reissue <team> <game>`).
+  3. generates an access token for every assignment that doesn't have one yet, **writes it back into `teams.yaml`** (field `token` on the assignment), and prints each team's game link;
+  4. can reissue a token (`--reissue <team> <game>`): replaces the token in `teams.yaml` and in the database, so the old link stops working at once.
+- `teams.yaml` is the record of all issued tokens. No separate token store is needed. Because it holds live game links, the repository must stay private, and the file must be committed after every `sync-config` run that issues or reissues tokens.
 - The admin runs it after changing configuration; no redeploy is needed. At runtime the database is the only source of data, so a future CMS edits the database directly.
 - A configuration change must not alter game runs that are already in progress. Each run keeps the task list it started with.
 
@@ -76,6 +78,7 @@ Estimated cost: about €25–40/month (to be confirmed in the Azure pricing cal
 | Environments | `dev`: local, with PostgreSQL in Docker and the Azurite storage emulator. `prod`: Azure. No staging environment in v1. |
 | Infrastructure as code | **Terraform** (azurerm provider) in `infra/`. State is kept remotely in a separate Azure Storage container. All resources in section 2 are defined there. |
 | CI/CD | **GitHub Actions**. Pull requests run lint and tests (backend: pytest; frontend: unit tests); merging to `main` builds and deploys to prod. |
+| Environment variables | Use environment variables wherever a value differs between environments or must stay secret. Examples: database host/name, storage account name, public base URL for game links, Azure subscription/tenant IDs, Terraform variables (`TF_VAR_*`). **Backend and `sync-config`** read all settings from environment variables, with no hard-coded values; locally from a `.env` file (git-ignored, with a committed `.env.example`), in Azure from App Service app settings (secrets as Key Vault references). **CI/CD** reads them from GitHub Actions *variables* (non-secret) and *secrets* (secret); Azure login uses OIDC federated credentials, so no long-lived keys are stored. **Frontend** build-time values use Vite `VITE_*` variables, which must never hold secrets because they end up in the browser bundle. |
 | Monitoring | None in v1, beyond the standard App Service logs. |
 | Backups | PostgreSQL built-in backups with 7-day retention. Soft delete on the `photos` container with 14-day retention. |
 | Budget | Azure budget alert at **€45/month**. |
