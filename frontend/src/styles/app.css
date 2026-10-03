@@ -1,0 +1,31 @@
+html, body, #root { height: 100%; margin: 0; }
+body { background: var(--surface); }
+.qs { height: 100dvh; max-width: 480px; margin: 0 auto; }            /* mocks use fixed 390x844 frames */
+.qs-main { overflow-y: auto; -webkit-overflow-scrolling: touch; }    /* mocks clip with overflow:hidden */
+.qs-scroll { flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
+.qs-scroll > .qs-main { overflow: visible; flex: none; }
+.qs-inline-icon { display: flex; align-items: center; gap: 8px; }
+.qs-hint-meta { font: 400 15px/20px var(--font-sans); }
+.qs-reveal-locked { display: grid; gap: 2px; text-align: left; }
+.qs-hint-btn--two-line { padding-top: 8px; padding-bottom: 8px; }
+.qs-riddle-card { gap: 12px; padding: 24px 20px; }
+.qs-main--top { padding-top: 24px; }                                 /* Photo mocks */
+.qs-main--top-lg { padding-top: 32px; }                              /* TaskNoPicture, Revealed */
+.qs-main.qs-main--end { justify-content: safe flex-end; }             /* LandmarkLast; `safe` keeps overflow scrollable */
+.qs-main.qs-main--center { justify-content: safe center; }            /* Correct, Loading, LinkNotValid, NotFound */
+/* Mocks put inline position:relative on content above the absolutely positioned confetti/curtain art */
+.qs-curtain > :not(svg), .qs-main--center > :not(svg) { position: relative; }
+/* TimesUp: light progress bar (mock inline style; .qc-progress itself is styled for the dark header) */
+.qs-progress--light { height: 10px; background: #efe9dc; }
+.qs-progress--light > span { background: #2f6a55; }
+/* LandmarkLast card: icon column (mock inline style) */
+.qs-last-card { display: grid; grid-template-columns: 40px 1fr; align-items: start; gap: 12px; }
+.qs-last-card > svg { width: 32px; height: 32px; color: var(--patina-800); }
+.qs-file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.qs-toast-slot { bottom: 132px; z-index: 5; }
+.qs-toast-slot--high { bottom: 196px; }                              /* Task screen: clear the answer form */
+.qs-actions-slot { display: contents; }                              /* wrapper only carries `inert` */
+.qs-pic--placeholder { display: grid; place-items: center; color: var(--ink-muted); font-size: 15px; flex: none; }
+.qs-host-card { background: var(--patina-50); box-shadow: none; }
+.qs-opens-card { justify-items: center; gap: 4px; width: 100%; max-width: 300px; background: var(--gold-100); box-shadow: none; }
+.qs-center-copy { display: grid; gap: 12px; max-width: 320px; }

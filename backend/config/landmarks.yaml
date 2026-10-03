@@ -1,0 +1,30 @@
+# accepted_answers[0] is the answer shown when a team reveals it.
+landmarks:
+  - id: alexander-nevsky
+    name: Alexander Nevsky Cathedral
+    task_picture: images/task-domes.svg
+    task: >-
+      Golden domes shine over the square that bears my name. I was built to honour
+      soldiers who fell for this land's freedom. Who am I?
+    accepted_answers: [Alexander Nevsky Cathedral, Alexander Nevsky, Nevsky Cathedral]
+    hint1: Look for the largest golden domes in the city centre.
+    hint2: The cathedral is named after a Russian saint and prince.
+    tourist_info: |
+      The cathedral was built between 1882 and 1912 in memory of the soldiers who died in the
+      Russo-Turkish War of 1877–78. That war led to Bulgaria's liberation.
+
+      It is one of the largest Eastern Orthodox cathedrals in Europe.
+    tourist_info_picture: images/landmark-nevsky.svg
+  - id: rotunda-st-george
+    name: Rotunda of St George
+    task: A red-brick church from Roman times hides in a courtyard among government buildings. Which church?
+    accepted_answers: [Rotunda of St George, St George Rotunda, Rotunda]
+    hint1: Look behind the Presidency building.
+    tourist_info: The Rotunda is considered the oldest building in Sofia, dating from the 4th century.
+  - id: ancient-serdika
+    name: Ancient Serdika Complex
+    task: Walk on Roman streets beneath the busiest metro station in town. Where are you?
+    accepted_answers: [Ancient Serdika, Serdika, Serdika Complex]
+    tourist_info: |
+      Beneath the centre of modern Sofia lie the streets of Serdika, the Roman city that stood
+      here almost 2,000 years ago.

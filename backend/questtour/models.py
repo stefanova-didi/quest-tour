@@ -1,0 +1,147 @@
+from datetime import datetime
+
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from questtour.db import Base, UTCDateTime
+
+
+class Landmark(Base):
+    __tablename__ = "landmarks"
+    __table_args__ = (UniqueConstraint("host_id", "key", name="uq_landmarks_host_key"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    host_id: Mapped[str] = mapped_column(String(64))
+    key: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(200))
+    task_text: Mapped[str] = mapped_column(Text)
+    task_image: Mapped[str | None] = mapped_column(String(200))  # blob name in images container
+    accepted_answers: Mapped[list[str]] = mapped_column(JSON)  # [0] = answer shown on reveal
+    hint1: Mapped[str | None] = mapped_column(Text)
+    hint2: Mapped[str | None] = mapped_column(Text)
+    info_text: Mapped[str] = mapped_column(Text)
+    info_image: Mapped[str | None] = mapped_column(String(200))
+
+
+class Game(Base):
+    __tablename__ = "games"
+    __table_args__ = (UniqueConstraint("host_id", "key", name="uq_games_host_key"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    host_id: Mapped[str] = mapped_column(String(64))
+    key: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(200))
+    intro: Mapped[str] = mapped_column(Text)
+    time_zone: Mapped[str] = mapped_column(String(64))
+    max_duration_minutes: Mapped[int] = mapped_column(Integer)
+    reveal_after_attempts: Mapped[int] = mapped_column(Integer)  # N
+    reveal_after_minutes: Mapped[int] = mapped_column(Integer)  # X
+    reveal_penalty_minutes: Mapped[int] = mapped_column(Integer)  # P
+    tasks: Mapped[list["GameTask"]] = relationship(
+        order_by="GameTask.position", cascade="all, delete-orphan"
+    )
+
+
+class GameTask(Base):
+    __tablename__ = "game_tasks"
+    game_id: Mapped[int] = mapped_column(
+        ForeignKey("games.id", ondelete="CASCADE"), primary_key=True
+    )
+    position: Mapped[int] = mapped_column(Integer, primary_key=True)  # 0-based
+    landmark_id: Mapped[int] = mapped_column(ForeignKey("landmarks.id"))
+    landmark: Mapped[Landmark] = relationship()
+
+
+class Team(Base):
+    __tablename__ = "teams"
+    __table_args__ = (
+        UniqueConstraint("host_id", "key", name="uq_teams_host_key"),
+        UniqueConstraint("host_id", "name", name="uq_teams_host_name"),
+    )
+    id: Mapped[int] = mapped_column(primary_key=True)
+    host_id: Mapped[str] = mapped_column(String(64))
+    key: Mapped[str] = mapped_column(String(100))
+    name: Mapped[str] = mapped_column(String(200))
+    participants: Mapped[int | None] = mapped_column(Integer)
+
+
+class Assignment(Base):
+    __tablename__ = "assignments"
+    __table_args__ = (UniqueConstraint("team_id", "game_id", name="uq_assignments_team_game"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    host_id: Mapped[str] = mapped_column(String(64))
+    team_id: Mapped[int] = mapped_column(ForeignKey("teams.id"))
+    game_id: Mapped[int] = mapped_column(ForeignKey("games.id"))
+    token_hash: Mapped[str | None] = mapped_column(String(64), unique=True)  # NULL = deactivated
+    valid_from: Mapped[datetime] = mapped_column(UTCDateTime)
+    valid_until: Mapped[datetime] = mapped_column(UTCDateTime)
+    exit_message: Mapped[str] = mapped_column(Text)
+    team: Mapped[Team] = relationship()
+    game: Mapped[Game] = relationship()
+
+
+class GameRun(Base):
+    __tablename__ = "game_runs"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    assignment_id: Mapped[int] = mapped_column(ForeignKey("assignments.id"), unique=True)  # R-13
+    started_at: Mapped[datetime] = mapped_column(UTCDateTime)
+    finished_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # last task completed
+    ended_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # clock stopped (any reason)
+    end_reason: Mapped[str | None] = mapped_column(String(20))  # finished|max_duration|window_closed
+    current_position: Mapped[int] = mapped_column(Integer)
+    version: Mapped[int] = mapped_column(Integer)  # +1 on every state change; clients drop older
+    assignment: Mapped[Assignment] = relationship()
+    tasks: Mapped[list["RunTask"]] = relationship(
+        order_by="RunTask.position", cascade="all, delete-orphan"
+    )
+
+
+class RunTask(Base):
+    """Snapshot of the ordered landmark list at Start, plus per-task progress (R-3)."""
+
+    __tablename__ = "run_tasks"
+    __table_args__ = (UniqueConstraint("run_id", "position", name="uq_run_tasks_run_position"),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    run_id: Mapped[int] = mapped_column(ForeignKey("game_runs.id", ondelete="CASCADE"))
+    position: Mapped[int] = mapped_column(Integer)
+    landmark_id: Mapped[int] = mapped_column(ForeignKey("landmarks.id"))
+    shown_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    completed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    completion: Mapped[str | None] = mapped_column(String(10))  # answered|revealed
+    hint1_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    hint2_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    revealed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    hint_penalty_minutes: Mapped[int] = mapped_column(Integer)
+    reveal_penalty_minutes: Mapped[int] = mapped_column(Integer)
+    wrong_attempts: Mapped[int] = mapped_column(Integer)
+    photo_count: Mapped[int] = mapped_column(Integer)
+    landmark: Mapped[Landmark] = relationship()
+
+
+class AnswerAttempt(Base):
+    __tablename__ = "answer_attempts"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    run_task_id: Mapped[int] = mapped_column(ForeignKey("run_tasks.id", ondelete="CASCADE"))
+    device_id: Mapped[str | None] = mapped_column(String(64))
+    submitted_at: Mapped[datetime] = mapped_column(UTCDateTime)
+    answer_text: Mapped[str] = mapped_column(Text)
+    correct: Mapped[bool] = mapped_column(Boolean)
+
+
+class Photo(Base):
+    __tablename__ = "photos"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    run_task_id: Mapped[int] = mapped_column(ForeignKey("run_tasks.id", ondelete="CASCADE"))
+    device_id: Mapped[str | None] = mapped_column(String(64))
+    uploaded_at: Mapped[datetime] = mapped_column(UTCDateTime)
+    blob_name: Mapped[str] = mapped_column(String(500), unique=True)
+    content_type: Mapped[str] = mapped_column(String(50))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+
+
+class RunDevice(Base):
+    __tablename__ = "run_devices"
+    run_id: Mapped[int] = mapped_column(
+        ForeignKey("game_runs.id", ondelete="CASCADE"), primary_key=True
+    )
+    device_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    first_seen_at: Mapped[datetime] = mapped_column(UTCDateTime)
+    last_seen_at: Mapped[datetime] = mapped_column(UTCDateTime)

@@ -1,0 +1,158 @@
+import logging
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Annotated
+
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from sqlalchemy.orm import Session
+
+from questtour.api.deps import DeviceDep, NowDep, SessionDep
+from questtour.api.schemas import ActionResult, AnswerIn, GameState, HintIn, PositionIn
+from questtour.imagetypes import sniff_photo
+from questtour.models import Assignment, GameRun
+from questtour.services import game as rules
+from questtour.services.access import ensure_link_usable, find_assignment
+from questtour.services.photos import save_photo
+from questtour.services.state import build_state
+from questtour.storage import StorageUnavailable
+
+log = logging.getLogger("questtour.play")
+router = APIRouter(prefix="/api/play/{token}", tags=["play"])
+
+
+@dataclass
+class Ctx:
+    session: Session
+    assignment: Assignment
+    run: GameRun | None
+    now: datetime
+    device_id: str | None
+
+
+def _open(
+    session: Session,
+    token: str,
+    now: datetime,
+    device_id: str | None,
+    *,
+    lock_assignment: bool = False,
+) -> Ctx:
+    assignment = find_assignment(session, token, lock=lock_assignment)
+    run = rules.load_run(session, assignment.id)
+    ensure_link_usable(assignment, run, now)
+    if run is not None:
+        rules.apply_time_limits(run, assignment, now)
+        rules.touch_device(session, run, device_id, now)
+    return Ctx(session, assignment, run, now, device_id)
+
+
+def _respond(ctx: Ctx, outcome: rules.Outcome, action: str) -> ActionResult:
+    state = build_state(ctx.session, ctx.assignment, ctx.run, ctx.now)
+    ctx.session.commit()
+    log.info("action=%s assignment=%s outcome=%s", action, ctx.assignment.id, outcome)
+    return ActionResult(outcome=outcome, state=state)
+
+
+@router.get("", response_model=GameState)
+def get_state(token: str, session: SessionDep, now: NowDep, device_id: DeviceDep) -> GameState:
+    ctx = _open(session, token, now, device_id)
+    state = build_state(session, ctx.assignment, ctx.run, now)
+    session.commit()
+    return state
+
+
+@router.post("/start", response_model=ActionResult)
+def start(token: str, session: SessionDep, now: NowDep, device_id: DeviceDep) -> ActionResult:
+    ctx = _open(session, token, now, device_id, lock_assignment=True)
+    if ctx.run is not None:
+        return _respond(ctx, rules.Outcome.ALREADY_STARTED, "start")
+    ctx.run = rules.start_run(session, ctx.assignment, now)
+    rules.touch_device(session, ctx.run, device_id, now)
+    return _respond(ctx, rules.Outcome.OK, "start")
+
+
+@router.post("/answer", response_model=ActionResult)
+def answer(
+    token: str, body: AnswerIn, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    ctx = _open(session, token, now, device_id)
+    outcome = (
+        rules.Outcome.STALE
+        if ctx.run is None
+        else rules.submit_answer(session, ctx.run, body.position, body.answer, now, device_id)
+    )
+    return _respond(ctx, outcome, "answer")
+
+
+@router.post("/hint", response_model=ActionResult)
+def hint(
+    token: str, body: HintIn, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    ctx = _open(session, token, now, device_id)
+    outcome = (
+        rules.Outcome.STALE
+        if ctx.run is None
+        else rules.open_hint(ctx.run, body.position, body.hint, now)
+    )
+    return _respond(ctx, outcome, "hint")
+
+
+@router.post("/reveal", response_model=ActionResult)
+def reveal(
+    token: str, body: PositionIn, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    ctx = _open(session, token, now, device_id)
+    outcome = (
+        rules.Outcome.STALE
+        if ctx.run is None
+        else rules.reveal_answer(ctx.run, ctx.assignment.game, body.position, now)
+    )
+    return _respond(ctx, outcome, "reveal")
+
+
+@router.post("/advance", response_model=ActionResult)
+def advance(
+    token: str, body: PositionIn, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    ctx = _open(session, token, now, device_id)
+    outcome = rules.Outcome.STALE if ctx.run is None else rules.advance(ctx.run, body.position, now)
+    return _respond(ctx, outcome, "advance")
+
+
+@router.post("/photo", response_model=ActionResult)
+def photo(
+    token: str,
+    request: Request,
+    session: SessionDep,
+    now: NowDep,
+    device_id: DeviceDep,
+    position: Annotated[int, Form(ge=0)],
+    file: Annotated[UploadFile, File()],
+) -> ActionResult:
+    settings = request.app.state.settings
+    ctx = _open(session, token, now, device_id)
+    data = file.file.read(settings.max_photo_bytes + 1)
+    if len(data) > settings.max_photo_bytes:
+        raise HTTPException(413, "Photo is larger than 20 MB")
+    kind = sniff_photo(data[:32])
+    if kind is None:
+        raise HTTPException(415, "Unsupported photo type (JPEG, PNG, HEIC or WebP)")
+    if ctx.run is None:
+        return _respond(ctx, rules.Outcome.STALE, "photo")
+    try:
+        outcome = save_photo(
+            session,
+            request.app.state.blob_store,
+            settings.photos_container,
+            ctx.run,
+            ctx.assignment,
+            position,
+            data,
+            kind,
+            now,
+            device_id,
+        )
+    except StorageUnavailable as exc:
+        log.exception("photo upload failed")
+        raise HTTPException(503, "Storage unavailable, please retry") from exc
+    return _respond(ctx, outcome, "photo")
