@@ -1,0 +1,12 @@
+# Holds live game links once sync-config has run: keep the repo private and commit after every run.
+# Timestamps must be quoted. Without an offset they are read in the game's time zone.
+teams:
+  - id: explorers
+    name: The Explorers
+    participants: 4
+assignments:
+  - team: explorers
+    game: sofia-old-town
+    valid_from: "2026-10-01T00:00:00"
+    valid_until: "2027-12-31T23:59:59"
+    exit_message: Thank you for exploring Sofia with us! Keep an eye on your inbox – a little surprise from your journey is on its way.

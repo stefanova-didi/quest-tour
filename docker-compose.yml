@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: questtour
+      POSTGRES_PASSWORD: questtour
+      POSTGRES_DB: questtour
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    # --location + volume: blobs and containers survive `docker compose down/up`.
+    # --skipApiVersionCheck: an older cached image still accepts newer azure-storage-blob API versions.
+    command: azurite-blob --blobHost 0.0.0.0 --location /data --loose --skipApiVersionCheck
+    ports: ["10000:10000"]
+    volumes: [azurite:/data]
+volumes:
+  pgdata: {}
+  azurite: {}

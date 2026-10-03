@@ -1,0 +1,71 @@
+import { useCallback, useEffect, useState } from "react";
+import { api } from "../api/client";
+import { GameHeader } from "../components/GameHeader";
+import type { FrameProps } from "../components/GameFrame";
+import { forgetToken, rememberToken } from "../lib/storage";
+import { CorrectScreen } from "../screens/CorrectScreen";
+import { FinishScreen } from "../screens/FinishScreen";
+import { LandmarkScreen } from "../screens/LandmarkScreen";
+import { LinkNotValidScreen } from "../screens/LinkNotValidScreen";
+import { LoadingScreen } from "../screens/LoadingScreen";
+import { PhotoScreen } from "../screens/PhotoScreen";
+import { RevealedScreen } from "../screens/RevealedScreen";
+import { TaskScreen } from "../screens/TaskScreen";
+import { TimesUpScreen } from "../screens/TimesUpScreen";
+import { WelcomeScreen } from "../screens/WelcomeScreen";
+import { EMPTY_UI, selectScreen, type LocalUi } from "./selectScreen";
+import { useGame } from "./useGame";
+
+export function GameApp({ token }: { token: string }) {
+  const game = useGame(token);
+  const [ui, setUi] = useState<LocalUi>(EMPTY_UI);
+  const kind = game.view.kind;
+  const invalidReason = game.view.kind === "invalid" ? game.view.info.reason : null;
+  useEffect(() => {
+    if (kind === "ready") rememberToken(token);
+    // A not-yet-open link will work later ("you won't need a new link"), so "/" should still find it.
+    if (invalidReason === "unknown" || invalidReason === "expired") forgetToken(token);
+  }, [kind, invalidReason, token]);
+  const onTimeUp = useCallback(() => void game.refresh(), [game.refresh]);
+
+  if (game.view.kind === "loading") return <LoadingScreen offline={game.offline} />;
+  if (game.view.kind === "invalid") return <LinkNotValidScreen info={game.view.info} />;
+
+  const { state, receivedAt } = game.view;
+  const position = state.position;
+  const frame: FrameProps = {
+    offline: game.offline, notice: game.notice, onNoticeDone: game.clearNotice,
+    header: state.clock && state.phase !== "results"
+      ? <GameHeader clock={state.clock} position={position} taskCount={state.game.task_count}
+                    receivedAt={receivedAt} onTimeUp={onTimeUp} />
+      : null,
+  };
+  const ack = () => setUi((u) => ({ ...u, ackedPosition: position }));
+
+  switch (selectScreen(state, ui)) {
+    case "welcome":
+      return <WelcomeScreen state={state} frame={frame} onStart={() => game.act(() => api.start(token))} />;
+    case "task":
+      return <TaskScreen key={position} state={state} receivedAt={receivedAt} frame={frame}
+                         onAnswer={(a) => game.act(() => api.answer(token, position, a))}
+                         onHint={(n) => game.act(() => api.hint(token, position, n))}
+                         onReveal={() => game.act(() => api.reveal(token, position))} />;
+    case "correct":
+      return <CorrectScreen state={state} frame={frame} onContinue={ack} />;
+    case "revealed":
+      return <RevealedScreen state={state} frame={frame} onContinue={ack} />;
+    case "photo":
+      return <PhotoScreen key={position} state={state} frame={frame}
+                          upload={(file, onProgress) => game.track(api.uploadPhoto(token, position, file, onProgress))}
+                          onFlowStart={() => setUi({ ackedPosition: position, photoFlowPosition: position })}
+                          onUploaded={game.applyResult}
+                          onContinue={() => setUi((u) => ({ ...u, photoFlowPosition: null }))}
+                          onError={game.fail} />;
+    case "landmark":
+      return <LandmarkScreen state={state} frame={frame} onNext={() => game.act(() => api.advance(token, position))} />;
+    case "finish":
+      return <FinishScreen state={state} frame={frame} />;
+    case "timesup":
+      return <TimesUpScreen state={state} frame={frame} />;
+  }
+}

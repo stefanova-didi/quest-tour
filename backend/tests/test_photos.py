@@ -1,0 +1,117 @@
+import pytest
+
+from questtour.imagetypes import JPEG, PNG
+from questtour.models import Assignment, Photo
+from questtour.services import game as rules
+from questtour.services.game import Outcome
+from questtour.services.photos import save_photo
+
+DATA = b"\xff\xd8\xff\xe0" + b"\x00" * 64
+
+
+@pytest.fixture
+def session(session_factory):
+    with session_factory() as s:
+        yield s
+
+
+@pytest.fixture
+def assignment(session, seed):
+    return session.get(Assignment, seed.assignment_id)
+
+
+@pytest.fixture
+def run(session, assignment, clock):
+    run = rules.start_run(session, assignment, clock.now)
+    session.commit()
+    return run
+
+
+def answer_current(session, run, clock):
+    position = run.current_position
+    answers = ["Alexander Nevsky", "Rotunda of St George", "Serdika"]
+    assert (
+        rules.submit_answer(session, run, position, answers[position], clock.now, "d1")
+        == Outcome.CORRECT
+    )
+
+
+def upload(session, blob_store, run, assignment, clock, position, kind=JPEG):
+    return save_photo(
+        session, blob_store, "photos", run, assignment, position, DATA, kind, clock.now, "d1"
+    )
+
+
+def test_upload_to_current_task(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    version = run.version
+    assert upload(session, blob_store, run, assignment, clock, 0) == Outcome.OK
+    assert blob_store.exists(
+        "photos",
+        "Sofia-Old-Town-Quest/The-Explorers/2026-10-14_11-00-00_01_Alexander-Nevsky-Cathedral.jpg",
+    )
+    assert run.tasks[0].photo_count == 1
+    assert run.version == version + 1
+    photo = session.query(Photo).one()
+    assert (photo.content_type, photo.size_bytes, photo.device_id) == ("image/jpeg", len(DATA), "d1")
+
+
+def test_name_collision_gets_numeric_suffix(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    upload(session, blob_store, run, assignment, clock, 0)
+    upload(session, blob_store, run, assignment, clock, 0, kind=PNG)
+    upload(session, blob_store, run, assignment, clock, 0)
+    base = "Sofia-Old-Town-Quest/The-Explorers/2026-10-14_11-00-00_01_Alexander-Nevsky-Cathedral"
+    assert blob_store.exists("photos", f"{base}.jpg")
+    assert blob_store.exists("photos", f"{base}.png")
+    assert blob_store.exists("photos", f"{base}_2.jpg")
+    assert run.tasks[0].photo_count == 3
+
+
+def test_late_photo_for_previous_task_is_kept(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    upload(session, blob_store, run, assignment, clock, 0)
+    assert rules.advance(run, 0, clock.now) == Outcome.OK
+    assert upload(session, blob_store, run, assignment, clock, 0) == Outcome.OK
+    assert run.current_position == 1
+    assert blob_store.exists(
+        "photos",
+        "Sofia-Old-Town-Quest/The-Explorers/2026-10-14_11-00-00_01_Alexander-Nevsky-Cathedral_2.jpg",
+    )
+    assert run.tasks[0].photo_count == 2
+
+
+def test_photo_for_unreached_task_is_stale(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    upload(session, blob_store, run, assignment, clock, 0)
+    rules.advance(run, 0, clock.now)
+    version = run.version
+    assert upload(session, blob_store, run, assignment, clock, 2) == Outcome.STALE
+    assert upload(session, blob_store, run, assignment, clock, -1) == Outcome.STALE
+    assert upload(session, blob_store, run, assignment, clock, 99) == Outcome.STALE
+    assert run.version == version
+    assert session.query(Photo).count() == 1
+
+
+def test_photo_before_task_is_completed_is_stale(session, blob_store, assignment, run, clock):
+    assert upload(session, blob_store, run, assignment, clock, 0) == Outcome.STALE
+    assert run.tasks[0].photo_count == 0
+
+
+def test_photo_after_timeout_is_game_over(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    clock.advance(minutes=241)
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.end_reason == "max_duration"
+    assert upload(session, blob_store, run, assignment, clock, 0) == Outcome.GAME_OVER
+    assert session.query(Photo).count() == 0
+
+
+def test_filename_uses_game_time_zone(session, blob_store, assignment, run, clock):
+    answer_current(session, run, clock)
+    clock.advance(minutes=30, seconds=5)
+    upload(session, blob_store, run, assignment, clock, 0)
+    assert blob_store.exists(
+        "photos",
+        "Sofia-Old-Town-Quest/The-Explorers/2026-10-14_11-30-05_01_Alexander-Nevsky-Cathedral.jpg",
+    )
