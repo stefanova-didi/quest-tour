@@ -10,6 +10,7 @@ class Settings(BaseSettings):
 
     database_url: str
     database_auth: Literal["password", "azure_ad"] = "password"
+    database_owner_role: str | None = None  # prod: NOLOGIN role that owns the tables (db-setup)
     host_id: str = "default"
     public_base_url: str
     storage_backend: Literal["azure", "local"] = "azure"

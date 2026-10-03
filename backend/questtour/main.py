@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import sessionmaker
 
-from questtour.api import images, play
+from questtour.api import health, images, play
 from questtour.clock import Clock, utc_now
 from questtour.db import make_engine
 from questtour.services.access import LinkNotValid
@@ -68,6 +68,7 @@ def create_app(
                 )
         return await call_next(request)
 
+    app.include_router(health.router)
     app.include_router(play.router)
     app.include_router(images.router)
     app.add_exception_handler(LinkNotValid, link_not_valid_handler)
