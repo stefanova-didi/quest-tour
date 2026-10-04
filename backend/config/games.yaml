@@ -8,4 +8,10 @@ games:
       Welcome to Sofia Old Town Quest! Your team will uncover landmarks hidden in riddles.
 
       Solve each riddle, walk to the place it describes, take a team photo and learn its story.
-    tasks: [alexander-nevsky, rotunda-st-george, ancient-serdika]
+    tasks:
+      - lily-pond
+      - eagles-bridge
+      - sofia-university
+      - alexander-nevsky
+      - ivan-vazov-theatre
+      - ancient-serdika

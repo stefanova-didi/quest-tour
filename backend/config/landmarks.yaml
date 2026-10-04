@@ -1,30 +1,215 @@
 # accepted_answers[0] is the answer shown when a team reveals it.
 landmarks:
+  - id: lily-pond
+    name: Lily Pond
+    task: >-
+      Long ago, this place was a swamp. Later, people called it the Fish Pond. Today white
+      flowers float on its surface, and in the middle three little boys splash about without
+      a care. Around them stand guards who, in fairy tales, wait for a kiss to turn into
+      princes. Here, though, no one has kissed them, so they stay at their posts. Find the
+      pond, look closely at the figures in the centre and count the ones guarding the
+      children. That number is the key to your next step.
+    accepted_answers: ["10", ten]
+    hint1: >-
+      Don't look for the big lake with the boats. Yours is smaller and older, and it takes
+      its name from the flowers growing in its water.
+    hint2: >-
+      If you spot a little honey-loving bear facing the water, you're in the right place.
+      Look where he's looking.
+    tourist_info: |
+      The pond was laid out by Daniel Neff, the Swiss gardener who first designed Borisova
+      Garden, on the site of a former marsh. He stocked it with goldfish and planted water
+      lilies. Because of the goldfish, it was known for many years as the Fish Pond. As early
+      as around 1900 the pond appeared on some of Sofia's very first postcards. At that time
+      it was decorated with an ornamental vase spouting water and with figures of frogs and
+      turtles.
+
+      Over the years the pond's appearance changed many times. In 1935 a large stone lily
+      with 36 jets of water was placed at its centre. Later, to a design by the sculptor
+      Vasil Zidarov, it was replaced by three bathing children. The boys have had an eventful
+      history. By 2011 they had disappeared, and only a few frogs remained of the decoration.
+      After bronze replicas, restored with corporate sponsorship, were stolen again, the
+      municipality had the figures made from painted plastic. Today the bathing boys are back
+      in their place, and some of the lilies in South Park were transplanted from this very
+      pond. A curious detail: the nearby drinking fountain was once topped with a bear, and
+      nine penguins surrounded its spouts.
+  - id: eagles-bridge
+    name: Eagles' Bridge
+    task: >-
+      More than a century ago, travellers arriving from Constantinople knew that once they
+      crossed this small river, they had reached the capital. This is where the city welcomed
+      its guests. One spring in March, it also welcomed those returning from distant exile.
+      Today this gate has no wings, but its guards do. Find the gate and search its railings
+      for the year it was first opened. That year is the key to your next step.
+    accepted_answers: ["1891"]
+    hint1: >-
+      The road the guests travelled on still bears the name of the city they came from.
+      Follow it towards the centre.
+    hint2: >-
+      The gate is named after the birds that guard it from above. Stand between them, look
+      down towards the river and read what is written in the metal.
+    tourist_info: |
+      Eagles' Bridge (Orlov Most) was built in 1890–1891 over the Perlovska River and was one
+      of the first solid masonry bridges erected in Sofia after the Liberation. For travellers
+      entering the city from the east along Tsarigradsko Shose, it was the first crossroads
+      leading into the centre proper, which is why it is called the city's gateway. The
+      location was no accident. In March 1878, the Bulgarian prisoners and exiles freed from
+      Diyarbakır were welcomed home on this very spot. For this reason, the bridge was
+      conceived as a symbol of freedom. Today the event is marked by a modest stone plaque
+      placed by the municipality in the 1990s.
+
+      The bridge was designed by Sofia's chief architect, Adolf Václav Kolář, together with
+      the Czech engineer Václav Prošek, while its construction was entrusted to his cousins
+      Jiří and Bohdan Prošek. The same builders also erected Lions' Bridge, and Eagles' Bridge
+      was completed two years after it. The eagles and the metal parts were made in Vienna by
+      the firm Rudolph Philipp Waagner & Biró. The four bronze eagles with outstretched wings
+      perch on columns of dressed granite about 7 metres high. According to interpreters,
+      their number symbolises the four cardinal directions. The year of completion is
+      inscribed on the richly decorated railings on both sides of the bridge. In 1970 the
+      bridge was widened, and its northern railing was moved.
+  - id: sofia-university
+    name: Sofia University (Rectorate)
+    task: >-
+      Two brothers from Karlovo turned a modest trade in a foreign land into a banking
+      empire, and to this day they remain an example of successful entrepreneurship. Yet
+      their generosity proved more valuable than their wealth. They supported churches,
+      schools and hospitals, and in the end left almost their entire fortune to their
+      homeland. They had no children, but they left Bulgaria an heir that welcomes thousands
+      of new "children" every year. Now the brothers sit on either side of the steps, watching
+      who comes in. Stand between them and count how many doors lead to knowledge.
+    accepted_answers: ["3", three]
+    hint1: >-
+      The brothers' heir is the oldest institution of higher education in the country.
+      Beneath it lies a metro station that bears its name.
+    hint2: >-
+      The brothers are cast in bronze and sit on either side of the grand staircase. Count
+      only the doors it leads to.
+    tourist_info: |
+      Evlogi and Hristo Georgiev were born in Karlovo. As young men they joined their
+      maternal uncles, the Puliev family, who were merchants in Romania. There the brothers
+      built up a large trading and banking business, while also supporting many institutions
+      and paying for the education of numerous young people. In 1896 Evlogi donated 800,000
+      gold leva and a plot of land in central Sofia for the building of the future university.
+      He died a year later. In his will he left 6 million leva for a higher school in Bulgaria
+      and also acknowledged the contribution of his brother Hristo, who had died back in 1872
+      at just 48. His relatives expected a large inheritance, but Evlogi left them only a few
+      thousand leva and gave almost everything else to churches, schools, hospitals and
+      universities. The two brothers are buried in Bellu Cemetery in Bucharest, and their tomb
+      has been declared an architectural monument by the Romanian state.
+
+      The road to the building was not an easy one. In 1906 an international design
+      competition was won by the French architect Henri Bréasson, but construction never
+      began. Later, the board managing the donation commissioned the architect Yordan Milanov
+      to rework the design, despite objections from the university and from Bréasson himself.
+      The foundation stone was laid on 30 June 1924, and the building was solemnly consecrated
+      on 16 December 1934. Evlogi had asked for two marble statues to be erected in the
+      school's courtyard in memory of the brothers. Today they stand before the university's
+      doors, but they were cast in bronze. The two seated figures are the work of the sculptor
+      Kiril Shivarov.
   - id: alexander-nevsky
     name: Alexander Nevsky Cathedral
-    task_picture: images/task-domes.svg
     task: >-
-      Golden domes shine over the square that bears my name. I was built to honour
-      soldiers who fell for this land's freedom. Who am I?
-    accepted_answers: [Alexander Nevsky Cathedral, Alexander Nevsky, Nevsky Cathedral]
-    hint1: Look for the largest golden domes in the city centre.
-    hint2: The cathedral is named after a Russian saint and prince.
+      This church is a gesture of gratitude to the thousands of soldiers who came from afar
+      to bring freedom. It bears the name of a warrior prince from the north who became the
+      patron of their army. The prince watches over the church from high up on the façade,
+      right above three windows. But someone is watching him too. Nearby, before the grave of
+      a soldier whose name no one knows, lies a guard who never blinks. He is a symbol of this
+      land and has guarded the fire beside him for almost a century. Find out on which side
+      the prince's icon is and who gazes at it from afar. The guard is the key to your next
+      step.
+    accepted_answers: [lion, the lion]
+    hint1: >-
+      The prince's icon is on the side where the bell tower rises, facing the direction where
+      the sun sets.
+    hint2: >-
+      Stand with your back to the icon and walk towards the oldest church, the one that gave
+      the city its name. Beside its eternal flame you will find the guard.
     tourist_info: |
-      The cathedral was built between 1882 and 1912 in memory of the soldiers who died in the
-      Russo-Turkish War of 1877–78. That war led to Bulgaria's liberation.
+      The St. Alexander Nevsky Cathedral was built in gratitude to the Russian liberators and
+      bears the name of St. Alexander Nevsky, patron of the Russian army in the Russo-Turkish
+      War. The foundation stone was laid in 1882, and construction to a design by the
+      architect Alexander Pomerantsev lasted from 1904 to 1912. The mosaic icon of the saint
+      is on the western façade, above the triple window, 30 metres above the ground.
 
-      It is one of the largest Eastern Orthodox cathedrals in Europe.
+      The lion that gazes towards it is part of the Monument to the Unknown Soldier beside the
+      St. Sofia Church. It is the work of the sculptor Andrey Nikolov, who spent five years on
+      it, from 1926 to 1931. The first monument, however, was rejected because it was
+      overloaded with 17 sculpted figures. It was finally unveiled in 1941, and during the
+      bombing of 1944 it was almost destroyed. For many years the lion moved from place to
+      place and was eventually found in the courtyard of a villa near Vrana. It was returned
+      to its original spot when the new monument opened in 1981. Beside it burns an eternal
+      flame, together with soil from Shipka and Stara Zagora, where the heaviest losses of the
+      Liberation War were suffered. Today the four-metre bronze lion is polished smooth by the
+      children who climb on it.
     tourist_info_picture: images/landmark-nevsky.svg
-  - id: rotunda-st-george
-    name: Rotunda of St George
-    task: A red-brick church from Roman times hides in a courtyard among government buildings. Which church?
-    accepted_answers: [Rotunda of St George, St George Rotunda, Rotunda]
-    hint1: Look behind the Presidency building.
-    tourist_info: The Rotunda is considered the oldest building in Sofia, dating from the 4th century.
+  - id: ivan-vazov-theatre
+    name: Ivan Vazov National Theatre
+    task: >-
+      In this building people cry and laugh, even though nothing sad or funny has happened in
+      their lives. Once it burned almost to the ground, but its face survived, as if it
+      refused to leave the stage. Six columns hold up its roof, and high above, the god of
+      the arts is surrounded by his muses. Don't look at him. Step under the portico and
+      raise your eyes above the doors. Women in white and gold sit there, and some of them
+      hold other people's faces in their hands, some laughing, some weeping. Count only the
+      faces in the hands of the women above the doors. The faces peering down from the top of
+      the portico are not part of this game. Their number is the key to your next step.
+    accepted_answers: ["4", four]
+    hint1: >-
+      The building bears the name of the patriarch of Bulgarian literature, and the City
+      Garden stretches out in front of it.
+    hint2: >-
+      Not all of the women above the doors hold faces. Some hold lyres, so skip those. Count
+      only the masks of comedy and tragedy that the women hold in their hands.
+    tourist_info: |
+      The building was designed by the Viennese architects Ferdinand Fellner and Hermann
+      Helmer, known as "the opera architects" because they built more than 50 theatres across
+      Europe. It stands on the site of the wooden Osnova Theatre, and the National Assembly
+      passed a special law to raise funds for its construction. The theatre opened on 3
+      January 1907 with Ivan Vazov's play The Lost Ones. The opening was a stormy one:
+      students booed Prince Ferdinand on his arrival, and he closed Sofia University for six
+      months in response. Above the entrance, six columns support a triangular pediment
+      showing Apollo, the patron of the arts, surrounded by the muses.
+
+      Within just a few days in 1923, the building went through two ordeals. On 4 February,
+      during a performance, a bomb was thrown at Prime Minister Aleksandar Stamboliyski, but
+      no one was killed and the show went on. A week later, on 10 February, during an
+      anniversary performance using gas lighting, a lamp set fire to the wooden parts of the
+      stage. The blaze destroyed almost the entire building, and only the façade survived. The
+      theatre was rebuilt by the German architect Martin Dülfer and the Bulgarian engineer
+      Kiril Chaparov, and the new stage had a movable floor, a revolutionary technology for
+      its time. The building was damaged again by bombing during the Second World War, and in
+      1974–1976 its original appearance was restored.
   - id: ancient-serdika
     name: Ancient Serdika Complex
-    task: Walk on Roman streets beneath the busiest metro station in town. Where are you?
-    accepted_answers: [Ancient Serdika, Serdika, Serdika Complex]
+    task: >-
+      Above your heads flows today's Sofia: cars, trams, people in a hurry. But a few metres
+      beneath their feet lies another city, whose streets were once walked by Roman soldiers
+      and merchants. One of those streets ran straight from north to south, like the needle
+      of a compass. The Romans called it by a word meaning "axis" or "hinge", because the
+      whole city turned around it. Go down to the ancient city, find the spot near the glass
+      dome and look for the sign that keeps the memory of this street alive. Its name is the
+      key to your next step.
+    accepted_answers: [Cardo, Cardo Maximus]
+    hint1: >-
+      Don't look for the sign directly under the glass dome. It stands a little behind it,
+      slightly to one side, tucked away behind a barrier rope.
+    hint2: >-
+      The street has a more famous sister that runs from east to west, called the Decumanus.
+      Look for the one that crosses her path.
     tourist_info: |
-      Beneath the centre of modern Sofia lie the streets of Serdika, the Roman city that stood
-      here almost 2,000 years ago.
+      The remains of the Roman city were uncovered between 2010 and 2012, during the
+      construction of the Serdika 2 metro station. The discoveries include parts of the city's
+      two main streets: the Cardo Maximus, which linked the northern and southern gates, and
+      the Decumanus Maximus, which linked the eastern and western gates. The two met at a
+      right angle, and the forum, the city's central square, stood at their crossing. The
+      street on the sign is one of the secondary streets that formed the city's grid. It is 5
+      metres wide, 10 metres of it have been excavated, and its paving dates from the 6th
+      century. Beneath it, parts of the ancient water supply and sewage system are on display,
+      proof that Serdica was a well-planned city.
+
+      The complex was officially opened in 2016 after six years of work by around a hundred
+      archaeologists and five architects. It covers 8,000 square metres and, at its opening,
+      was presented as the largest open-air museum in the Balkans. Under the glass dome
+      between the Presidency and the Council of Ministers, a stage has been set up with the
+      ruins of Serdica as its backdrop. Near the entrance to the metro station there are also
+      remains of an early Christian basilica from the 4th century.
