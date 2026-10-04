@@ -149,6 +149,27 @@ Warnings:
 - To swap two team names, rename one team through a temporary name in two `sync-config` runs
   (team names are unique, so a direct swap fails and rolls back).
 
+## Deployment (Azure)
+
+Production runs on Azure App Service, PostgreSQL Flexible Server and Blob storage. The infrastructure is
+Terraform in `infra/`; GitHub Actions does the rest:
+
+- **Pull requests** run CI: backend ruff and pytest (SQLite and PostgreSQL), frontend typecheck and
+  vitest, static checks of the workflows, scripts and Terraform, and a build and smoke test of the
+  deploy package.
+- **Merge to `main`** re-runs CI and deploys to App Service through GitHub OIDC, once the repository
+  variable `DEPLOY_ENABLED` is `true`. Commits that only touch `backend/config/`, `infra/`, `specs/`,
+  `frontend-mocks/` or Markdown files never deploy. *Deploy* can also be run by hand, to redeploy or
+  to roll back.
+- **Infrastructure** changes go through the separate, manually run *Infrastructure (Terraform)*
+  workflow: `plan`, then `apply` with `confirm = APPLY`.
+
+Build the deploy package locally with `bash scripts/package-app.sh dist/app.zip` (after
+`npm run build` in `frontend/`) and check it with `bash scripts/smoke-package.sh dist/app.zip`.
+
+First-time setup, GitHub variables, day-2 operations and troubleshooting are in
+[`infra/README.md`](infra/README.md).
+
 ## Tests
 
 ```bash

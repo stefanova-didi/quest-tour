@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  pull_request:
+  workflow_call: # deploy.yml re-runs the same checks before deploying
+    inputs:
+      ref:
+        description: "Commit to check out (deploy.yml rollback); empty = the triggering commit"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: questtour
+          POSTGRES_PASSWORD: questtour
+          POSTGRES_DB: questtour
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U questtour"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - name: pytest (SQLite)
+        run: uv run pytest -q
+      - name: pytest (PostgreSQL, incl. @pytest.mark.postgres row-lock tests)
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://questtour:questtour@localhost:5432/questtour
+        run: uv run pytest -q
+      - name: alembic upgrade head on PostgreSQL as the shared owner role (what prod startup runs)
+        env:
+          PGHOST: localhost
+          PGUSER: questtour
+          PGPASSWORD: questtour
+          DATABASE_URL: postgresql+psycopg://questtour:questtour@localhost:5432/questtour_migrate
+          DATABASE_OWNER_ROLE: questtour_owner
+          PUBLIC_BASE_URL: http://localhost
+        run: |
+          psql -d questtour -v ON_ERROR_STOP=1 \
+            -c 'CREATE ROLE questtour_owner NOLOGIN' \
+            -c 'CREATE DATABASE questtour_migrate OWNER questtour_owner'
+          uv run python -m alembic upgrade head
+          uv run python -m alembic upgrade head # every App Service restart re-runs it: must be a no-op
+          owner="$(psql -d questtour_migrate -tAc "SELECT tableowner FROM pg_tables WHERE tablename = 'alembic_version'")"
+          if [ "$owner" != "questtour_owner" ]; then
+            echo "::error::alembic_version is owned by '$owner', not questtour_owner: env.py did not SET ROLE"; exit 1
+          fi
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  devops-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -color
+      - name: shellcheck
+        run: shellcheck backend/startup.sh scripts/*.sh infra/bootstrap/*.sh
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+      - name: terraform fmt / validate / test (mock provider, no Azure access)
+        working-directory: infra
+        run: |
+          terraform fmt -check -diff -recursive
+          terraform init -backend=false -input=false
+          terraform validate
+          terraform test
+
+  package:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Build SPA
+        working-directory: frontend
+        run: npm ci && npm run build
+      - run: bash scripts/package-app.sh dist/app.zip
+      - name: Smoke-test the package (fresh venv, startup.sh, SQLite)
+        run: bash scripts/smoke-package.sh dist/app.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-package
+          path: dist/app.zip
+          retention-days: 7
+          if-no-files-found: error

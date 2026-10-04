@@ -1,3 +1,4 @@
+import re
 from datetime import UTC, datetime
 
 from sqlalchemy import DateTime, create_engine, event
@@ -40,11 +41,11 @@ def make_engine(settings: Settings) -> Engine:
         kwargs["connect_args"] = {"check_same_thread": False}
     engine = create_engine(settings.database_url, **kwargs)
     if settings.database_auth == "azure_ad":
-        _use_entra_token_password(engine)
+        use_entra_token_password(engine)
     return engine
 
 
-def _use_entra_token_password(engine: Engine) -> None:
+def use_entra_token_password(engine: Engine) -> None:
     """App Service managed identity -> PostgreSQL Flexible Server (technical §2). Not exercised locally."""
     from azure.identity import DefaultAzureCredential
 
@@ -55,3 +56,24 @@ def _use_entra_token_password(engine: Engine) -> None:
         cparams["password"] = credential.get_token(
             "https://ossrdbms-aad.database.windows.net/.default"
         ).token
+
+
+# Entra UPNs and group names, incl. guest UPNs (name_domain#EXT#@tenant). No quotes, no backslash.
+_IDENT = re.compile(r"[A-Za-z0-9 _@.#\-]{1,63}")
+
+
+def quote_ident(name: str) -> str:
+    """Double-quote a PostgreSQL role/database name. The names come from Terraform outputs and Entra
+    UPNs; anything that would need escaping is refused instead of escaped."""
+    if not _IDENT.fullmatch(name):
+        raise ValueError(f"unsupported PostgreSQL identifier: {name!r}")
+    return f'"{name}"'
+
+
+def set_role(connection, role: str) -> None:
+    """Make objects created on this connection owned by the shared owner role (infra/README.md), so
+    tables migrated by the app identity stay writable by the admin running sync-config. SET ROLE is
+    session-level, so committing keeps it while ending the implicit transaction alembic must not
+    inherit."""
+    connection.exec_driver_sql(f"SET ROLE {quote_ident(role)}")
+    connection.commit()

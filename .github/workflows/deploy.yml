@@ -1,0 +1,85 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: # teams.yaml commits after sync-config must not restart prod mid-game
+      - "backend/config/**"
+      - "infra/**"
+      - "specs/**"
+      - "frontend-mocks/**"
+      - "**/*.md"
+  workflow_dispatch: # redeploy, or roll back: run it on main with an older commit SHA
+    inputs:
+      ref:
+        description: "Commit SHA or tag to deploy (empty = latest main). Never roll back across a migration."
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ inputs.ref || github.sha }}
+
+  deploy:
+    needs: ci
+    # Pushes deploy only once prod exists and its database is set up: the owner sets the repository
+    # variable DEPLOY_ENABLED=true as the last first-time-setup step (infra/README.md). Until then a
+    # push to main runs CI and skips this job. A manual dispatch always deploys.
+    if: vars.DEPLOY_ENABLED == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # GitHub OIDC -> Entra (no stored credentials)
+    env:
+      WEBAPP: ${{ vars.AZURE_WEBAPP_NAME }}
+    steps:
+      - name: Check configuration
+        env:
+          CLIENT_ID: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
+          TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::error::Deploy only runs from main: the deploy identity trusts main only (infra/README.md)"; exit 1
+          fi
+          for name in WEBAPP CLIENT_ID TENANT_ID SUBSCRIPTION_ID RESOURCE_GROUP; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Repository variable for $name is not set; run infra/bootstrap/bootstrap.sh"; exit 1
+            fi
+          done
+      - name: Show OIDC subject (compare with the federated credential if login fails)
+        run: |
+          curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" |
+            python3 -c 'import base64, json, sys; p = json.load(sys.stdin)["value"].split(".")[1]; print("OIDC subject:", json.loads(base64.urlsafe_b64decode(p + "=" * (-len(p) % 4)))["sub"])'
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-package
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_DEPLOY_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
+          resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
+          package: app.zip
+      - name: Smoke check (waits for Oryx build + migrations + startup)
+        run: |
+          HEALTH_URL="https://$WEBAPP.azurewebsites.net/api/health"
+          for _ in $(seq 1 30); do
+            if curl -fsS --connect-timeout 10 --max-time 30 "$HEALTH_URL"; then echo; exit 0; fi
+            sleep 10
+          done
+          echo "::error::$HEALTH_URL did not become healthy; check 'az webapp log tail'"; exit 1

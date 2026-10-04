@@ -1,0 +1,111 @@
+name: Infrastructure (Terraform)
+
+# The separate, manually run Terraform pipeline (clarify: terraform-in-ci). Only users with write
+# access can run it; "apply" additionally needs confirm=APPLY. No GitHub environments are used, so
+# this works on every GitHub plan (infra/README.md, "GitHub plan").
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "plan = show changes only; apply = plan and apply"
+        type: choice
+        options: [plan, apply]
+        default: plan
+      confirm:
+        description: "Type APPLY to confirm an apply (ignored for plan)"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: terraform-prod
+  cancel-in-progress: false
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash # explicit bash = -eo pipefail, so `terraform plan | tee` still fails the step
+        working-directory: infra
+    env:
+      ARM_CLIENT_ID: ${{ vars.AZURE_INFRA_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARM_USE_OIDC: "true"
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      TF_VAR_app_name: ${{ vars.TF_APP_NAME }}
+      TF_VAR_resource_group_name: ${{ vars.AZURE_RESOURCE_GROUP }}
+      TF_VAR_admin_principal_object_id: ${{ vars.TF_ADMIN_PRINCIPAL_OBJECT_ID }}
+      TF_VAR_admin_principal_name: ${{ vars.TF_ADMIN_PRINCIPAL_NAME }}
+      TF_VAR_admin_principal_type: ${{ vars.TF_ADMIN_PRINCIPAL_TYPE || 'User' }}
+      TF_VAR_admin_ip_addresses: ${{ vars.TF_ADMIN_IP_ADDRESSES || '{}' }}
+      TF_VAR_host_principal_object_ids: ${{ vars.TF_HOST_PRINCIPAL_OBJECT_IDS || '[]' }}
+      TF_VAR_budget_contact_emails: ${{ vars.TF_BUDGET_CONTACT_EMAILS }}
+      TF_VAR_deploy_principal_object_id: ${{ vars.TF_DEPLOY_PRINCIPAL_OBJECT_ID }}
+    steps:
+      - name: Guard (main only, explicit confirmation for apply)
+        working-directory: .
+        env:
+          ACTION: ${{ inputs.action }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "::error::Run this workflow from main: the infra identity trusts main only"; exit 1
+          fi
+          if [ "$ACTION" = "apply" ] && [ "$CONFIRM" != "APPLY" ]; then
+            echo "::error::apply needs the confirm input set to APPLY"; exit 1
+          fi
+          for name in ARM_CLIENT_ID ARM_TENANT_ID ARM_SUBSCRIPTION_ID TF_VAR_app_name \
+            TF_VAR_resource_group_name TF_VAR_admin_principal_object_id TF_VAR_admin_principal_name \
+            TF_VAR_budget_contact_emails TF_VAR_deploy_principal_object_id; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is empty: set its repository variable (infra/README.md)"; exit 1
+            fi
+          done
+      - name: Show OIDC subject (compare with the federated credential if login fails)
+        working-directory: .
+        run: |
+          curl -fsS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=api://AzureADTokenExchange" |
+            python3 -c 'import base64, json, sys; p = json.load(sys.stdin)["value"].split(".")[1]; print("OIDC subject:", json.loads(base64.urlsafe_b64decode(p + "=" * (-len(p) % 4)))["sub"])'
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+          terraform_wrapper: false
+      - name: terraform init (remote state, Entra auth)
+        env:
+          STATE_RG: ${{ vars.TFSTATE_RESOURCE_GROUP }}
+          STATE_ACCOUNT: ${{ vars.TFSTATE_STORAGE_ACCOUNT }}
+          STATE_CONTAINER: ${{ vars.TFSTATE_CONTAINER }}
+        run: >-
+          terraform init
+          -backend-config="resource_group_name=$STATE_RG"
+          -backend-config="storage_account_name=$STATE_ACCOUNT"
+          -backend-config="container_name=$STATE_CONTAINER"
+          -backend-config="key=prod.tfstate"
+      - name: terraform plan
+        run: |
+          terraform plan -out=tfplan -no-color | tee plan.txt
+          {
+            echo "### Terraform plan ($GITHUB_SHA)"
+            echo '```'
+            grep -E '^(Plan:|No changes|  # )' plan.txt || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - if: inputs.action == 'apply'
+        run: terraform apply -no-color tfplan
+      - if: inputs.action == 'apply'
+        name: Outputs
+        run: |
+          {
+            echo '### Terraform outputs'
+            echo '```'
+            terraform output -no-color
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

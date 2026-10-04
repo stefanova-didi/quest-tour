@@ -6,3 +6,10 @@ backend/*.db
 .pytest_cache/
 frontend/node_modules/
 frontend/dist/
+dist/
+infra/.terraform/
+infra/tfplan
+infra/plan.txt
+*.tfstate
+*.tfstate.*
+crash.log
