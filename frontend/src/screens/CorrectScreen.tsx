@@ -21,7 +21,7 @@ export function CorrectScreen({ state, frame, onContinue }: { state: GameState; 
       <div className="qs-badge"><Icon name="check" /></div>
       <h1 className="t-display-xl" style={{ marginTop: 12 }}>Correct!</h1>
       <div style={{ display: "grid", gap: 4 }}>
-        <p className="t-body t-muted">You found it:</p>
+        <p className="t-body t-muted">You explored a new landmark:</p>
         <p className="t-display-l">{state.task!.landmark?.name}</p>
       </div>
     </GameFrame>
