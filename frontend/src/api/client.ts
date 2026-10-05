@@ -58,6 +58,7 @@ export const api = {
   hint: (token: string, position: number, hint: 1 | 2) =>
     request<ActionResult>(`${base(token)}/hint`, { position, hint }),
   reveal: (token: string, position: number) => request<ActionResult>(`${base(token)}/reveal`, { position }),
+  reset: (token: string) => request<ActionResult>(`${base(token)}/reset`, {}),   // service (test) links only
   advance: (token: string, position: number) => request<ActionResult>(`${base(token)}/advance`, { position }),
   uploadPhoto(token: string, position: number, file: File, onProgress: (pct: number) => void): Promise<ActionResult> {
     return new Promise((resolve, reject) => {

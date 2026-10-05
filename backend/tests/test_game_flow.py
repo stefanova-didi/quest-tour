@@ -5,7 +5,7 @@ import pytest
 from questtour.models import AnswerAttempt, Assignment, RunDevice
 from questtour.services import game as rules
 from questtour.services.game import Outcome
-from tests.factories import seed_game
+from tests.factories import add_service_assignment, seed_game
 
 
 @pytest.fixture
@@ -287,3 +287,41 @@ def test_constants():
     assert rules.HINT_PENALTIES == {1: 10, 2: 15}
     assert rules.WARNING_SECONDS == 900
     assert rules.TIMED_OUT == frozenset({"max_duration", "window_closed"})
+
+
+def _service_assignment(session, clock):
+    seed = seed_game(session, clock.now)
+    token = add_service_assignment(session, seed, clock.now)
+    from questtour.services.access import find_assignment
+
+    return find_assignment(session, token)
+
+
+def test_service_run_never_hits_time_limits(session_factory, clock):
+    with session_factory() as session:
+        assignment = _service_assignment(session, clock)
+        run = rules.start_run(session, assignment, clock.now)
+        clock.advance(days=10)
+        rules.apply_time_limits(run, assignment, clock.now)
+        assert run.end_reason is None and run.ended_at is None
+
+
+def test_service_reveal_is_instant(session_factory, clock):
+    with session_factory() as session:
+        assignment = _service_assignment(session, clock)
+        run = rules.start_run(session, assignment, clock.now)
+        task, game = run.tasks[0], assignment.game
+        assert rules.reveal_unlocked(task, game, clock.now) is False
+        assert rules.reveal_unlocked(task, game, clock.now, instant=True) is True
+        assert rules.reveal_answer(run, game, 0, clock.now, instant=True) == rules.Outcome.OK
+        assert run.tasks[0].completion == "revealed"
+
+
+def test_start_run_starts_above_version_floor(session_factory, clock):
+    with session_factory() as session:
+        seed = seed_game(session, clock.now)
+        assignment = session.get(Assignment, seed.assignment_id)
+        assert rules.start_run(session, assignment, clock.now).version == 1
+        other = session.query(Assignment).filter(Assignment.id != assignment.id).one()
+        other.version_floor = 9
+        assert rules.start_run(session, other, clock.now).version == 10

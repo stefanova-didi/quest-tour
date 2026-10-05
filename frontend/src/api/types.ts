@@ -23,7 +23,7 @@ export interface Results {
   exit_message: string; leaderboard: LeaderboardRow[];
 }
 export interface GameState {
-  version: number; status: Status; phase: Phase | null; position: number; game: GameInfo; team: { name: string };
+  version: number; service: boolean; status: Status; phase: Phase | null; position: number; game: GameInfo; team: { name: string };
   clock: Clock | null; task: Task | null; results: Results | null;
 }
 export interface ActionResult { outcome: Outcome; state: GameState; }

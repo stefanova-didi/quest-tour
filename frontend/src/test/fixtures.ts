@@ -15,7 +15,7 @@ export function makeTask(overrides: Partial<Task> = {}): Task {
 
 export function makeState(overrides: Partial<GameState> = {}): GameState {
   return {
-    version: 7, status: "playing", phase: "task", position: 2,
+    version: 7, service: false, status: "playing", phase: "task", position: 2,
     game: { name: "Sofia Old Town Quest", intro: "Welcome!\n\nHave fun.", task_count: 8, time_zone: "Europe/Sofia",
             max_duration_minutes: 240, hint_penalties: [10, 15], reveal_after_attempts: 5,
             reveal_after_minutes: 20, reveal_penalty_minutes: 30 },

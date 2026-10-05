@@ -82,7 +82,8 @@ class ResultsOut(BaseModel):
 
 
 class GameState(BaseModel):
-    version: int  # game_runs.version; 0 before Start
+    version: int  # game_runs.version; assignments.version_floor before Start
+    service: bool  # R-25: service (test) link — no time limits, Reset available
     status: Literal["not_started", "playing", "finished", "timed_out"]
     phase: Literal["task", "photo", "info", "results"] | None
     position: int

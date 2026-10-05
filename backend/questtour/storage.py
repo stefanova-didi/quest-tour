@@ -26,6 +26,8 @@ class BlobStore(Protocol):
 
     def get(self, container: str, name: str) -> tuple[bytes, str] | None: ...
 
+    def delete(self, container: str, name: str) -> None: ...  # missing blob: no error
+
 
 class LocalBlobStore:
     """Filesystem store for tests and the no-Docker dev fallback."""
@@ -63,6 +65,11 @@ class LocalBlobStore:
             else "application/octet-stream"
         )
         return path.read_bytes(), ctype
+
+    def delete(self, container, name):
+        path = self._path(container, name)
+        path.unlink(missing_ok=True)
+        path.with_name(path.name + ".content-type").unlink(missing_ok=True)
 
 
 class AzureBlobStore:
@@ -104,6 +111,16 @@ class AzureBlobStore:
         except ResourceNotFoundError:
             return None
         return downloader.readall(), downloader.properties.content_settings.content_type
+
+    def delete(self, container, name):
+        from azure.core.exceptions import AzureError, ResourceNotFoundError
+
+        try:
+            self.service.get_blob_client(container, name).delete_blob()
+        except ResourceNotFoundError:
+            pass
+        except AzureError as exc:
+            raise StorageUnavailable(str(exc)) from exc
 
 
 def make_blob_store(settings: Settings) -> BlobStore:

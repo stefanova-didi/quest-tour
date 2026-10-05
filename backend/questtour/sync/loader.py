@@ -10,6 +10,7 @@ from questtour.sync.schema import (
     AssignmentCfg,
     GameCfg,
     LandmarkCfg,
+    ServiceCfg,
     TeamCfg,
     parse_window_time,
 )
@@ -22,6 +23,7 @@ class LoadedConfig:
     games: list[GameCfg] = field(default_factory=list)
     teams: list[TeamCfg] = field(default_factory=list)
     assignments: list[AssignmentCfg] = field(default_factory=list)
+    service: ServiceCfg | None = None  # R-25
     teams_doc: object = None  # ruamel round-trip document, for token write-back
     errors: list[str] = field(default_factory=list)
 
@@ -57,6 +59,23 @@ def _parse_list(doc, file: str, key: str, model: type[BaseModel], errors: list[s
     return parsed
 
 
+def _parse_service(doc, errors: list[str]) -> ServiceCfg | None:
+    raw = (doc or {}).get("service")
+    if raw is None:
+        return None
+    try:
+        data = dict(raw)
+        data["tokens"] = dict(data.get("tokens") or {})  # `tokens:` left empty reads as None
+        return ServiceCfg.model_validate(data)
+    except ValidationError as exc:
+        for err in exc.errors():
+            where = ".".join(str(p) for p in err["loc"])
+            errors.append(f"teams.yaml: service {where}: {err['msg']}")
+    except (TypeError, ValueError) as exc:
+        errors.append(f"teams.yaml: service: {exc}")
+    return None
+
+
 def _duplicates(file: str, what: str, values: list[str]) -> list[str]:
     seen, out = set(), []
     for v in values:
@@ -79,6 +98,7 @@ def load_config(config_dir: Path) -> LoadedConfig:
     cfg.assignments = _parse_list(
         cfg.teams_doc, "teams.yaml", "assignments", AssignmentCfg, cfg.errors
     )
+    cfg.service = _parse_service(cfg.teams_doc, cfg.errors)
     if not cfg.errors:
         cfg.errors.extend(cross_check(cfg))
     return cfg
@@ -100,7 +120,20 @@ def cross_check(cfg: LoadedConfig) -> list[str]:
     errors += _duplicates(
         "teams.yaml", "assignment", [f"{a.team}/{a.game}" for a in cfg.assignments]
     )
-    errors += _duplicates("teams.yaml", "token", [a.token for a in cfg.assignments if a.token])
+    service_tokens = list(cfg.service.tokens.values()) if cfg.service else []
+    errors += _duplicates(
+        "teams.yaml", "token", [a.token for a in cfg.assignments if a.token] + service_tokens
+    )
+    if cfg.service is not None:
+        s = cfg.service
+        if s.team in {t.id for t in cfg.teams}:
+            errors.append(f"teams.yaml: service team id {s.team!r} is also a regular team id")
+        if s.name.casefold() in {t.name.casefold() for t in cfg.teams}:
+            errors.append(f"teams.yaml: service team name {s.name!r} is also a regular team name")
+        elif safe_name(s.name).casefold() in {safe_name(t.name).casefold() for t in cfg.teams}:
+            errors.append(
+                f"teams.yaml: service team name {s.name!r} shares a photo folder with a regular team"
+            )
     landmark_ids = {lm.id for lm in cfg.landmarks}
     for game in cfg.games:
         errors += [

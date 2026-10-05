@@ -44,3 +44,15 @@ def test_owner_role_setting_defaults_to_none(monkeypatch):
     monkeypatch.delenv("DATABASE_OWNER_ROLE", raising=False)  # _env_file=None only skips .env
     s = Settings(_env_file=None, database_url="sqlite://", public_base_url="http://t")
     assert s.database_owner_role is None
+
+
+def test_new_team_and_assignment_defaults(session_factory, clock):
+    from questtour.models import Assignment, Team
+    from tests.factories import seed_game
+
+    with session_factory() as s:
+        seed = seed_game(s, clock.now)
+        assignment = s.get(Assignment, seed.assignment_id)
+        assert assignment.version_floor == 0
+        assert assignment.team.is_service is False
+        assert all(t.is_service is False for t in s.query(Team))

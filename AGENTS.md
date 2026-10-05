@@ -76,7 +76,7 @@ Non-negotiable invariants (violating these is a bug even if tests pass):
   one transaction ("first correct answer wins", each penalty charged exactly once). Teammates sync by
   polling every 60 s (plus after own actions and on visibility change) — no WebSockets in v1.
 - **One run per assignment (R-13).** A game can never be replayed; reopened links show the finish
-  state again.
+  state again — except service (test) links (R-25), which can be reset from the game screen.
 - **Photos (R-10).** Stored at original resolution, never re-encoded, max 20 MB, JPEG/PNG/HEIC/WebP.
   Players never see photos, not even thumbnails. Path:
   `photos/{Game}/{Team}/{timestamp}_{position}_{landmark}.{ext}` (game time zone, safe names via

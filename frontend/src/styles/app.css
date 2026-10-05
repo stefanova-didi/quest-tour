@@ -29,3 +29,12 @@ body { background: var(--surface); }
 .qs-host-card { background: var(--patina-50); box-shadow: none; }
 .qs-opens-card { justify-items: center; gap: 4px; width: 100%; max-width: 300px; background: var(--gold-100); box-shadow: none; }
 .qs-center-copy { display: grid; gap: 12px; max-width: 320px; }
+
+/* R-25 service (test) links: fixed pill over any screen + its confirm sheet */
+.qs-service-bar { position: fixed; top: 4px; left: 50%; transform: translateX(-50%); z-index: 30;
+  display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 12px; border-radius: 999px;
+  background: var(--gold-100); color: var(--ink); font: 600 12px/16px var(--font-sans);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .2); }
+.qs-service-bar__btn { border: 0; border-radius: 999px; padding: 4px 10px; background: var(--ink);
+  color: var(--surface); font: inherit; cursor: pointer; }
+.qs-service-sheet { position: fixed; inset: 0; z-index: 40; max-width: 480px; margin: 0 auto; }

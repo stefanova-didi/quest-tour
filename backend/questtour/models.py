@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint, false
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from questtour.db import Base, UTCDateTime
@@ -61,6 +61,8 @@ class Team(Base):
     key: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(200))
     participants: Mapped[int | None] = mapped_column(Integer)
+    # R-25: service (test) team — no time limits, resettable runs, never on a leaderboard
+    is_service: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
 
 class Assignment(Base):
@@ -74,6 +76,8 @@ class Assignment(Base):
     valid_from: Mapped[datetime] = mapped_column(UTCDateTime)
     valid_until: Mapped[datetime] = mapped_column(UTCDateTime)
     exit_message: Mapped[str] = mapped_column(Text)
+    # R-25: a reset bumps this past the deleted run's version so phones never drop the fresh state
+    version_floor: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
     team: Mapped[Team] = relationship()
     game: Mapped[Game] = relationship()
 

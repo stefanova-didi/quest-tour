@@ -13,6 +13,7 @@ from questtour.models import Assignment, GameRun
 from questtour.services import game as rules
 from questtour.services.access import ensure_link_usable, find_assignment
 from questtour.services.photos import save_photo
+from questtour.services.reset import delete_photo_blobs, reset_run
 from questtour.services.state import build_state
 from questtour.storage import StorageUnavailable
 
@@ -105,7 +106,13 @@ def reveal(
     outcome = (
         rules.Outcome.STALE
         if ctx.run is None
-        else rules.reveal_answer(ctx.run, ctx.assignment.game, body.position, now)
+        else rules.reveal_answer(
+            ctx.run,
+            ctx.assignment.game,
+            body.position,
+            now,
+            instant=rules.is_service(ctx.assignment),
+        )
     )
     return _respond(ctx, outcome, "reveal")
 
@@ -156,3 +163,19 @@ def photo(
         log.exception("photo upload failed")
         raise HTTPException(503, "Storage unavailable, please retry") from exc
     return _respond(ctx, outcome, "photo")
+
+
+@router.post("/reset", response_model=ActionResult)
+def reset(
+    token: str, request: Request, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    """R-25: service (test) links only — wipe the run so the same link starts from scratch."""
+    assignment = find_assignment(session, token, lock=True)
+    if not rules.is_service(assignment):
+        raise HTTPException(404, "Not Found")  # invisible to real teams
+    run = rules.load_run(session, assignment.id)
+    blob_names = reset_run(session, assignment, run) if run is not None else []
+    result = _respond(Ctx(session, assignment, None, now, device_id), rules.Outcome.OK, "reset")
+    settings = request.app.state.settings
+    delete_photo_blobs(request.app.state.blob_store, settings.photos_container, blob_names)
+    return result

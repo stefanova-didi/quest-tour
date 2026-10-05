@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Annotated
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -92,6 +93,14 @@ class AssignmentCfg(_Cfg):
                 'write the timestamp in quotes, e.g. "2026-10-14T09:00:00+03:00"'
             )
         return value
+
+
+class ServiceCfg(_Cfg):
+    """R-25: the service (test) team. sync-config fills `tokens` with one link per game."""
+
+    team: str = Field(pattern=SLUG)
+    name: str = Field(min_length=1)
+    tokens: dict[str, Annotated[str, Field(min_length=22)]] = Field(default_factory=dict)
 
 
 def parse_window_time(value: str, time_zone: str) -> datetime:

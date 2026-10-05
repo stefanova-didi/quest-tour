@@ -1,6 +1,7 @@
 import type { GameState } from "../api/types";
 
 export function teammateNotice(prev: GameState, next: GameState): string | null {
+  if (prev.status !== "not_started" && next.status === "not_started") return "The test run was reset";
   if (prev.status === "not_started" && next.status !== "not_started") return "A teammate started the quest";
   if (prev.status === "timed_out" || next.status === "timed_out") return null;
   if (next.position > prev.position) {

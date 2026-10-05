@@ -5,7 +5,7 @@ import pytest
 from questtour.models import Assignment, GameRun, Team
 from questtour.services.access import LinkNotValid, ensure_link_usable, find_assignment
 from questtour.tokens import hash_token
-from tests.factories import seed_game
+from tests.factories import add_service_assignment, seed_game
 
 
 def add_assignment(session, seed, key, **window):
@@ -116,3 +116,11 @@ def test_started_run_ignores_window(session_factory, clock):
             version=1,
         )
         ensure_link_usable(old, run, clock.now)
+
+
+def test_service_link_ignores_validity_window(session_factory, clock):
+    with session_factory() as session:
+        seed = seed_game(session, clock.now)
+        token = add_service_assignment(session, seed, clock.now)
+        assignment = find_assignment(session, token)
+        ensure_link_usable(assignment, None, clock.now)  # window closed 29 days ago: no LinkNotValid

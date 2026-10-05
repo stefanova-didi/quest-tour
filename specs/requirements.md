@@ -105,7 +105,7 @@
 - **R-5 Wrong answers.** Teams can retry without limit, and wrong answers carry no penalty. Every attempt is logged for statistics.
 - **R-6 Reveal answer.** A "Reveal answer" button unlocks after *N* wrong attempts or *X* minutes on the task, whichever comes first. Revealing shows the answer, adds a *P*-minute penalty on top of any hint penalties, and counts as completing the task. *N*, *X* and *P* are set per game (defaults 5, 20 min, 30 min). A confirmation shows the penalty first.
 - **R-7 Total time.** Total time = (finish time − start time) + all hint penalties + all reveal penalties.
-- **R-8 Maximum duration.** Each game sets a maximum duration, measured as wall-clock time since Start (penalties excluded). From 15 minutes before the limit, a warning shows the remaining time. When the limit is reached, or the assignment's validity window closes, the game ends unfinished: the team sees a "Time is up" screen with the exit message and the leaderboard, and does not appear on the leaderboard. Photos uploaded up to that point are kept.
+- **R-8 Maximum duration.** Each game sets a maximum duration, measured as wall-clock time since Start (penalties excluded). From 15 minutes before the limit, a warning shows the remaining time. When the limit is reached, or the assignment's validity window closes, the game ends unfinished: the team sees a "Time is up" screen with the exit message and the leaderboard, and does not appear on the leaderboard. Photos uploaded up to that point are kept. (Service links, R-25, have no time limit.)
 - **R-9 Answer checking.** Players type the answer as free text. Before comparing, both the input and each accepted answer are normalised: lower-cased, leading/trailing/duplicate whitespace removed, punctuation removed, diacritics stripped. The answer is correct if it equals any accepted answer after normalisation. Checking happens on the server, so accepted answers are never sent to the browser.
 - **R-10 Landmark photo.**
   - After a task is completed, the next task (or, after the last task, the finish screen) stays locked until at least one team member uploads a photo. There is no skip.
@@ -121,9 +121,10 @@
 - **R-12 Leaderboard.** Each game has its own leaderboard, ranked by total time (R-7) with the lowest first.
   - Players see it only on the finish and "Time is up" screens, never during the game.
   - Only finished teams are listed.
+  - Service (test) teams (R-25) are never listed.
   - Teams with equal total time (to the second) share a rank (e.g. 1, 2, 2, 4).
   - Each row shows rank, team name, total time (hh:mm:ss) and the number of hints used. The viewing team's own row is highlighted.
-- **R-13 One run per assignment.** Each team plays each assigned game once. Opening the link after the game has ended shows the finish (or "Time is up") screen again; the game cannot be replayed.
+- **R-13 One run per assignment.** Each team plays each assigned game once. Opening the link after the game has ended shows the finish (or "Time is up") screen again; the game cannot be replayed (except service links, R-25).
 
 ## 4. Screens
 
@@ -158,10 +159,15 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
 - **R-19 Platform.** v1 is a website used in a mobile browser; no installation is needed.
 - **R-20 Extensibility.** The data model and backend must allow a CMS and multiple hosts to be added later without a rewrite.
 - **R-21 Access.** Each assignment has its own secret link containing a long random token (at least 128 bits, not guessable). Players do not log in; anyone with the link plays as that team.
-  - The link works only between the assignment's *valid from* and *valid until* dates.
+  - The link works only between the assignment's *valid from* and *valid until* dates (except service links, R-25).
   - The admin can reissue the token, which immediately makes the old link stop working.
   - Each browser gets an anonymous device ID (stored locally) so the number of devices that joined a game run can be counted.
   - v1 has no admin login; admin work is done through configuration (see technical.md).
 - **R-22 Language.** v1 is in English only: the interface and all content.
 - **R-23 Weak signal.** When the connection drops, the app shows "No connection – retrying…" and retries automatically. A failed photo upload can be retried without retaking the picture, because the selected photo is kept until the upload succeeds. No full offline mode.
 - **R-24 Scale.** v1 targets a few teams per day, with at most about 10 game runs at the same time.
+- **R-25 Service (test) team.** `teams.yaml` may define one service team. `sync-config` gives it one link per
+  game, automatically for every game. Its links ignore the validity window, the maximum duration and the
+  reveal waiting time (reveal is available as soon as a task is shown; penalties are still charged). The game
+  screen shows a "Reset test run" button that deletes the run with its answers and photos, so the link starts
+  again from the beginning. Service runs never appear on any leaderboard.

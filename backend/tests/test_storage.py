@@ -42,3 +42,11 @@ def test_nested_names_work(store):
     store.put("photos", "a/b/c.jpg", b"deep", "image/jpeg", overwrite=False)
     assert store.exists("photos", "a/b/c.jpg")
     assert store.get("photos", "a/b/c.jpg") == (b"deep", "image/jpeg")
+
+
+def test_delete_removes_blob_and_ignores_missing(store):
+    store.put("c", "g/t/p.jpg", b"x", "image/jpeg", overwrite=False)
+    store.delete("c", "g/t/p.jpg")
+    assert not store.exists("c", "g/t/p.jpg")
+    assert store.get("c", "g/t/p.jpg") is None
+    store.delete("c", "g/t/p.jpg")  # already gone: no error
