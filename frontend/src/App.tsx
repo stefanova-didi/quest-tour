@@ -4,6 +4,14 @@ import { lastToken } from "./lib/storage";
 import { NotFoundScreen } from "./screens/NotFoundScreen";
 
 export function App({ path = window.location.pathname }: { path?: string }) {
+  useEffect(() => {                          // belt-and-braces for copy paths CSS can't reach (Ctrl+A, long-press menus)
+    const block = (e: Event) => {
+      const target = e.target as HTMLElement | null;
+      if (!target?.closest("input, textarea")) e.preventDefault();
+    };
+    for (const type of ["copy", "cut", "contextmenu", "selectstart"]) document.addEventListener(type, block);
+    return () => { for (const type of ["copy", "cut", "contextmenu", "selectstart"]) document.removeEventListener(type, block); };
+  }, []);
   const match = /^\/play\/([^/]+)$/.exec(path);
   if (match) {
     const token = safeDecode(match[1]);
