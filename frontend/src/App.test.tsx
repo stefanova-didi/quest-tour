@@ -21,4 +21,27 @@ describe("App", () => {
     render(<App path="/play/%E0%A4%A" />);
     expect(screen.getByText("Page not found")).toBeInTheDocument();
   });
+
+  it("blocks copy/cut/context-menu/select events so riddle text can't be googled", () => {
+    render(<App path="/" />);
+    const prevent = (type: string) => {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      document.body.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    for (const type of ["copy", "cut", "contextmenu", "selectstart"]) {
+      expect(prevent(type), type).toBe(true);
+    }
+  });
+
+  it("still allows copy/selection inside the answer input", () => {
+    render(
+      <div className="qc-input">
+        <input defaultValue="answer" />
+      </div>,
+    );
+    const event = new Event("copy", { bubbles: true, cancelable: true });
+    screen.getByRole("textbox").dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(false);
+  });
 });
