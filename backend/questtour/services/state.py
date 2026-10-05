@@ -23,6 +23,7 @@ from questtour.services.game import (
     effective_deadline,
     elapsed_seconds,
     hints_used,
+    is_service,
     penalty_minutes,
     reveal_unlocked,
     run_status,
@@ -41,7 +42,7 @@ def run_phase(run: GameRun, assignment: Assignment, now: datetime) -> str:
     task = current_task(run)
     if task is None:
         return "results"
-    if run.end_reason == "finished" and now >= assignment.valid_until:
+    if run.end_reason == "finished" and not is_service(assignment) and now >= assignment.valid_until:
         return "results"  # finished team re-opening after the window: straight to Finish
     if task.completed_at is None:
         return "task"
@@ -65,7 +66,7 @@ def build_game(game: Game, task_count: int) -> GameOut:
 def build_clock(run: GameRun, assignment: Assignment, now: datetime) -> ClockOut:
     running = run.end_reason is None
     remaining = None
-    if running:
+    if running and not is_service(assignment):  # R-25: service runs have no deadline
         end_at, _ = effective_deadline(run, assignment)
         # Rounded UP: 0 only once the deadline has passed (and then apply_time_limits has already ended
         # the run). Flooring would send `running: true, remaining_seconds: 0` during the last second, and
@@ -80,7 +81,7 @@ def build_clock(run: GameRun, assignment: Assignment, now: datetime) -> ClockOut
     )
 
 
-def build_task(task: RunTask, game: Game, now: datetime) -> TaskOut:
+def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = False) -> TaskOut:
     landmark = task.landmark
     completed = task.completed_at is not None
     hints: list[HintOut] = []
@@ -100,7 +101,7 @@ def build_task(task: RunTask, game: Game, now: datetime) -> TaskOut:
                 text=(text or "") if opened else None,  # unopened hint text never leaves the server
             )
         )
-    unlocked = not completed and reveal_unlocked(task, game, now)
+    unlocked = not completed and reveal_unlocked(task, game, now, instant=instant)
     unlocks_in = None
     if not completed and not unlocked:
         due = task.shown_at + timedelta(minutes=game.reveal_after_minutes)
@@ -152,9 +153,11 @@ def build_state(
     session: Session, assignment: Assignment, run: GameRun | None, now: datetime
 ) -> GameState:
     game, team = assignment.game, assignment.team
+    service = is_service(assignment)
     if run is None:
         return GameState(
-            version=0,
+            version=assignment.version_floor,
+            service=service,
             status="not_started",
             phase=None,
             position=0,
@@ -169,12 +172,13 @@ def build_state(
     task = current_task(run) if phase != "results" else None
     return GameState(
         version=run.version,
+        service=service,
         status=run_status(run),
         phase=phase,
         position=run.current_position,
         game=build_game(game, len(run.tasks)),
         team=TeamOut(name=team.name),
         clock=build_clock(run, assignment, now),
-        task=build_task(task, game, now) if task is not None else None,
+        task=build_task(task, game, now, instant=service) if task is not None else None,
         results=build_results(session, run, assignment, now) if phase == "results" else None,
     )

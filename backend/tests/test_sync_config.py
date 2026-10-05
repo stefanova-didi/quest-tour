@@ -7,7 +7,7 @@ from sqlalchemy import select
 
 from questtour.cli.sync_config import main
 from questtour.db import Base
-from questtour.models import Assignment, Game, GameRun, RunTask
+from questtour.models import Assignment, Game, GameRun, RunTask, Team
 from questtour.services.game import start_run
 from questtour.settings import get_settings
 from questtour.sync.apply import apply_config
@@ -248,3 +248,93 @@ def test_cli_full_run(tmp_path, monkeypatch, capsys):
         assert "(new)" not in capsys.readouterr().out
     finally:
         get_settings.cache_clear()
+
+
+SERVICE = """service:
+  team: qa
+  name: QA Service
+"""
+GAMES_GH = (
+    GAMES
+    + """  - {id: h, name: Game H, intro: Hi, time_zone: Europe/Sofia, max_duration_minutes: 60, tasks: [b]}
+"""
+)
+
+
+def test_service_block_gets_one_link_per_game(tmp_path, session_factory, blob_store):
+    root = write_config(tmp_path, games=GAMES_GH, teams=TEAMS + SERVICE)
+    issued = sync(root, session_factory, blob_store)
+    assert set(issued) == {("t", "g"), ("qa", "g"), ("qa", "h")}
+    text = (root / "teams.yaml").read_text(encoding="utf-8")
+    assert f"g: {issued[('qa', 'g')]}" in text and f"h: {issued[('qa', 'h')]}" in text
+    assert "# keep this repo private" in text
+    with session_factory() as s:
+        team = s.scalars(select(Team).where(Team.key == "qa")).one()
+        assert team.is_service is True and team.name == "QA Service"
+        rows = s.scalars(select(Assignment).where(Assignment.team_id == team.id)).all()
+        assert {r.token_hash for r in rows} == {
+            hash_token(issued[("qa", "g")]),
+            hash_token(issued[("qa", "h")]),
+        }
+        regular = s.scalars(select(Team).where(Team.key == "t")).one()
+        assert regular.is_service is False
+    assert sync(root, session_factory, blob_store) == {}  # idempotent: no new tokens
+
+
+def test_new_game_gets_service_link_and_removed_game_deactivates_it(
+    tmp_path, session_factory, blob_store
+):
+    root = write_config(tmp_path, teams=TEAMS + SERVICE)
+    first = sync(root, session_factory, blob_store)
+    assert set(first) == {("t", "g"), ("qa", "g")}
+    (root / "games.yaml").write_text(GAMES_GH, encoding="utf-8")
+    assert set(sync(root, session_factory, blob_store)) == {("qa", "h")}
+    (root / "games.yaml").write_text(GAMES, encoding="utf-8")
+    assert sync(root, session_factory, blob_store) == {}  # stale `h` token is not an error
+    with session_factory() as s:
+        h = s.scalars(select(Game).where(Game.key == "h")).one()
+        row = s.scalars(select(Assignment).where(Assignment.game_id == h.id)).one()
+        assert row.token_hash is None
+
+
+def test_removing_service_block_deactivates_service_links(tmp_path, session_factory, blob_store):
+    root = write_config(tmp_path, teams=TEAMS + SERVICE)
+    sync(root, session_factory, blob_store)
+    kept = (root / "teams.yaml").read_text(encoding="utf-8").split("service:")[0]
+    (root / "teams.yaml").write_text(kept, encoding="utf-8")
+    sync(root, session_factory, blob_store)
+    with session_factory() as s:
+        qa = s.scalars(select(Team).where(Team.key == "qa")).one()
+        row = s.scalars(select(Assignment).where(Assignment.team_id == qa.id)).one()
+        assert row.token_hash is None
+
+
+def test_reissue_service_token(tmp_path, session_factory, blob_store):
+    root = write_config(tmp_path, teams=TEAMS + SERVICE)
+    old = sync(root, session_factory, blob_store)[("qa", "g")]
+    new = sync(root, session_factory, blob_store, reissue=("qa", "g"))[("qa", "g")]
+    assert new != old and f"g: {new}" in (root / "teams.yaml").read_text(encoding="utf-8")
+
+
+def test_service_block_cross_checks(tmp_path):
+    clash = """service:
+  team: t
+  name: team t
+  tokens:
+    g: TOKEN-0123456789abcdefghijklmn
+"""
+    teams = TEAMS.replace(
+        "exit_message: Bye", "exit_message: Bye\n    token: TOKEN-0123456789abcdefghijklmn"
+    )
+    write_config(tmp_path, teams=teams + clash)
+    errors = load_config(tmp_path).errors
+    assert any("service team id 't'" in e for e in errors)
+    assert any("service team name" in e for e in errors)
+    assert any("duplicate token" in e for e in errors)
+
+
+def test_service_block_validation_errors(tmp_path):
+    write_config(tmp_path, teams=TEAMS + "service:\n  team: Not A Slug\n  name: ''\n")
+    errors = load_config(tmp_path).errors
+    assert any(e.startswith("teams.yaml: service team:") for e in errors)
+    assert any(e.startswith("teams.yaml: service name:") for e in errors)

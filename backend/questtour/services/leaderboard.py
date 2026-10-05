@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from questtour.api.schemas import LeaderboardRowOut
-from questtour.models import Assignment, GameRun
+from questtour.models import Assignment, GameRun, Team
 from questtour.services.game import hints_used, total_seconds
 
 
@@ -42,7 +42,12 @@ def leaderboard_rows(
     runs = session.scalars(
         select(GameRun)
         .join(GameRun.assignment)
-        .where(Assignment.game_id == game_id, GameRun.end_reason == "finished")
+        .join(Assignment.team)
+        .where(
+            Assignment.game_id == game_id,
+            GameRun.end_reason == "finished",
+            Team.is_service.is_(False),  # R-25: test runs never rank
+        )
         .options(
             selectinload(GameRun.tasks),
             selectinload(GameRun.assignment).selectinload(Assignment.team),

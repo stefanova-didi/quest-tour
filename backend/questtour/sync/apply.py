@@ -1,5 +1,6 @@
 import hashlib
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 
 from sqlalchemy import select
@@ -12,6 +13,11 @@ from questtour.sync.loader import LoadedConfig
 from questtour.sync.schema import parse_window_time
 from questtour.tokens import hash_token
 
+# R-25: service links ignore the window; the NOT NULL columns get fixed sentinels.
+SERVICE_VALID_FROM = datetime(2000, 1, 1, tzinfo=UTC)
+SERVICE_VALID_UNTIL = datetime(2100, 1, 1, tzinfo=UTC)
+SERVICE_EXIT_MESSAGE = 'Test run complete. Press "Reset test run" to play this game again.'
+
 
 @dataclass
 class SyncReport:
@@ -19,6 +25,7 @@ class SyncReport:
     games: int = 0
     teams: int = 0
     assignments: int = 0
+    service_assignments: int = 0
     images_uploaded: int = 0
     deactivated: list[str] = field(default_factory=list)
     not_in_config: list[str] = field(default_factory=list)
@@ -34,6 +41,16 @@ def _upsert(session: Session, model, host_id: str, key: str, **values):
     for name, value in values.items():
         setattr(obj, name, value)
     return obj
+
+
+def _assignment(session: Session, host_id: str, team: Team, game: Game) -> Assignment:
+    row = session.scalars(
+        select(Assignment).where(Assignment.team_id == team.id, Assignment.game_id == game.id)
+    ).one_or_none()
+    if row is None:
+        row = Assignment(host_id=host_id, team_id=team.id, game_id=game.id)
+        session.add(row)
+    return row
 
 
 def apply_config(
@@ -88,7 +105,10 @@ def apply_config(
             game.tasks.extend(GameTask(position=i, landmark_id=lid) for i, lid in enumerate(wanted))
         games[gc.id] = game
     teams = {
-        tc.id: _upsert(session, Team, host_id, tc.id, name=tc.name, participants=tc.participants)
+        tc.id: _upsert(
+            session, Team, host_id, tc.id, name=tc.name, participants=tc.participants,
+            is_service=False,
+        )
         for tc in cfg.teams
     }
     session.flush()
@@ -96,23 +116,32 @@ def apply_config(
     seen: set[int] = set()
     zones = {gc.id: gc.time_zone for gc in cfg.games}
     for ac in cfg.assignments:
-        team, game = teams[ac.team], games[ac.game]
-        row = session.scalars(
-            select(Assignment).where(Assignment.team_id == team.id, Assignment.game_id == game.id)
-        ).one_or_none()
-        if row is None:
-            row = Assignment(host_id=host_id, team_id=team.id, game_id=game.id)
-            session.add(row)
+        row = _assignment(session, host_id, teams[ac.team], games[ac.game])
         row.token_hash = hash_token(ac.token)
         row.valid_from = parse_window_time(ac.valid_from, zones[ac.game])
         row.valid_until = parse_window_time(ac.valid_until, zones[ac.game])
         row.exit_message = ac.exit_message
         session.flush()
         seen.add(row.id)
+    if cfg.service is not None:
+        service_team = _upsert(
+            session, Team, host_id, cfg.service.team, name=cfg.service.name, participants=None,
+            is_service=True,
+        )
+        session.flush()
+        for gc in cfg.games:
+            row = _assignment(session, host_id, service_team, games[gc.id])
+            row.token_hash = hash_token(cfg.service.tokens[gc.id])  # issue_tokens filled every game
+            row.valid_from, row.valid_until = SERVICE_VALID_FROM, SERVICE_VALID_UNTIL
+            row.exit_message = SERVICE_EXIT_MESSAGE
+            session.flush()
+            seen.add(row.id)
+            report.service_assignments += 1
     for row in session.scalars(select(Assignment).where(Assignment.host_id == host_id)):
         if row.id not in seen and row.token_hash is not None:
             row.token_hash = None  # D14: removed => link stops working
             report.deactivated.append(f"{row.team.key}/{row.game.key}")
+    known_teams = set(teams) | ({cfg.service.team} if cfg.service else set())
     report.not_in_config = sorted(
         {
             f"landmark {lm.key}"
@@ -127,7 +156,7 @@ def apply_config(
         | {
             f"team {t.key}"
             for t in session.scalars(select(Team).where(Team.host_id == host_id))
-            if t.key not in teams
+            if t.key not in known_teams
         }
     )
     report.landmarks, report.games = len(landmarks), len(games)

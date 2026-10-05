@@ -106,6 +106,31 @@ def seed_game(
     return Seed(TOKEN, OTHER_TOKEN, game.id, mine.id)
 
 
+SERVICE_TOKEN = "service-token-0123456789abcdefghijklmnop"
+
+
+def add_service_assignment(session, seed: Seed, now: datetime) -> str:
+    """A service (test) team on the seeded game whose validity window closed long ago (R-25)."""
+    game = session.get(Assignment, seed.assignment_id).game
+    team = Team(host_id="default", key="qa-service", name="QA Service", is_service=True)
+    session.add_all(
+        [
+            team,
+            Assignment(
+                host_id="default",
+                team=team,
+                game=game,
+                token_hash=hash_token(SERVICE_TOKEN),
+                valid_from=now - timedelta(days=30),
+                valid_until=now - timedelta(days=29),
+                exit_message="Test run complete.",
+            ),
+        ]
+    )
+    session.commit()
+    return SERVICE_TOKEN
+
+
 ANSWERS = ["Alexander-Nevsky", "rotunda of st george", "SERDIKA"]
 
 

@@ -29,7 +29,8 @@ These come from the requirements; a pull request that breaks them is wrong even 
 4. **Concurrency (R-18):** answer / hint / reveal / photo actions lock the game run row in one
    transaction — first correct answer wins, each penalty is charged exactly once. Teammates sync by
    60 s polling; no WebSockets in v1.
-5. **One run per assignment (R-13):** a game can never be replayed.
+5. **One run per assignment (R-13):** a game can never be replayed — except service (test) links (R-25), which can
+   be reset from the game screen.
 6. **Photos (R-10):** stored at original resolution, never re-encoded, max 20 MB,
    JPEG/PNG/HEIC/WebP; players never see photos, not even thumbnails.
 7. **Real 404s:** the SPA is served only for known routes (`backend/questtour/web.py`); anything

@@ -27,7 +27,10 @@ def main(argv: list[str] | None = None) -> int:
         "--reissue",
         nargs=2,
         metavar=("TEAM_ID", "GAME_ID"),
-        help="replace the token of one assignment; the old link stops working",
+        help=(
+            "replace the token of one assignment (or of the service team's link for a game); "
+            "the old link stops working"
+        ),
     )
     args = parser.parse_args(argv)
 
@@ -68,7 +71,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print(
         f"Synced {report.landmarks} landmarks, {report.games} games, {report.teams} teams, "
-        f"{report.assignments} assignments; uploaded {report.images_uploaded} picture(s)."
+        f"{report.assignments} assignments, {report.service_assignments} service link(s); uploaded {report.images_uploaded} picture(s)."
     )
     for item in report.deactivated:
         print(f"Deactivated assignment no longer in teams.yaml: {item}")
@@ -81,6 +84,12 @@ def main(argv: list[str] | None = None) -> int:
         mark = " (new)" if (a.team, a.game) in issued else ""
         link = f"{settings.public_base_url.rstrip('/')}/play/{a.token}{mark}"
         print(f"  {names[a.team]} — {games[a.game]}: {link}")
+    if cfg.service is not None:
+        print("\nService (test) links — no time limits, resettable, never on a leaderboard:")
+        for g in cfg.games:
+            mark = " (new)" if (cfg.service.team, g.id) in issued else ""
+            link = f"{settings.public_base_url.rstrip('/')}/play/{cfg.service.tokens[g.id]}{mark}"
+            print(f"  {cfg.service.name} — {g.name}: {link}")
     return 0
 
 

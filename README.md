@@ -125,7 +125,9 @@ The admin configuration is three YAML files in the config directory plus an `ima
   `reveal: { attempts, minutes, penalty_minutes }` (N attempts / X minutes before reveal unlocks,
   P penalty minutes), an `intro` text and `tasks:` (ordered landmark ids).
 - `teams.yaml` — `teams:` (`id`, `name`, `participants`) and `assignments:` (`team`, `game`,
-  `valid_from`, `valid_until`, `exit_message`). `token` fields are added by `sync-config`.
+  `valid_from`, `valid_until`, `exit_message`). `token` fields are added by `sync-config`. An optional
+  `service:` block (`team`, `name`) defines the service (test) team: `sync-config` writes one link per game
+  under `service.tokens`.
 
 Timestamps (`valid_from`, `valid_until`) **must be quoted** ISO-8601 strings, e.g.
 `"2026-10-01T00:00:00"`. Without an offset they are read in the game's time zone.
@@ -143,6 +145,8 @@ Warnings:
 
 - `sync-config` writes the tokens into `teams.yaml`. **Commit `teams.yaml` after issuing tokens and
   keep the repository private** — the file holds live game links.
+- Service (test) links are for testing only: they ignore every time limit, can be reset from the game
+  screen and never appear on a leaderboard. Do not hand them to real teams.
 - Game rule edits (max duration, N/X/P, validity windows) **apply live to running games**.
   Shortening them can end a game that is in progress. Only the landmark order of a running game is
   frozen.

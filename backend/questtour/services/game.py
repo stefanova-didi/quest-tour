@@ -46,9 +46,15 @@ def effective_deadline(run: GameRun, assignment: Assignment) -> tuple[datetime, 
     return by_duration, "max_duration"
 
 
+def is_service(assignment: Assignment) -> bool:
+    """R-25: a service (test) team's links ignore every time limit and can be reset."""
+    return assignment.team.is_service
+
+
 def apply_time_limits(run: GameRun, assignment: Assignment, now: datetime) -> None:
-    """R-8: called on every request; the end time is the deadline itself, not the request time."""
-    if run.end_reason is not None:
+    """R-8: called on every request; the end time is the deadline itself, not the request time.
+    Service runs (R-25) never end by time."""
+    if run.end_reason is not None or is_service(assignment):
         return
     end_at, reason = effective_deadline(run, assignment)
     if now >= end_at:
@@ -79,10 +85,12 @@ def total_seconds(run: GameRun) -> int:
     return int((run.finished_at - run.started_at).total_seconds()) + 60 * penalty_minutes(run)
 
 
-def reveal_unlocked(task: RunTask, game: Game, now: datetime) -> bool:
-    """R-6: after N wrong attempts or X minutes on the task, whichever comes first."""
+def reveal_unlocked(task: RunTask, game: Game, now: datetime, *, instant: bool = False) -> bool:
+    """R-6: after N wrong attempts or X minutes on the task, whichever comes first.
+    `instant` (service links, R-25) unlocks it as soon as the task is shown."""
     return (
-        task.wrong_attempts >= game.reveal_after_attempts
+        instant
+        or task.wrong_attempts >= game.reveal_after_attempts
         or now >= task.shown_at + timedelta(minutes=game.reveal_after_minutes)
     )
 
@@ -100,8 +108,14 @@ def touch_device(session: Session, run: GameRun, device_id: str | None, now: dat
 
 
 def start_run(session: Session, assignment: Assignment, now: datetime) -> GameRun:
-    """Caller holds the assignment row lock and has checked no run exists. Snapshots the landmark order."""
-    run = GameRun(assignment=assignment, started_at=now, current_position=0, version=1)
+    """Caller holds the assignment row lock and has checked no run exists. Snapshots the landmark order.
+    Starts above assignment.version_floor so a reset (R-25) never makes phones drop newer states."""
+    run = GameRun(
+        assignment=assignment,
+        started_at=now,
+        current_position=0,
+        version=assignment.version_floor + 1,
+    )
     for position, game_task in enumerate(assignment.game.tasks):
         run.tasks.append(
             RunTask(
@@ -192,11 +206,13 @@ def open_hint(run: GameRun, position: int, number: int, now: datetime) -> Outcom
     return Outcome.OK
 
 
-def reveal_answer(run: GameRun, game: Game, position: int, now: datetime) -> Outcome:
+def reveal_answer(
+    run: GameRun, game: Game, position: int, now: datetime, *, instant: bool = False
+) -> Outcome:
     task, blocked = _open_task(run, position)
     if blocked:
         return blocked
-    if not reveal_unlocked(task, game, now):
+    if not reveal_unlocked(task, game, now, instant=instant):
         return Outcome.LOCKED
     task.revealed_at = now
     task.reveal_penalty_minutes = game.reveal_penalty_minutes   # frozen at charge time

@@ -15,3 +15,8 @@ it("explains changes made on another phone", () => {
   expect(teammateNotice(makeState({ status: "not_started", phase: null }), task)).toBe("A teammate started the quest");
   expect(teammateNotice(task, task)).toBeNull();
 });
+
+it("tells teammates that the test run was reset", () => {
+  const reset = makeState({ status: "not_started", phase: null, position: 0, clock: null, task: null, service: true });
+  expect(teammateNotice(makeState({ service: true }), reset)).toBe("The test run was reset");
+});

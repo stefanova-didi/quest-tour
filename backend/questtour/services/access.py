@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from questtour.models import Assignment, GameRun
+from questtour.services.game import is_service
 from questtour.tokens import hash_token
 
 Reason = Literal["unknown", "not_yet", "expired"]
@@ -39,8 +40,8 @@ def find_assignment(session: Session, token: str, *, lock: bool = False) -> Assi
 def ensure_link_usable(assignment: Assignment, run: GameRun | None, now: datetime) -> None:
     """Validity window gates only assignments that never started (clarification: post-window access).
     A started run always resolves to its current or final state; time limits end it
-    (game.apply_time_limits)."""
-    if run is not None:
+    (game.apply_time_limits). Service links (R-25) are never gated."""
+    if run is not None or is_service(assignment):
         return
     tz = assignment.game.time_zone
     if now < assignment.valid_from:

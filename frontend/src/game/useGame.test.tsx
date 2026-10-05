@@ -124,3 +124,14 @@ it("does not blame a teammate when its own action's response was lost", async ()
   expect(version()).toBe(4);
   expect(result.current.notice).toBeNull();
 });
+
+it("accepts the not-started state after a reset because its version is higher", async () => {
+  getState.mockResolvedValueOnce(makeState({ version: 12, service: true }))
+          .mockResolvedValueOnce(makeState({ version: 13, service: true, status: "not_started", phase: null,
+                                             position: 0, clock: null, task: null }));
+  const { result } = mount();
+  await flush();
+  await flush(POLL_MS);
+  const view = result.current.view;
+  expect(view.kind === "ready" && view.state.status).toBe("not_started");
+});
