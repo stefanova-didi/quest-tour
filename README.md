@@ -27,6 +27,19 @@ The specs are in `specs/`, the design mocks in `frontend-mocks/`.
 - Docker (optional): provides PostgreSQL and Azurite. Without it, use the
   [no-Docker fallback](#no-docker-fallback).
 
+## One-command dev run (no Docker)
+
+```bash
+./scripts/dev.sh
+```
+
+Runs the [no-Docker fallback](#no-docker-fallback) end to end in one foreground
+terminal: it writes `backend/.env` (SQLite + local file storage) on first run,
+installs dependencies, migrates, runs `sync-config` (which prints the team game
+links), then starts uvicorn and the Vite dev server together. Ctrl-C stops both;
+every output line is tagged `[backend]` or `[frontend]` so the interleaved logs
+stay readable.
+
 ## Docker dev path
 
 Start PostgreSQL 16 and Azurite from the repo root:
