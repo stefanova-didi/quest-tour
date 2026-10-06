@@ -1,10 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { vi } from "vitest";
+import { afterEach, vi } from "vitest";
 import { makeState, makeTask } from "../test/fixtures";
 import { TaskScreen } from "./TaskScreen";
 
 const frame = { header: null, offline: false, notice: null, onNoticeDone: () => {} };
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
 
 it("confirms the hint penalty before opening it", async () => {
   const onHint = vi.fn().mockResolvedValue("ok");
@@ -58,6 +62,34 @@ it("confirms the compass penalty before opening it", async () => {
   expect(screen.getByRole("dialog", { name: "Open compass?" })).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Open compass" }));
   expect(onCompass).toHaveBeenCalled();
+});
+
+it("requests iOS device-orientation permission before opening the compass", async () => {
+  const requestPermission = vi.fn().mockResolvedValue("granted");
+  vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
+  const onCompass = vi.fn().mockResolvedValue("ok");
+  const task = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={onCompass} />);
+  await userEvent.click(screen.getByRole("button", { name: /Compass/ }));
+  await userEvent.click(screen.getByRole("button", { name: "Open compass" }));
+  expect(requestPermission).toHaveBeenCalledTimes(1);
+  expect(onCompass).toHaveBeenCalled();
+  // The permission prompt must be inside the user gesture, i.e. before the server call.
+  expect(requestPermission.mock.invocationCallOrder[0])
+    .toBeLessThan(onCompass.mock.invocationCallOrder[0]);
+});
+
+it("still opens the compass when the iOS permission is denied", async () => {
+  const requestPermission = vi.fn().mockRejectedValue(new Error("denied"));
+  vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
+  const onCompass = vi.fn().mockResolvedValue("ok");
+  const task = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={onCompass} />);
+  await userEvent.click(screen.getByRole("button", { name: /Compass/ }));
+  await userEvent.click(screen.getByRole("button", { name: "Open compass" }));
+  expect(onCompass).toHaveBeenCalled(); // falls back to the static bearing text
 });
 
 it("hides the compass button when no compass is available", () => {

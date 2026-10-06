@@ -2,6 +2,7 @@
 landmarks:
   - id: lily-pond
     name: Lily Pond
+    coordinates: { lat: 42.68521840568546, lon: 23.3425011626189 }
     task: >-
       Long ago, this place was a swamp. Later, people called it the Fish Pond. Today white
       flowers float on its surface, and in the middle three little boys splash about without
@@ -108,7 +109,6 @@ landmarks:
       Kiril Shivarov.
   - id: alexander-nevsky
     name: Alexander Nevsky Cathedral
-    coordinates: { lat: 42.6955, lon: 23.3331 }
     task: >-
       This church is a gesture of gratitude to the thousands of soldiers who came from afar
       to bring freedom. It bears the name of a warrior prince from the north who became the
@@ -145,6 +145,7 @@ landmarks:
     tourist_info_picture: images/landmark-nevsky.svg
   - id: ivan-vazov-theatre
     name: Ivan Vazov National Theatre
+    coordinates: { lat: 42.694466839258304, lon: 23.326135921777293 }
     task: >-
       In this building people cry and laugh, even though nothing sad or funny has happened in
       their lives. Once it burned almost to the ground, but its face survived, as if it
