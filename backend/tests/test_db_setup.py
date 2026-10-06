@@ -15,7 +15,8 @@ def test_fresh_server_creates_roles_memberships_and_database():
         'GRANT "questtour_owner" TO "app-qt" WITH INHERIT TRUE, SET TRUE',
         'CREATE DATABASE "questtour" OWNER "questtour_owner"',
     ]
-    assert plan.database == []
+    # Fresh create also grants schema privileges (PG 15+ members don't inherit CREATE):
+    assert plan.database == ['GRANT USAGE, CREATE ON SCHEMA public TO "questtour_owner"']
 
 
 def test_rerun_only_refreshes_memberships_and_schema_grant():

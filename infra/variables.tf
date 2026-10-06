@@ -32,12 +32,12 @@ variable "admin_principal_type" {
 }
 
 variable "admin_ip_addresses" {
-  description = "PostgreSQL firewall: name => public IPv4 of an admin machine (sync-config, db-setup)."
+  description = "PostgreSQL firewall: name => public IPv4 or CIDR range (e.g. 198.51.100.0/24) of an admin machine (sync-config, db-setup)."
   type        = map(string)
   default     = {}
   validation {
-    condition     = alltrue([for k, ip in var.admin_ip_addresses : can(regex("^[A-Za-z0-9_-]+$", k)) && can(cidrhost("${ip}/32", 0))])
-    error_message = "Keys: letters, digits, - or _; values: IPv4 addresses."
+    condition     = alltrue([for k, ip in var.admin_ip_addresses : can(regex("^[A-Za-z0-9_-]+$", k)) && (can(cidrhost(ip, 0)) || can(cidrhost("${ip}/32", 0)))])
+    error_message = "Keys: letters, digits, - or _; values: an IPv4 address or a CIDR range (e.g. 203.0.113.0/24)."
   }
 }
 
