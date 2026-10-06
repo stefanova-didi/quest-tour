@@ -57,7 +57,7 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
         <form className="qs-actions" onSubmit={submit}>
           <div className={wrong ? "qc-field qc-field--error" : "qc-field"}>
             <label className="qc-field__label" htmlFor="answer">Your answer</label>
-            <input className="qc-input" id="answer" placeholder="Type the landmark's name" autoComplete="off" maxLength={500}
+            <input className="qc-input" id="answer" placeholder="Type your answer" autoComplete="off" maxLength={500}
                    autoCapitalize="off" spellCheck={false} value={answer} aria-invalid={wrong || undefined}
                    aria-describedby={wrong ? "answer-error" : undefined}
                    onChange={(e) => { setAnswer(e.target.value); setWrong(false); }} />
