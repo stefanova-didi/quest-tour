@@ -8,6 +8,7 @@ from questtour.models import AnswerAttempt, Assignment, Game, GameRun, RunDevice
 from questtour.normalize import is_correct
 
 HINT_PENALTIES: dict[int, int] = {1: 10, 2: 15}   # R-4 (fixed, not per game)
+COMPASS_PENALTY_MINUTES: int = 5                   # R-26
 WARNING_SECONDS = 15 * 60                         # R-8, R-14
 TIMED_OUT = frozenset({"max_duration", "window_closed"})
 
@@ -76,7 +77,11 @@ def penalty_minutes(run: GameRun) -> int:
 
 
 def hints_used(run: GameRun) -> int:
-    return sum((t.hint1_at is not None) + (t.hint2_at is not None) for t in run.tasks)
+    # R-12: the leaderboard "hints used" column counts hints + compasses.
+    return sum(
+        (t.hint1_at is not None) + (t.hint2_at is not None) + (t.compass_opened_at is not None)
+        for t in run.tasks
+    )
 
 
 def total_seconds(run: GameRun) -> int:
@@ -202,6 +207,19 @@ def open_hint(run: GameRun, position: int, number: int, now: datetime) -> Outcom
     if getattr(task, attr) is None:                    # R-18: charged at most once
         setattr(task, attr, now)
         task.hint_penalty_minutes += HINT_PENALTIES[number]
+        bump(run)
+    return Outcome.OK
+
+
+def open_compass(run: GameRun, now: datetime) -> Outcome:
+    task, blocked = _open_task(run, run.current_position)
+    if blocked:
+        return blocked
+    if task.landmark.coordinates_lat is None or task.landmark.coordinates_lon is None:
+        return Outcome.NOT_AVAILABLE
+    if task.compass_opened_at is None:  # R-18/R-26: charged at most once
+        task.compass_opened_at = now
+        task.hint_penalty_minutes += COMPASS_PENALTY_MINUTES
         bump(run)
     return Outcome.OK
 

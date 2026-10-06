@@ -17,6 +17,25 @@ from questtour.services.state import (
 )
 
 
+def test_compass_in_state_when_landmark_has_coordinates(session, assignment, run, clock):
+    run.tasks[0].landmark.coordinates_lat = 42.7
+    run.tasks[0].landmark.coordinates_lon = 23.3
+    task = build_task(run.tasks[0], assignment.game, clock.now)
+    assert task.compass.opened is False
+    assert task.compass.lat == 42.7
+    assert task.compass.lon == 23.3
+    assert task.compass.penalty_minutes == 5
+    rules.open_compass(run, clock.now)
+    task = build_task(run.tasks[0], assignment.game, clock.now)
+    assert task.compass.opened is True
+
+
+def test_task_without_coordinates_has_no_compass(session, assignment, run, clock):
+    task = build_task(run.tasks[0], assignment.game, clock.now)
+    assert task.compass is None
+
+
+
 @pytest.fixture
 def session(session_factory):
     with session_factory() as s:

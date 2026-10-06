@@ -1,6 +1,16 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, ForeignKey, Integer, String, Text, UniqueConstraint, false
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    false,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from questtour.db import Base, UTCDateTime
@@ -20,6 +30,8 @@ class Landmark(Base):
     hint2: Mapped[str | None] = mapped_column(Text)
     info_text: Mapped[str] = mapped_column(Text)
     info_image: Mapped[str | None] = mapped_column(String(200))
+    coordinates_lat: Mapped[float | None] = mapped_column(Float)
+    coordinates_lon: Mapped[float | None] = mapped_column(Float)
 
 
 class Game(Base):
@@ -112,6 +124,7 @@ class RunTask(Base):
     completion: Mapped[str | None] = mapped_column(String(10))  # answered|revealed
     hint1_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     hint2_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
+    compass_opened_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     revealed_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     hint_penalty_minutes: Mapped[int] = mapped_column(Integer)
     reveal_penalty_minutes: Mapped[int] = mapped_column(Integer)

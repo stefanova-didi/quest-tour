@@ -12,6 +12,8 @@ it("explains changes made on another phone", () => {
                                     { number: 2, penalty_minutes: 15, available: true, opened: false, text: null }] });
   expect(teammateNotice(task, makeState({ task: hinted }))).toBe("A teammate opened hint 1");
   expect(teammateNotice(task, makeState({ position: 3 }))).toBe("A teammate moved on to the next riddle");
+  const compassOpened = makeTask({ compass: { opened: true, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
+  expect(teammateNotice(task, makeState({ task: compassOpened }))).toBe("A teammate opened the compass");
   expect(teammateNotice(makeState({ status: "not_started", phase: null }), task)).toBe("A teammate started the quest");
   expect(teammateNotice(task, task)).toBeNull();
 });

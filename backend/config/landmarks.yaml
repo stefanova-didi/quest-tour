@@ -108,6 +108,7 @@ landmarks:
       Kiril Shivarov.
   - id: alexander-nevsky
     name: Alexander Nevsky Cathedral
+    coordinates: { lat: 42.6955, lon: 23.3331 }
     task: >-
       This church is a gesture of gratitude to the thousands of soldiers who came from afar
       to bring freedom. It bears the name of a warrior prince from the north who became the

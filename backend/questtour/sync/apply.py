@@ -88,6 +88,8 @@ def apply_config(
             task_image=image(lc.task_picture), accepted_answers=list(lc.accepted_answers),
             hint1=lc.hint1, hint2=lc.hint2, info_text=lc.tourist_info,
             info_image=image(lc.tourist_info_picture),
+            coordinates_lat=lc.coordinates.lat if lc.coordinates else None,
+            coordinates_lon=lc.coordinates.lon if lc.coordinates else None,
         )
     session.flush()
     games = {}

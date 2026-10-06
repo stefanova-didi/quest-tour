@@ -1,21 +1,23 @@
 import { useState, type FormEvent } from "react";
 import type { GameState, Hint } from "../api/types";
 import type { ActOutcome } from "../game/useGame";
+import { CompassDisplay } from "../components/CompassDisplay";
 import { ConfirmSheet } from "../components/ConfirmSheet";
 import { GameFrame, type FrameProps } from "../components/GameFrame";
 import { Icon } from "../components/Icon";
 import { formatPenalty } from "../lib/format";
 import { useNow } from "../lib/useNow";
 
-type Pending = { kind: "hint"; hint: Hint } | { kind: "reveal" } | null;
+type Pending = { kind: "hint"; hint: Hint } | { kind: "reveal" } | { kind: "compass" } | null;
 type Act = Promise<ActOutcome>;
 
-export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onReveal }: {
+export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onReveal, onCompass }: {
   state: GameState; receivedAt: number; frame: FrameProps;
-  onAnswer(answer: string): Act; onHint(hint: 1 | 2): Act; onReveal(): Act;
+  onAnswer(answer: string): Act; onHint(hint: 1 | 2): Act; onReveal(): Act; onCompass(): Act;
 }) {
   const task = state.task!;
   const game = state.game;
+  const compass = task.compass;
   const [answer, setAnswer] = useState("");
   const [wrong, setWrong] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -36,9 +38,23 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
   async function confirm() {
     if (!pending) return;
     setBusy(true);
-    if (pending.kind === "hint") await onHint(pending.hint.number); else await onReveal();
-    setBusy(false);
-    setPending(null);
+    try {
+      if (pending.kind === "hint") {
+        await onHint(pending.hint.number);
+      } else if (pending.kind === "compass") {
+        // iOS requires DeviceOrientation permission from a user gesture; the confirm button is it.
+        const DOE = window.DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> };
+        if (DOE?.requestPermission) {
+          try { await DOE.requestPermission(); } catch { /* denied/unsupported: proceed with static bearing fallback */ }
+        }
+        await onCompass();
+      } else {
+        await onReveal();
+      }
+    } finally {
+      setBusy(false);
+      setPending(null);
+    }
   }
 
   const riddle = (
@@ -69,14 +85,23 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
         </form>
       }
       overlay={pending && (
-        <ConfirmSheet
-          busy={busy} onCancel={() => setPending(null)} onConfirm={confirm}
-          {...(pending.kind === "hint"
-            ? { title: `Open hint ${pending.hint.number}?`, confirmLabel: "Open hint",
-                body: <>This adds <span className="qc-tag">{formatPenalty(pending.hint.penalty_minutes)}</span> to your time.</> }
-            : { title: "Give up and reveal the answer?", confirmLabel: "Reveal", danger: true,
-                body: <>This adds <span className="qc-tag">{formatPenalty(game.reveal_penalty_minutes)}</span> to your time. You'll still visit the landmark and take your photo.</> })}
-        />
+        (() => {
+          const sheetProps =
+            pending.kind === "hint"
+              ? { title: `Open hint ${pending.hint.number}?`, confirmLabel: "Open hint",
+                  body: <>This adds <span className="qc-tag">{formatPenalty(pending.hint.penalty_minutes)}</span> to your time.</> }
+              : pending.kind === "compass"
+              ? { title: "Open compass?", confirmLabel: "Open compass",
+                  body: <>This adds <span className="qc-tag">{formatPenalty(compass!.penalty_minutes)}</span> to your time.</> }
+              : { title: "Give up and reveal the answer?", confirmLabel: "Reveal", danger: true,
+                  body: <>This adds <span className="qc-tag">{formatPenalty(game.reveal_penalty_minutes)}</span> to your time. You'll still visit the landmark and take your photo.</> };
+          return (
+            <ConfirmSheet
+              busy={busy} onCancel={() => setPending(null)} onConfirm={confirm}
+              {...sheetProps}
+            />
+          );
+        })()
       )}
     >
       {task.picture_url
@@ -102,6 +127,16 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
               <span className="qs-hint-meta">after hint 1 · {formatPenalty(hint.penalty_minutes)}</span>
             </button>
           ))}
+        {compass && (
+          compass.opened ? (
+            <CompassDisplay key="compass" lat={compass.lat} lon={compass.lon} />
+          ) : (
+            <button type="button" className="qc-hint-btn" onClick={() => setPending({ kind: "compass" })}>
+              <span className="qs-inline-icon"><Icon name="compass" size={18} />Compass</span>
+              <span className="qc-tag">{formatPenalty(compass.penalty_minutes)}</span>
+            </button>
+          )
+        )}
         {revealOpen ? (
           <button type="button" className="qc-hint-btn" onClick={() => setPending({ kind: "reveal" })}>
             <span className="qs-inline-icon"><Icon name="flag" size={18} />Give up and reveal answer</span>

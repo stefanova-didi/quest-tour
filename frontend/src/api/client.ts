@@ -57,6 +57,7 @@ export const api = {
     request<ActionResult>(`${base(token)}/answer`, { position, answer }),
   hint: (token: string, position: number, hint: 1 | 2) =>
     request<ActionResult>(`${base(token)}/hint`, { position, hint }),
+  compass: (token: string) => request<ActionResult>(`${base(token)}/compass`, {}),
   reveal: (token: string, position: number) => request<ActionResult>(`${base(token)}/reveal`, { position }),
   reset: (token: string) => request<ActionResult>(`${base(token)}/reset`, {}),   // service (test) links only
   advance: (token: string, position: number) => request<ActionResult>(`${base(token)}/advance`, { position }),

@@ -14,6 +14,11 @@ class _Cfg(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, coerce_numbers_to_str=True)
 
 
+class CoordinatesCfg(_Cfg):
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
+
 class LandmarkCfg(_Cfg):
     id: str = Field(pattern=SLUG)
     name: str = Field(min_length=1)
@@ -24,6 +29,7 @@ class LandmarkCfg(_Cfg):
     hint2: str | None = None
     tourist_info: str = Field(min_length=1)
     tourist_info_picture: str | None = None
+    coordinates: CoordinatesCfg | None = None
 
     @field_validator("accepted_answers")
     @classmethod

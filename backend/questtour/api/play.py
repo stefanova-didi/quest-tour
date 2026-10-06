@@ -98,6 +98,19 @@ def hint(
     return _respond(ctx, outcome, "hint")
 
 
+@router.post("/compass", response_model=ActionResult)
+def compass(
+    token: str, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> ActionResult:
+    ctx = _open(session, token, now, device_id)
+    outcome = (
+        rules.Outcome.STALE
+        if ctx.run is None
+        else rules.open_compass(ctx.run, now)
+    )
+    return _respond(ctx, outcome, "compass")
+
+
 @router.post("/reveal", response_model=ActionResult)
 def reveal(
     token: str, body: PositionIn, session: SessionDep, now: NowDep, device_id: DeviceDep

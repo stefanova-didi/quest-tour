@@ -113,3 +113,7 @@
 .qc-board tr.is-you td:first-child { box-shadow: inset 0 2px 0 var(--gold-500), inset 0 -2px 0 var(--gold-500), inset 2px 0 0 var(--gold-500); }
 .qc-board tr.is-you td:last-child { box-shadow: inset 0 2px 0 var(--gold-500), inset 0 -2px 0 var(--gold-500), inset -2px 0 0 var(--gold-500); }
 .qc-you { font: 700 13px/16px var(--font-sans); background: var(--ink); color: var(--gold-300); padding: 1px 6px; border-radius: var(--radius-pill); margin-left: var(--space-1); vertical-align: 2px; }
+
+/* Compass */
+.qc-compass { display: flex; justify-content: center; padding: var(--space-4) 0; }
+.qc-compass__arrow { color: var(--accent); transform-origin: center; transition: transform 0.2s ease-out; }

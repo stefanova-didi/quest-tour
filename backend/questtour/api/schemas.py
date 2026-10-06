@@ -19,6 +19,13 @@ class LandmarkOut(BaseModel):
     picture_url: str | None
 
 
+class CompassOut(BaseModel):
+    opened: bool
+    lat: float
+    lon: float
+    penalty_minutes: int
+
+
 class TaskOut(BaseModel):
     number: int
     text: str
@@ -32,6 +39,7 @@ class TaskOut(BaseModel):
     reveal_penalty_minutes: int  # charged on this task (0 unless revealed); frozen, unlike game.P
     landmark: LandmarkOut | None
     photo_count: int
+    compass: CompassOut | None
 
 
 class ClockOut(BaseModel):
