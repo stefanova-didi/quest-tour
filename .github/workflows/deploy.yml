@@ -8,6 +8,7 @@ on:
       - "infra/**"
       - "specs/**"
       - "frontend-mocks/**"
+      - "design/**"
       - "**/*.md"
   workflow_dispatch: # redeploy, or roll back: run it on main with an older commit SHA
     inputs:
