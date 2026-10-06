@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200">
+  <rect width="320" height="200" fill="#e8f1ea"/>
+  <circle cx="262" cy="44" r="18" fill="#e8d390"/>
+  <rect x="0" y="168" width="320" height="32" fill="#d6cdb9"/>
+  <rect x="0" y="176" width="320" height="24" fill="#efe9dc"/>
+  <!-- bell tower -->
+  <rect x="34" y="70" width="34" height="100" fill="#faf7f0"/>
+  <path d="M34 70 A17 17 0 0 1 68 70 Z" fill="#2f6a55"/>
+  <rect x="49" y="40" width="4" height="16" fill="#d6a836"/>
+  <rect x="45" y="44" width="12" height="3" fill="#d6a836"/>
+  <path d="M44 100 V90 a7 7 0 0 1 14 0 V100 Z" fill="#1f4a3b"/>
+  <path d="M44 130 V120 a7 7 0 0 1 14 0 V130 Z" fill="#1f4a3b"/>
+  <!-- main body -->
+  <rect x="68" y="110" width="200" height="60" fill="#faf7f0"/>
+  <rect x="96" y="92" width="144" height="22" fill="#faf7f0"/>
+  <path d="M68 110 L96 92 V110 Z" fill="#86aa92"/>
+  <path d="M268 110 L240 92 V110 Z" fill="#86aa92"/>
+  <!-- side domes -->
+  <rect x="104" y="78" width="28" height="18" fill="#faf7f0"/>
+  <path d="M104 78 A14 14 0 0 1 132 78 Z" fill="#2f6a55"/>
+  <rect x="204" y="78" width="28" height="18" fill="#faf7f0"/>
+  <path d="M204 78 A14 14 0 0 1 232 78 Z" fill="#2f6a55"/>
+  <!-- central drum and golden dome -->
+  <rect x="146" y="62" width="44" height="34" fill="#faf7f0"/>
+  <path d="M146 62 A22 22 0 0 1 190 62 Z" fill="#d6a836"/>
+  <rect x="166" y="22" width="4" height="20" fill="#d6a836"/>
+  <rect x="161" y="27" width="14" height="3" fill="#d6a836"/>
+  <path d="M154 90 V78 a5 5 0 0 1 10 0 V90 Z" fill="#1f4a3b"/>
+  <path d="M172 90 V78 a5 5 0 0 1 10 0 V90 Z" fill="#1f4a3b"/>
+  <!-- facade arches -->
+  <path d="M150 170 V140 a18 18 0 0 1 36 0 V170 Z" fill="#1f4a3b"/>
+  <path d="M90 160 V140 a8 8 0 0 1 16 0 V160 Z" fill="#2f6a55"/>
+  <path d="M116 160 V140 a8 8 0 0 1 16 0 V160 Z" fill="#2f6a55"/>
+  <path d="M204 160 V140 a8 8 0 0 1 16 0 V160 Z" fill="#2f6a55"/>
+  <path d="M230 160 V140 a8 8 0 0 1 16 0 V160 Z" fill="#2f6a55"/>
+  <path d="M150 132 A18 18 0 0 1 186 132 Z" fill="#d6a836"/>
+</svg>

@@ -1,0 +1,44 @@
+/* 02c Evening Domes · Cards — loaded after 02-patina-noir.css.
+   Components: everything sits on raised cards, flat controls on sunken ground, segmented progress.
+   Fonts: Onest, JetBrains Mono numerals. Highlights: solid gold chips, patina-tint hints. Icons: filled in tinted circles. */
+:root {
+  --font-display: "Onest", system-ui, sans-serif;
+  --font-sans: "Onest", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --display-weight: 800; --display-tracking: -0.025em; --display-transform: none;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --pic-radius: 16px;
+  --surface: #e9efe9;
+}
+.t-display-l { font-size: 30px; line-height: 34px; }
+.t-display-xl { font-size: 44px; line-height: 46px; letter-spacing: -0.03em; }
+.t-title { font: 800 22px/28px var(--font-display); letter-spacing: -0.02em; }
+.hero, .curtain { border-bottom: 0; }
+.main { gap: 12px; }
+.pic { aspect-ratio: 16 / 8; }
+.main > .group, .main > p, .main > .notice, .main > .rules { background: var(--surface-raised); border-radius: 16px; padding: 12px 14px; box-shadow: var(--shadow-raised); }
+.main > p { margin: 0; }
+.main > .rules { gap: 14px; }
+.main > .notice { background: var(--surface-raised); }
+.rules svg, .notice svg { width: 30px; height: 30px; padding: 6px; background: var(--accent-tint); color: var(--accent-strong); border-radius: 50%; margin-top: 0; }
+.rules li, .notice { grid-template-columns: 30px 1fr; }
+.hint-btn { border: 0; background: var(--surface-sunken); }
+.hint-btn[disabled] { background: var(--surface); }
+.hint-open { background: var(--accent-tint); border-left: 0; border-radius: 12px; }
+.hint-open .t-caption { color: var(--accent-strong); }
+.tag, .hdr .tag { background: var(--gold-500); color: var(--ink); border-radius: 8px; }
+.team { background: var(--gold-500); border-radius: 8px; }
+.eyebrow { background: var(--accent-strong); color: #fff; padding: 4px 10px 4px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .06em; font-size: 12px; width: max-content; }
+.hdr .prog { position: relative; height: 8px; border-radius: 4px; background: rgba(244,241,230,.18); }
+.hdr .prog::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(12.5% - 3px), var(--header-bg) calc(12.5% - 3px) 12.5%); }
+.input { border: 0; background: var(--surface-sunken); border-radius: 12px; }
+.input--error { box-shadow: inset 0 0 0 2px var(--theatre-600); }
+.btn--secondary { border: 0; background: var(--surface-sunken); }
+.actions { background: var(--surface-raised); border-top: 0; box-shadow: 0 -6px 18px rgba(15,27,22,.06); }
+.actions .err { background: var(--theatre-100); border-radius: 10px; }
+.sheet { border-radius: 20px 20px 0 0; }
+.sheet .cost { border-radius: 10px; background: var(--gold-500); color: var(--ink); }
+.lb { background: var(--surface-raised); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-raised); }
+.lb th { background: var(--surface-sunken); color: var(--ink-muted); border-radius: 0 !important; }
+.lb tr.me td { background: var(--gold-100); border-radius: 0 !important; }
+.sum { background: var(--surface-raised); border-radius: 12px; padding: 12px 14px; box-shadow: var(--shadow-raised); }
+.badge { border-radius: 16px; }

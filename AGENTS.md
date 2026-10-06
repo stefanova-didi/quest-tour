@@ -17,6 +17,7 @@ frontend/src/
   lib/                      format.ts, storage.ts (localStorage), useNow.ts
   styles/                   questcity.css (design system), quest-screens.css, app.css
 frontend-mocks/             Static HTML mockups of every screen (reference for UI work, not runtime code)
+design/                     Look-and-feel proposals: directions + variants as static HTML, themes/*.css, self-hosted fonts/
 backend/                    Python 3.12 + FastAPI + SQLAlchemy
 backend/questtour/
   main.py                   create_app factory (injects settings, session_factory, blob_store, clock)

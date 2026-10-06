@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quest City Tour L&amp;F Proposals</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="base.css">
+<style>
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px; margin: 24px 0 40px; }
+  .card-p { background: var(--page-card); border: 1px solid #dcd9d1; border-radius: 14px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; text-decoration: none; color: inherit; }
+  .card-p:hover { border-color: var(--page-fg); }
+  .thumb { height: 300px; overflow: hidden; background: #ddd; position: relative; }
+  .thumb iframe { width: 1500px; height: 1100px; border: 0; transform: scale(.46); transform-origin: 0 0; pointer-events: none; }
+  .thumb::after { content: ""; position: absolute; inset: 0; }
+  .card-p .body { padding: 14px 16px 16px; }
+  .card-p h2 { margin: 0 0 4px; font-size: 18px; }
+  .card-p h2 small { display: inline-block; font-size: 12px; font-weight: 600; color: var(--page-muted); letter-spacing: .08em; margin-right: 8px; }
+  .card-p p { margin: 0; color: var(--page-muted); font-size: 14px; }
+  table.cmp { width: 100%; border-collapse: collapse; background: var(--page-card); border: 1px solid #dcd9d1; border-radius: 12px; overflow: hidden; font-size: 14px; }
+  .cmp th, .cmp td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #e6e3db; vertical-align: top; }
+  .cmp th { background: #f3f1eb; font-weight: 600; }
+  .cmp tr:last-child td { border-bottom: 0; }
+  .cmp td:first-child { font-weight: 600; white-space: nowrap; }
+  .wrap { overflow-x: auto; }
+  .rec-box { background: var(--page-card); border: 1px solid #c9d9cf; border-left: 4px solid #2f6a55; border-radius: 12px; padding: 14px 18px; margin: 4px 0 8px; max-width: 110ch; }
+  .rec-box h2 { margin: 0 0 6px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: #2f6a55; }
+  .rec-box p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; }
+  .how { max-width: 78ch; color: var(--page-muted); }
+  .how code { font: 13px ui-monospace, Menlo, monospace; background: #f1efe9; padding: 1px 5px; border-radius: 4px; color: var(--page-fg); }
+  h2.sec { font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--page-muted); margin: 32px 0 12px; }
+</style>
+</head>
+<body>
+<div class="pg">
+  <div class="pg-top">
+    <div>
+      <h1><small>Quest City Tour</small>Look &amp; feel proposals</h1>
+      <p>Four green directions for the player app, each anchored in a real Sofia material or place, plus three component-and-type variants each of 00 Limestone &amp; Patina and 02 Evening Domes. Every page shows the same five screens at 390 × 844 (Welcome, Task, hint confirmation, Landmark, Finish) so the directions compare fairly. Direction 00 is the current look.</p>
+    </div>
+  </div>
+
+  <div class="rec-box">
+    <h2>Recommendation</h2>
+    <p><b>★ 02c Evening Domes · Cards.</b> Best match for the brief: every state (riddle, open hint, wrong answer) has its own container so it can be scanned while walking; the dark header makes the timer the highest-contrast element in sunlight; the segmented bar gives per-task feedback; filled icons hold up at small sizes; Onest and JetBrains Mono give full Cyrillic for a future Bulgarian UI; and it keeps the green-and-gold brand the app already has. Trim the card padding on long tourist texts when implementing.</p>
+    <p><b>★ 00c Limestone &amp; Patina · Pills</b> is the lowest-cost alternative: the shipped palette untouched, only radius and type tokens change, and Sofia Sans adds Bulgarian Cyrillic forms for free.</p>
+    <p>Whatever the choice: self-host the fonts, prefer filled or bold icons outdoors, and pick a display face with Cyrillic. The hairline variants (00b Guidebook, 02b Luxe) are the weakest in glare.</p>
+  </div>
+
+  <div class="grid">
+    <a class="card-p" href="00-baseline.html"><div class="thumb"><iframe src="00-baseline.html" title="Limestone & Patina" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>00</small>Limestone &amp; Patina</h2><p>Current system. Cathedral stone, copper-patina roofs, gold domes.</p></div></a>
+    <a class="card-p" href="01-borisova.html"><div class="thumb"><iframe src="01-borisova.html" title="Borisova Gradina" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>01</small>Borisova Gradina</h2><p>Park green with fresh lime, cream-sage ground, round shapes. Friendly and modern.</p></div></a>
+    <a class="card-p" href="02-patina-noir.html"><div class="thumb"><iframe src="02-patina-noir.html" title="Evening Domes" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>02</small>Evening Domes</h2><p>Deep patina bands, gold rule, light sage reading surface. Premium and calm.</p></div></a>
+    <a class="card-p" href="03-vitosha.html"><div class="thumb"><iframe src="03-vitosha.html" title="Vitosha Trail" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>03</small>Vitosha Trail</h2><p>Spruce, granite, snow, red-white-red trail blazes. Built for glare.</p></div></a>
+  </div>
+
+
+  <h2 class="sec">Variants of 00 Limestone &amp; Patina</h2>
+  <p class="how" style="margin-top:-4px">The shipped palette, untouched. What changes is the component language, the typefaces, how penalties and hints are highlighted, and the icon style.</p>
+  <div class="grid">
+    <a class="card-p" href="00b-patina-guidebook.html"><div class="thumb"><iframe src="00b-patina-guidebook.html" title="Limestone & Patina · Guidebook" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>00b</small>Limestone &amp; Patina · Guidebook</h2><p>Hairline frames, small caps, ticked progress. Literata + Atkinson. Thin icons.</p></div></a>
+    <a class="card-p" href="00c-patina-pills.html"><div class="thumb"><iframe src="00c-patina-pills.html" title="Limestone & Patina · Pills" loading="lazy" tabindex="-1"></iframe></div><div class="body"><span class="rec">★ Recommended · lowest cost</span><h2><small>00c</small>Limestone &amp; Patina · Pills</h2><p>Pills, patina tints, floating header. Sofia Sans. Filled icons.</p></div></a>
+    <a class="card-p" href="00d-patina-signage.html"><div class="thumb"><iframe src="00d-patina-signage.html" title="Limestone & Patina · Signage" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>00d</small>Limestone &amp; Patina · Signage</h2><p>Squared frames, condensed uppercase, solid gold chips, segmented progress. Sofia Sans Condensed + Onest. Bold icons.</p></div></a>
+  </div>
+
+  <h2 class="sec">Variants of 02 Evening Domes</h2>
+  <p class="how" style="margin-top:-4px">Same palette as 02; what changes is the component language, the typefaces, how penalties and hints are highlighted, and the icon style. Each variant page opens with a strip that names those four differences.</p>
+  <div class="grid">
+    <a class="card-p" href="02b-evening-serif.html"><div class="thumb"><iframe src="02b-evening-serif.html" title="Evening Domes · Luxe" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>02b</small>Evening Domes · Luxe</h2><p>Hairline gold outlines, ghost buttons, small caps. Prata + Commissioner. Thin icons.</p></div></a>
+    <a class="card-p" href="02c-evening-cards.html"><div class="thumb"><iframe src="02c-evening-cards.html" title="Evening Domes · Cards" loading="lazy" tabindex="-1"></iframe></div><div class="body"><span class="rec">★ Recommended</span><h2><small>02c</small>Evening Domes · Cards</h2><p>Raised cards on sage, sunken controls, segmented progress. Onest + JetBrains Mono. Filled icons in circles.</p></div></a>
+    <a class="card-p" href="02d-evening-soft.html"><div class="thumb"><iframe src="02d-evening-soft.html" title="Evening Domes · Soft" loading="lazy" tabindex="-1"></iframe></div><div class="body"><h2><small>02d</small>Evening Domes · Soft</h2><p>Pills, rounded header, soft shadows, pale gold highlights. Nunito. Duotone icons.</p></div></a>
+  </div>
+
+  <h2 class="sec">Side by side</h2>
+  <div class="wrap">
+  <table class="cmp">
+    <thead><tr><th>Direction</th><th>Sofia reference</th><th>Primary action</th><th>Display face</th><th>Cyrillic ready</th><th>Outdoor legibility</th><th>Mood</th><th>App change</th></tr></thead>
+    <tbody>
+      <tr><td>00 Limestone &amp; Patina</td><td>Nevsky cathedral materials</td><td>Patina green on cream</td><td>Fraunces (serif)</td><td>No</td><td>Good</td><td>Warm, heritage</td><td>None</td></tr>
+      <tr><td>01 Borisova Gradina</td><td>Borisova gradina park, lily pond</td><td>Leaf green on cream sage</td><td>Manrope</td><td>Yes</td><td>Very good</td><td>Fresh, friendly</td><td>Tokens + one lime token + pill radius</td></tr>
+      <tr><td>02 Evening Domes</td><td>Cathedral domes after sunset</td><td>Patina green on light sage</td><td>Commissioner</td><td>Yes</td><td>Very good</td><td>Premium, calm</td><td>Tokens + gold rule</td></tr>
+      <tr><td>03 Vitosha Trail</td><td>Vitosha mountain, hiking blazes</td><td>Blaze orange on snow</td><td>Sofia Sans Semi Condensed</td><td>Yes</td><td>Very good</td><td>Active, outdoor</td><td>Tokens + blaze progress</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2 class="sec">How to review</h2>
+  <div class="how">
+    <p>Open a direction, scroll the phone frames sideways, and judge three things the brief cares about: can you read the riddle in sunlight, is every penalty visible before it is paid (the hint sheet frame), and does the Finish screen feel like a reward. Then check the three notes under the frames: why it works, where it is weak, and what would have to change in the app.</p>
+    <p>Every direction is a token swap. The token names in <code>themes/*.css</code> match <code>frontend-mocks/ds/questcity/tokens.json</code> and <code>frontend/src/styles/questcity.css</code>, so adopting one means updating those values plus the font link in <code>frontend/index.html</code>. Two or more can also be mixed: for example Largo's header and numerals on the Mineral Baths palette.</p>
+    <p>All typefaces are self-hosted in <code>fonts/</code> (SIL Open Font License), so the pages work offline and render the same on every machine. The same files can be copied into the app to replace the Google Fonts link.</p>
+    <p>To tweak a direction, edit its file in <code>themes/</code> and reload. To change the sample screens for all directions, edit <code>build.py</code> and run <code>python3 build.py</code>.</p>
+  </div>
+</div>
+</body>
+</html>

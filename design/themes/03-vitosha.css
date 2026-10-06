@@ -1,0 +1,36 @@
+/* 03 Vitosha Trail — spruce, granite, snow and red-white-red trail blazes. */
+:root {
+  --surface: #f6f8f4; --surface-raised: #ffffff; --surface-sunken: #e6ebe4;
+  --line: #c9d2c6; --line-strong: #5e6b5f;
+  --ink: #13201a; --ink-muted: #41524a; --ink-inverse: #ffffff;
+  --accent: #c8491a; --accent-strong: #983510; --accent-tint: #fbe6dd; --accent-soft: #9fb4a6;
+  --gold-100: #fff2cc; --gold-300: #f6d774; --gold-500: #e8b320; --gold-700: #6b5000;
+  --theatre-100: #f8e0dc; --theatre-500: #244d35; --theatre-600: #a0372a; --theatre-800: #6c2118;
+  --font-display: "Sofia Sans Semi Condensed", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Sofia Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --display-weight: 800; --display-tracking: -0.01em;
+  --radius-sm: 4px; --radius-md: 8px; --radius-lg: 12px;
+  --header-bg: #244d35; --header-fg: #ffffff;
+  --hero-bg: #244d35; --hero-fg: #ffffff;
+  --curtain-bg: #244d35; --curtain-fg: #ffffff;
+  --page-bg: #e1e6df;
+}
+/* contour lines */
+.hero, .curtain {
+  background-image:
+    radial-gradient(ellipse 160px 70px at 80% 110%, transparent 0 58px, rgba(255,255,255,.12) 59px 60px, transparent 61px 78px, rgba(255,255,255,.12) 79px 80px, transparent 81px 98px, rgba(255,255,255,.12) 99px 100px, transparent 101px),
+    radial-gradient(ellipse 220px 90px at 15% -10%, transparent 0 68px, rgba(255,255,255,.12) 69px 70px, transparent 71px 88px, rgba(255,255,255,.12) 89px 90px, transparent 91px);
+}
+/* trail blaze: red-white-red */
+.hdr .prog { background: #fff; height: 12px; border-radius: 2px; box-shadow: inset 0 4px 0 var(--accent), inset 0 -4px 0 var(--accent); }
+.hdr .prog > span { background: var(--accent); border-radius: 0; }
+.hdr .tag { background: var(--gold-300); color: var(--ink); }
+.hero .kicker::before { content: ""; display: inline-block; width: 28px; height: 14px; margin-right: 10px; vertical-align: -1px; background: linear-gradient(#fff 0 0) center / 100% 4px no-repeat, var(--accent); }
+.team { background: #fff; color: var(--ink); }
+.eyebrow { color: var(--accent-strong); }
+.btn--primary { box-shadow: inset 0 -3px 0 rgba(0,0,0,.18); }
+.hint-open { border-left-width: 6px; }
+.badge { background: var(--accent); box-shadow: 0 0 0 10px rgba(255,255,255,.18); }
+.curtain .t-display-xl { font-size: 48px; line-height: 48px; }
+.lb tr.me td { background: var(--gold-100); }
