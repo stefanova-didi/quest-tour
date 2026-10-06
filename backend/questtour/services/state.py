@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from questtour.api.schemas import (
     ClockOut,
+    CompassOut,
     GameOut,
     GameState,
     HintOut,
@@ -15,6 +16,7 @@ from questtour.api.schemas import (
 )
 from questtour.models import Assignment, Game, GameRun, RunTask
 from questtour.services.game import (
+    COMPASS_PENALTY_MINUTES,
     HINT_PENALTIES,
     TIMED_OUT,
     WARNING_SECONDS,
@@ -106,6 +108,14 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
     if not completed and not unlocked:
         due = task.shown_at + timedelta(minutes=game.reveal_after_minutes)
         unlocks_in = max(0, math.ceil((due - now).total_seconds()))
+    compass = None
+    if landmark.coordinates_lat is not None and landmark.coordinates_lon is not None:
+        compass = CompassOut(
+            opened=task.compass_opened_at is not None,
+            lat=landmark.coordinates_lat,
+            lon=landmark.coordinates_lon,
+            penalty_minutes=COMPASS_PENALTY_MINUTES,
+        )
     return TaskOut(
         number=task.position + 1,
         text=landmark.task_text,
@@ -125,6 +135,7 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
         if completed
         else None,
         photo_count=task.photo_count,
+        compass=compass,
     )
 
 

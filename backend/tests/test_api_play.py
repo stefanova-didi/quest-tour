@@ -345,6 +345,79 @@ def test_hint_and_reveal_after_completion_are_stale(client, seed):
     assert play(client, t, "reveal", position=0)["outcome"] == "stale"
 
 
+# --- compass --------------------------------------------------------------------------------------
+
+
+def test_compass_endpoint(client, seed, session_factory):
+    t = seed.token
+    # Give the current landmark coordinates so the compass is available.
+    from questtour.models import Landmark
+
+    with session_factory() as s:
+        landmark = s.query(Landmark).filter_by(key="nevsky").one()
+        landmark.coordinates_lat = 42.6965
+        landmark.coordinates_lon = 23.3331
+        s.commit()
+    client.post(f"/api/play/{t}/start")
+    r = client.post(f"/api/play/{t}/compass").json()
+    assert r["outcome"] == "ok"
+    assert r["state"]["clock"]["penalty_minutes"] == 5
+    assert r["state"]["task"]["compass"]["opened"] is True
+
+
+def test_compass_after_full_completion_is_stale(client, seed, clock):
+    t = seed.token
+    play_through(client, t, clock)  # finishes all tasks; current_position == 3
+    assert client.post(f"/api/play/{t}/compass").json()["outcome"] == "stale"
+
+
+def test_compass_not_available_without_coordinates(client, seed):
+    t = seed.token
+    client.post(f"/api/play/{t}/start")
+    # default fixtures: position-0 landmark has no coordinates
+    assert client.post(f"/api/play/{t}/compass").json()["outcome"] == "not_available"
+
+
+def test_compass_with_coordinates(client, seed, session_factory):
+    t = seed.token
+    from questtour.models import Landmark
+
+    with session_factory() as s:
+        landmark = s.query(Landmark).filter_by(key="nevsky").one()
+        landmark.coordinates_lat = 42.6965
+        landmark.coordinates_lon = 23.3331
+        s.commit()
+    client.post(f"/api/play/{t}/start")
+    r1 = client.post(f"/api/play/{t}/compass").json()
+    assert r1["outcome"] == "ok" and r1["state"]["clock"]["penalty_minutes"] == 5
+    r2 = client.post(f"/api/play/{t}/compass").json()
+    assert r2["state"]["clock"]["penalty_minutes"] == 5
+
+
+def test_compass_counts_toward_leaderboard_hints_used(client, seed, session_factory, clock):
+    t = seed.token
+    from questtour.models import Landmark
+
+    with session_factory() as s:
+        landmark = s.query(Landmark).filter_by(key="nevsky").one()
+        landmark.coordinates_lat = 42.6965
+        landmark.coordinates_lon = 23.3331
+        s.commit()
+    client.post(f"/api/play/{t}/start")
+    assert client.post(f"/api/play/{t}/compass").json()["outcome"] == "ok"
+    state = play_through(client, t, clock)
+    assert state["status"] == "finished"
+    assert state["results"]["leaderboard"] == [
+        {
+            "rank": 1,
+            "team_name": "The Explorers",
+            "total_seconds": 1800 + 5 * 60,  # 30 min play + 5 min compass penalty
+            "hints_used": 1,
+            "is_you": True,
+        }
+    ]
+
+
 # --- photos ---------------------------------------------------------------------------------------
 
 

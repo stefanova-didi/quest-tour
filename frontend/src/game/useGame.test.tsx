@@ -2,12 +2,12 @@ import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { api, HttpError, LinkNotValidError, NetworkError } from "../api/client";
 import type { ActionResult, LinkNotValidInfo } from "../api/types";
-import { makeState } from "../test/fixtures";
+import { makeState, makeTask } from "../test/fixtures";
 import { POLL_MS, RETRY_MS, useGame } from "./useGame";
 
 vi.mock("../api/client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../api/client")>()),
-  api: { state: vi.fn(), answer: vi.fn() },
+  api: { state: vi.fn(), answer: vi.fn(), compass: vi.fn() },
 }));
 
 const getState = vi.mocked(api.state);
@@ -111,6 +111,17 @@ it("raises a teammate notice for a change made on another phone", async () => {
   await flush();
   await flush(POLL_MS);
   expect(result.current.notice).toBe("A teammate solved this task");
+});
+
+it("raises a teammate notice when a teammate opens the compass", async () => {
+  const closed = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
+  const opened = makeTask({ compass: { opened: true, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
+  getState.mockResolvedValueOnce(makeState({ version: 3, task: closed }))
+          .mockResolvedValueOnce(makeState({ version: 4, task: opened }));
+  const { result } = mount();
+  await flush();
+  await flush(POLL_MS);
+  expect(result.current.notice).toBe("A teammate opened the compass");
 });
 
 it("does not blame a teammate when its own action's response was lost", async () => {

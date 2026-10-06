@@ -54,3 +54,16 @@ def test_simultaneous_correct_answers_give_one_correct_and_one_stale(
     )
 
     assert sorted(results) == sorted([Outcome.CORRECT, Outcome.STALE])
+
+
+def test_simultaneous_compass_is_charged_once(client, seed, session_factory, clock):
+    from questtour.models import Landmark
+
+    with session_factory() as s:
+        landmark = s.query(Landmark).filter_by(key="nevsky").one()
+        landmark.coordinates_lat = 42.6965
+        landmark.coordinates_lon = 23.3331
+        s.commit()
+    client.post(f"/api/play/{seed.token}/start")
+    _race(session_factory, seed.token, lambda s, run: rules.open_compass(run, clock.now))
+    assert client.get(f"/api/play/{seed.token}").json()["clock"]["penalty_minutes"] == 5

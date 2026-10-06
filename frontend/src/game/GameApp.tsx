@@ -63,6 +63,7 @@ export function GameApp({ token }: { token: string }) {
         return <TaskScreen key={position} state={state} receivedAt={receivedAt} frame={frame}
                            onAnswer={(a) => game.act(() => api.answer(token, position, a))}
                            onHint={(n) => game.act(() => api.hint(token, position, n))}
+                           onCompass={() => game.act(() => api.compass(token))}
                            onReveal={() => game.act(() => api.reveal(token, position))} />;
       case "correct":
         return <CorrectScreen state={state} frame={frame} onContinue={ack} />;

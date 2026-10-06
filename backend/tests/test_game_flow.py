@@ -125,6 +125,23 @@ def test_hints_in_order_and_charged_once(run, clock):
     assert rules.hints_used(run) == 2
 
 
+def test_compass_charged_once_and_adds_five_minutes(run, clock):
+    run.tasks[0].landmark.coordinates_lat = 42.7
+    run.tasks[0].landmark.coordinates_lon = 23.3
+    assert rules.open_compass(run, clock.now) == rules.Outcome.OK
+    assert run.tasks[0].compass_opened_at == clock.now
+    assert run.tasks[0].hint_penalty_minutes == 5
+    assert rules.hints_used(run) == 1  # R-12: compasses count as hints used
+    assert rules.open_compass(run, clock.now) == rules.Outcome.OK
+    assert run.tasks[0].hint_penalty_minutes == 5  # once only
+    assert rules.hints_used(run) == 1
+    assert run.version == 2
+
+
+def test_compass_not_available_without_coordinates(run, clock):
+    assert rules.open_compass(run, clock.now) == rules.Outcome.NOT_AVAILABLE
+
+
 def test_hint_without_text_is_not_available(session, run, clock):
     # Rotunda (position 1) has hint1 only; Serdika (position 2) has none.
     rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
@@ -260,6 +277,14 @@ def test_actions_after_timeout_are_game_over(session, run, assignment, clock):
     assert rules.open_hint(run, 0, 1, now) == Outcome.GAME_OVER
     assert rules.reveal_answer(run, game, 0, now) == Outcome.GAME_OVER
     assert rules.advance(run, 0, now) == Outcome.GAME_OVER
+
+
+def test_compass_game_over_after_timeout(run, clock, assignment):
+    run.tasks[0].landmark.coordinates_lat = 42.7
+    run.tasks[0].landmark.coordinates_lon = 23.3
+    clock.advance(minutes=assignment.game.max_duration_minutes + 1)
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert rules.open_compass(run, clock.now) == rules.Outcome.GAME_OVER
 
 
 def test_elapsed_seconds_while_playing(run, clock):

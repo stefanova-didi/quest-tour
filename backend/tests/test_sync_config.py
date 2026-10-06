@@ -7,7 +7,7 @@ from sqlalchemy import select
 
 from questtour.cli.sync_config import main
 from questtour.db import Base
-from questtour.models import Assignment, Game, GameRun, RunTask, Team
+from questtour.models import Assignment, Game, GameRun, Landmark, RunTask, Team
 from questtour.services.game import start_run
 from questtour.settings import get_settings
 from questtour.sync.apply import apply_config
@@ -87,6 +87,44 @@ assignments:
     assert "empty after normalisation" in text
     assert "unknown time zone" in text
     assert "write the timestamp in quotes" in text
+
+
+def test_coordinates_are_optional_and_validated(tmp_path):
+    write_config(
+        tmp_path,
+        landmarks="""
+landmarks:
+  - {id: a, name: A, task: T, accepted_answers: [x], tourist_info: I,
+     coordinates: {lat: 42.7, lon: 23.3}}
+  - {id: b, name: B, task: T, accepted_answers: [y], tourist_info: I}
+  - {id: c, name: C, task: T, accepted_answers: [z], tourist_info: I,
+     coordinates: {lat: 99, lon: 200}}
+""",
+    )
+    errors = [e for e in load_config(tmp_path).errors]
+    flat = "\n".join(errors)
+    assert "coordinates.lat" in flat
+    assert "coordinates.lon" in flat
+
+
+def test_coordinates_are_persisted(tmp_path, session_factory, blob_store):
+    root = write_config(
+        tmp_path,
+        landmarks="""
+landmarks:
+  - {id: a, name: A, task: T, accepted_answers: [x], tourist_info: I,
+     coordinates: {lat: 42.7, lon: 23.3}}
+  - {id: b, name: B, task: T, accepted_answers: [y], tourist_info: I}
+""",
+    )
+    sync(root, session_factory, blob_store)
+    with session_factory() as s:
+        a = s.scalars(select(Landmark).where(Landmark.key == "a")).one()
+        b = s.scalars(select(Landmark).where(Landmark.key == "b")).one()
+        assert a.coordinates_lat == 42.7
+        assert a.coordinates_lon == 23.3
+        assert b.coordinates_lat is None
+        assert b.coordinates_lon is None
 
 
 def test_cross_check_finds_duplicates_missing_images_and_bad_windows(tmp_path):

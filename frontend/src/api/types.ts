@@ -3,12 +3,13 @@ export type Phase = "task" | "photo" | "info" | "results";
 export type Outcome = "ok" | "already_started" | "correct" | "wrong" | "stale" | "locked" | "not_available" | "game_over";
 
 export interface Hint { number: 1 | 2; penalty_minutes: number; available: boolean; opened: boolean; text: string | null; }
+export interface Compass { opened: boolean; lat: number; lon: number; penalty_minutes: number; }
 export interface LandmarkInfo { name: string; info: string; picture_url: string | null; }
 export interface Task {
   number: number; text: string; picture_url: string | null; hints: Hint[]; wrong_attempts: number;
   reveal_unlocked: boolean; reveal_unlocks_in_seconds: number | null;
   completion: "answered" | "revealed" | null; revealed_answer: string | null; reveal_penalty_minutes: number;
-  landmark: LandmarkInfo | null; photo_count: number;
+  landmark: LandmarkInfo | null; photo_count: number; compass: Compass | null;
 }
 export interface Clock { elapsed_seconds: number; running: boolean; penalty_minutes: number; remaining_seconds: number | null; warning: boolean; }
 export interface GameInfo {

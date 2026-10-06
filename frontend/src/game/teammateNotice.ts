@@ -15,6 +15,9 @@ export function teammateNotice(prev: GameState, next: GameState): string | null 
   if (prev.phase === "task" && next.phase === "task") {
     const opened = next.task.hints.find((h) => h.opened && !prev.task!.hints.find((p) => p.number === h.number)?.opened);
     if (opened) return `A teammate opened hint ${opened.number}`;
+    if (next.task.compass?.opened && !prev.task!.compass?.opened) {
+      return "A teammate opened the compass";
+    }
   }
   return null;
 }

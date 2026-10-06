@@ -29,12 +29,13 @@
 
 | Term | Meaning |
 |---|---|
-| Landmark / Task | A place in the city plus the quiz task that leads to it. One landmark = one task. A landmark is defined once and can be used in many games, with the same riddle, hints and answers everywhere. |
+| Landmark / Task | A place in the city plus the quiz task that leads to it. One landmark = one task. A landmark is defined once and can be used in many games, with the same riddle, hints, compass and answers everywhere. |
 | Game | An ordered series of tasks with a unique identifier and its own leaderboard. |
 | Team | A group of players who share one team identifier. |
 | Assignment | A team assigned to a game. It carries the secret game link. |
 | Game run | One team playing one game (at most one per assignment). It holds progress, timings, hints, reveals, attempts and photos. |
 | Hint | Optional help for a task, with up to 2 per task. Each one adds a time penalty. |
+| Compass | Optional directional pointer to a task's landmark. Opening it adds a time penalty. |
 | Reveal | Giving up on a task: the answer is shown and a time penalty is added. |
 
 **Relationships**
@@ -51,6 +52,7 @@
 | Task | The question or riddle text |
 | Accepted answers | A list of one or more strings (R-9) |
 | Hint 1 | Optional |
+| Compass | Optional; shows direction to the landmark when opened |
 | Hint 2 | Optional; allowed only if Hint 1 is set |
 | Tourist information | Shown after the task is completed |
 | Tourist information picture | Optional |
@@ -104,7 +106,7 @@
 - **R-4 Hints.** Each task has up to 2 hints. Opening hint 1 adds **+10 min**; opening hint 2 adds a further **+15 min** (up to 25 min per task). Hint 2 is available only after hint 1 has been opened. Before a hint opens, a confirmation shows its penalty.
 - **R-5 Wrong answers.** Teams can retry without limit, and wrong answers carry no penalty. Every attempt is logged for statistics.
 - **R-6 Reveal answer.** A "Reveal answer" button unlocks after *N* wrong attempts or *X* minutes on the task, whichever comes first. Revealing shows the answer, adds a *P*-minute penalty on top of any hint penalties, and counts as completing the task. *N*, *X* and *P* are set per game (defaults 5, 20 min, 30 min). A confirmation shows the penalty first.
-- **R-7 Total time.** Total time = (finish time − start time) + all hint penalties + all reveal penalties.
+- **R-7 Total time.** Total time = (finish time − start time) + all hint penalties (including compasses) + all reveal penalties.
 - **R-8 Maximum duration.** Each game sets a maximum duration, measured as wall-clock time since Start (penalties excluded). From 15 minutes before the limit, a warning shows the remaining time. When the limit is reached, or the assignment's validity window closes, the game ends unfinished: the team sees a "Time is up" screen with the exit message and the leaderboard, and does not appear on the leaderboard. Photos uploaded up to that point are kept. (Service links, R-25, have no time limit.)
 - **R-9 Answer checking.** Players type the answer as free text. Before comparing, both the input and each accepted answer are normalised: lower-cased, leading/trailing/duplicate whitespace removed, punctuation removed, diacritics stripped. The answer is correct if it equals any accepted answer after normalisation. Checking happens on the server, so accepted answers are never sent to the browser.
 - **R-10 Landmark photo.**
@@ -117,13 +119,13 @@
     e.g. `Sofia-Center/The-Explorers/2026-10-14_11-32-05_03_Alexander-Nevsky.jpg`. Names are converted to safe file-name characters (Latin transliteration, spaces → `-`). The timestamp is the upload time in the game's time zone. If two uploads get the same name, a suffix `_2`, `_3`… is added.
   - Photos are kept until the host deletes them; there is no automatic deletion.
   - The welcome page tells players that photos are collected and kept by the host (a privacy notice).
-- **R-11 Navigation.** The app shows no map or directions. Finding the next landmark is part of the riddle.
+- **R-11 Navigation.** The app shows no map, no distance and no directions. Finding the next landmark is part of the riddle. *Exception:* a team that has opened the compass (R-26) sees a direction arrow for the current task's landmark.
 - **R-12 Leaderboard.** Each game has its own leaderboard, ranked by total time (R-7) with the lowest first.
   - Players see it only on the finish and "Time is up" screens, never during the game.
   - Only finished teams are listed.
   - Service (test) teams (R-25) are never listed.
   - Teams with equal total time (to the second) share a rank (e.g. 1, 2, 2, 4).
-  - Each row shows rank, team name, total time (hh:mm:ss) and the number of hints used. The viewing team's own row is highlighted.
+  - Each row shows rank, team name, total time (hh:mm:ss) and the number of hints used, counting opened hints *and* opened compasses. The viewing team's own row is highlighted.
 - **R-13 One run per assignment.** Each team plays each assigned game once. Opening the link after the game has ended shows the finish (or "Time is up") screen again; the game cannot be replayed (except service links, R-25).
 
 ## 4. Screens
@@ -134,8 +136,8 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
 |---|---|
 | Welcome | Game intro, rules, photo privacy notice, Start button. If the team has already started, players go straight to the current state. |
 | Start confirmation | "Start the clock? It can't be paused. Every team member's phone will start too." Start / Cancel. Prevents one player starting the game for the whole team by accident. |
-| Task | Task picture and text, answer input, hint buttons, reveal button (when unlocked), timer, progress bar. Wrong answers show a short "Not quite – try again". |
-| Hint / Reveal confirmation | Shows the penalty and asks to confirm; then shows the hint or the answer. |
+| Task | Task picture and text, answer input, hint buttons, compass button (when coordinates are set), reveal button (when unlocked), timer, progress bar. Wrong answers show a short "Not quite – try again". |
+| Hint / Compass / Reveal confirmation | Shows the penalty and asks to confirm; then shows the hint, compass or the answer. |
 | Photo upload | Take or choose a photo; "Photo saved" confirmation; retry on failure. |
 | Landmark info | Tourist information, picture, Next riddle button (See results after the last task). |
 | Finish | Total time, leaderboard, exit message. |
@@ -144,7 +146,7 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
 | 404 Not found | Shown for any URL that doesn't match a page in the app (e.g. a mistyped or truncated link). Friendly "Page not found" message telling players to open the exact link they received from the host. Shows no game data, and the server returns HTTP 404. |
 
 **On every in-game screen**
-- **R-14** The game timer (elapsed time, `hh:mm:ss`) is visible at all times. Next to it, the running penalty total (e.g. `+25 min`) is shown once any hint or reveal penalty applies. In the last 15 minutes before the maximum duration (R-8), the timer switches to a warning style showing the remaining time.
+- **R-14** The game timer (elapsed time, `hh:mm:ss`) is visible at all times. Next to it, the running penalty total (e.g. `+25 min`) is shown once any hint, compass or reveal penalty applies. In the last 15 minutes before the maximum duration (R-8), the timer switches to a warning style showing the remaining time.
 - **R-15** A progress bar shows the current task out of the total.
 
 ## 5. Quality requirements
@@ -152,9 +154,9 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
 - **R-16 Mobile-first.** The design is responsive and mobile-first; the app is used mainly on phones in current iOS Safari and Android Chrome.
 - **R-17 Session persistence.** If a player closes the browser by mistake, reopening the game returns them to their current progress.
 - **R-18 Shared team progress.** Game progress is recorded on the server. Every team member who opens the game sees the current task and state. All team members are equal:
-  - Any member can start the game, answer, open a hint, reveal an answer or upload a photo. The action applies to the whole team.
+  - Any member can start the game, answer, open a hint, open a compass, reveal an answer or upload a photo. The action applies to the whole team.
   - The first correct answer (or reveal) completes the task, and later submissions for that task are ignored.
-  - Each hint or reveal is charged to the team at most once per task, even if several members press it at the same moment.
+  - Each hint, compass or reveal is charged to the team at most once per task, even if several members press it at the same moment.
   - The other phones show the new state (next task, opened hint, etc.) within **1 minute**. A phone also refreshes straight away whenever its player acts (answer, hint, reveal, upload) and when the app comes back to the foreground. An action on a task the team has already completed is rejected, and the phone moves to the current task. When a phone moves on because of a teammate's action, it shows a short notice (e.g. "A teammate solved this task").
 - **R-19 Platform.** v1 is a website used in a mobile browser; no installation is needed.
 - **R-20 Extensibility.** The data model and backend must allow a CMS and multiple hosts to be added later without a rewrite.
@@ -171,3 +173,5 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
   reveal waiting time (reveal is available as soon as a task is shown; penalties are still charged). The game
   screen shows a "Reset test run" button that deletes the run with its answers and photos, so the link starts
   again from the beginning. Service runs never appear on any leaderboard.
+- **R-26 Compass.** Each task can offer a compass that shows the direction from the team to the task's landmark. Opening it adds **+5 min**. Before it opens, a confirmation shows the penalty. Once opened, it stays visible until the task is completed; it is charged at most once per task. It does not carry over to the next task.
+- **R-27 Compass availability.** The compass is available as soon as the task is shown. A landmark without coordinates has no compass; the button is hidden.
