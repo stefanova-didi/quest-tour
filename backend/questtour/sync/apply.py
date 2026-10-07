@@ -6,6 +6,7 @@ from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from questtour.clock import utc_now
 from questtour.imagetypes import CONFIG_IMAGE_TYPES
 from questtour.models import Assignment, Game, GameTask, Landmark, Team
 from questtour.storage import BlobStore
@@ -27,6 +28,7 @@ class SyncReport:
     assignments: int = 0
     service_assignments: int = 0
     images_uploaded: int = 0
+    issued: dict[tuple[str, str], str] = field(default_factory=dict)
     deactivated: list[str] = field(default_factory=list)
     not_in_config: list[str] = field(default_factory=list)
 
@@ -120,6 +122,7 @@ def apply_config(
     for ac in cfg.assignments:
         row = _assignment(session, host_id, teams[ac.team], games[ac.game])
         row.token_hash = hash_token(ac.token)
+        row.issued_at = utc_now()
         row.valid_from = parse_window_time(ac.valid_from, zones[ac.game])
         row.valid_until = parse_window_time(ac.valid_until, zones[ac.game])
         row.exit_message = ac.exit_message
@@ -134,6 +137,7 @@ def apply_config(
         for gc in cfg.games:
             row = _assignment(session, host_id, service_team, games[gc.id])
             row.token_hash = hash_token(cfg.service.tokens[gc.id])  # issue_tokens filled every game
+            row.issued_at = utc_now()
             row.valid_from, row.valid_until = SERVICE_VALID_FROM, SERVICE_VALID_UNTIL
             row.exit_message = SERVICE_EXIT_MESSAGE
             session.flush()

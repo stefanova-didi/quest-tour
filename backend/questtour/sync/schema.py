@@ -19,7 +19,7 @@ class CoordinatesCfg(_Cfg):
     lon: float = Field(ge=-180, le=180)
 
 
-class LandmarkCfg(_Cfg):
+class LandmarkBaseCfg(_Cfg):
     id: str = Field(pattern=SLUG)
     name: str = Field(min_length=1)
     task: str = Field(min_length=1)
@@ -39,10 +39,14 @@ class LandmarkCfg(_Cfg):
         return value
 
     @model_validator(mode="after")
-    def _hint2_needs_hint1(self) -> "LandmarkCfg":
+    def _hint2_needs_hint1(self) -> "LandmarkBaseCfg":
         if self.hint2 and not self.hint1:
             raise ValueError("hint2 is set but hint1 is empty")
         return self
+
+
+class LandmarkCfg(LandmarkBaseCfg):
+    pass
 
 
 class RevealCfg(_Cfg):
@@ -51,14 +55,13 @@ class RevealCfg(_Cfg):
     penalty_minutes: int = Field(30, ge=0)
 
 
-class GameCfg(_Cfg):
+class GameBaseCfg(_Cfg):
     id: str = Field(pattern=SLUG)
     name: str = Field(min_length=1)
     intro: str = Field(min_length=1)
     time_zone: str
     max_duration_minutes: int = Field(gt=0)
     reveal: RevealCfg = Field(default_factory=RevealCfg)
-    tasks: list[str] = Field(min_length=1)
 
     @field_validator("time_zone")
     @classmethod
@@ -69,6 +72,10 @@ class GameCfg(_Cfg):
             raise ValueError(f"unknown time zone {value!r}") from exc
         return value
 
+
+class GameCfg(GameBaseCfg):
+    tasks: list[str] = Field(min_length=1)
+
     @field_validator("tasks")
     @classmethod
     def _no_repeats(cls, value: list[str]) -> list[str]:
@@ -77,19 +84,22 @@ class GameCfg(_Cfg):
         return value
 
 
-class TeamCfg(_Cfg):
+class TeamBaseCfg(_Cfg):
     id: str = Field(pattern=SLUG)
     name: str = Field(min_length=1)
     participants: int | None = Field(default=None, ge=1)
 
 
-class AssignmentCfg(_Cfg):
+class TeamCfg(TeamBaseCfg):
+    pass
+
+
+class AssignmentBaseCfg(_Cfg):
     team: str
     game: str
     valid_from: str
     valid_until: str
     exit_message: str = ""
-    token: str | None = Field(default=None, min_length=22)  # >= 128 bits base64url
 
     @field_validator("valid_from", "valid_until", mode="before")
     @classmethod
@@ -99,6 +109,10 @@ class AssignmentCfg(_Cfg):
                 'write the timestamp in quotes, e.g. "2026-10-14T09:00:00+03:00"'
             )
         return value
+
+
+class AssignmentCfg(AssignmentBaseCfg):
+    token: str | None = Field(default=None, min_length=22)  # >= 128 bits base64url
 
 
 class ServiceCfg(_Cfg):

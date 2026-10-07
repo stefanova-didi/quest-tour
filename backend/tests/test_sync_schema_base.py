@@ -1,0 +1,195 @@
+from datetime import UTC, date, datetime
+
+import pytest
+from pydantic import ValidationError
+
+from questtour.sync.schema import (
+    AssignmentBaseCfg,
+    AssignmentCfg,
+    GameBaseCfg,
+    GameCfg,
+    LandmarkBaseCfg,
+    LandmarkCfg,
+    TeamBaseCfg,
+    TeamCfg,
+)
+
+
+def test_landmark_base_cfg_validates_minimal_data():
+    cfg = LandmarkBaseCfg(
+        id="old-bridge",
+        name="Old Bridge",
+        task="Find the year",
+        accepted_answers=["1879"],
+        tourist_info="A nice bridge",
+    )
+    assert cfg.id == "old-bridge"
+    assert cfg.hint1 is None
+    assert cfg.hint2 is None
+    assert cfg.coordinates is None
+
+
+def test_landmark_base_cfg_rejects_blank_answer():
+    with pytest.raises(ValidationError, match="empty after normalisation"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            task="T",
+            accepted_answers=["   "],
+            tourist_info="I",
+        )
+
+
+def test_landmark_base_cfg_rejects_hint2_without_hint1():
+    with pytest.raises(ValidationError, match="hint2 is set but hint1 is empty"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            task="T",
+            accepted_answers=["x"],
+            hint2="only-two",
+            tourist_info="I",
+        )
+
+
+def test_landmark_base_cfg_validates_coordinates():
+    cfg = LandmarkBaseCfg(
+        id="a",
+        name="A",
+        task="T",
+        accepted_answers=["x"],
+        tourist_info="I",
+        coordinates={"lat": 42.7, "lon": 23.3},
+    )
+    assert cfg.coordinates is not None
+    assert cfg.coordinates.lat == pytest.approx(42.7)
+
+    with pytest.raises(ValidationError, match="coordinates.lat"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+            coordinates={"lat": 99, "lon": 200},
+        )
+
+
+def test_landmark_cfg_extends_base_without_extra_behavior():
+    assert issubclass(LandmarkCfg, LandmarkBaseCfg)
+    cfg = LandmarkCfg(
+        id="a",
+        name="A",
+        task="T",
+        accepted_answers=["x"],
+        tourist_info="I",
+    )
+    assert isinstance(cfg, LandmarkBaseCfg)
+
+
+def test_game_base_cfg_validates_minimal_data():
+    cfg = GameBaseCfg(
+        id="g",
+        name="Game",
+        intro="Welcome",
+        time_zone="Europe/Sofia",
+        max_duration_minutes=120,
+    )
+    assert cfg.id == "g"
+    assert cfg.reveal.attempts == 5
+
+
+def test_game_base_cfg_rejects_unknown_time_zone():
+    with pytest.raises(ValidationError, match="unknown time zone"):
+        GameBaseCfg(
+            id="g",
+            name="G",
+            intro="I",
+            time_zone="Mars/Base",
+            max_duration_minutes=60,
+        )
+
+
+def test_game_cfg_adds_tasks_and_no_repeats_validator():
+    assert issubclass(GameCfg, GameBaseCfg)
+    cfg = GameCfg(
+        id="g",
+        name="G",
+        intro="I",
+        time_zone="Europe/Sofia",
+        max_duration_minutes=60,
+        tasks=["a", "b"],
+    )
+    assert cfg.tasks == ["a", "b"]
+
+    with pytest.raises(ValidationError, match="appears twice"):
+        GameCfg(
+            id="g",
+            name="G",
+            intro="I",
+            time_zone="Europe/Sofia",
+            max_duration_minutes=60,
+            tasks=["a", "a"],
+        )
+
+
+def test_team_base_cfg_validates_minimal_data():
+    cfg = TeamBaseCfg(id="t", name="Team T")
+    assert cfg.participants is None
+
+    with pytest.raises(ValidationError, match="participants"):
+        TeamBaseCfg(id="t", name="T", participants=0)
+
+
+def test_team_cfg_extends_base():
+    assert issubclass(TeamCfg, TeamBaseCfg)
+    cfg = TeamCfg(id="t", name="T")
+    assert isinstance(cfg, TeamBaseCfg)
+
+
+def test_assignment_base_cfg_requires_quoted_timestamps():
+    with pytest.raises(ValidationError, match="write the timestamp in quotes"):
+        AssignmentBaseCfg(
+            team="t",
+            game="g",
+            valid_from=datetime(2026, 10, 1, tzinfo=UTC),
+            valid_until="2026-10-02T00:00:00",
+        )
+    with pytest.raises(ValidationError, match="write the timestamp in quotes"):
+        AssignmentBaseCfg(
+            team="t",
+            game="g",
+            valid_from=date(2026, 10, 1),
+            valid_until="2026-10-02T00:00:00",
+        )
+
+
+def test_assignment_base_cfg_accepts_string_timestamps():
+    cfg = AssignmentBaseCfg(
+        team="t",
+        game="g",
+        valid_from="2026-10-01T00:00:00",
+        valid_until="2026-10-02T00:00:00+02:00",
+    )
+    assert cfg.exit_message == ""
+
+
+def test_assignment_cfg_extends_base_and_adds_token():
+    assert issubclass(AssignmentCfg, AssignmentBaseCfg)
+    cfg = AssignmentCfg(
+        team="t",
+        game="g",
+        valid_from="2026-10-01T00:00:00",
+        valid_until="2026-10-02T00:00:00+02:00",
+        token="x" * 22,
+    )
+    assert cfg.token == "x" * 22
+
+    with pytest.raises(ValidationError, match="token"):
+        AssignmentCfg(
+            team="t",
+            game="g",
+            valid_from="2026-10-01T00:00:00",
+            valid_until="2026-10-02T00:00:00+02:00",
+            token="short",
+        )

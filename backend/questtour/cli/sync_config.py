@@ -7,11 +7,10 @@ from dotenv import load_dotenv  # python-dotenv ships with pydantic-settings
 from sqlalchemy.orm import Session
 
 from questtour.db import make_engine
+from questtour.services.seed import import_yaml
 from questtour.settings import get_settings
 from questtour.storage import make_blob_store
-from questtour.sync.apply import apply_config
 from questtour.sync.loader import load_config
-from questtour.sync.teams_file import issue_tokens, write_teams_file
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -34,41 +33,45 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    # Validation can be done without touching the database or requiring full settings.
     cfg = load_config(args.config_dir)
     if cfg.errors:
         for error in cfg.errors:
             print(f"error: {error}", file=sys.stderr)
         print(f"{len(cfg.errors)} problem(s) found; nothing was changed.", file=sys.stderr)
         return 1
+
     if args.validate_only:
         print("Configuration is valid.")
         return 0
 
-    try:
-        issued = issue_tokens(cfg, tuple(args.reissue) if args.reissue else None)
-    except ValueError as exc:
-        print(f"error: {exc}", file=sys.stderr)
-        return 1
-    if issued:
-        write_teams_file(cfg)  # D13: YAML first, so a failed DB commit can't lose a token
-        print(f"Wrote {len(issued)} new token(s) to teams.yaml — commit it (the repo must stay private).")
-
     settings = get_settings()
+    if args.config_dir:
+        settings = settings.model_copy(update={"config_dir": args.config_dir})
+
     engine = make_engine(settings)
     try:
         with Session(engine) as session:
-            report = apply_config(
-                session,
-                make_blob_store(settings),
-                cfg,
-                host_id=settings.host_id,
-                images_container=settings.images_container,
-                photos_container=settings.photos_container,
+            report = import_yaml(
+                session=session,
+                store=make_blob_store(settings),
+                settings=settings,
+                write_back=True,
+                reissue=tuple(args.reissue) if args.reissue else None,
             )
+            if isinstance(report, list):
+                for error in report:
+                    print(f"error: {error}", file=sys.stderr)
+                print(f"{len(report)} problem(s) found; nothing was changed.", file=sys.stderr)
+                return 1
             session.commit()
     finally:
         engine.dispose()  # release pooled connections (SQLite file lock on Windows)
 
+    # Reload the round-trip config so link output uses the token values just written to teams.yaml.
+    cfg = load_config(settings.config_dir)
+    names = {t.id: t.name for t in cfg.teams}
+    games = {g.id: g.name for g in cfg.games}
     print(
         f"Synced {report.landmarks} landmarks, {report.games} games, {report.teams} teams, "
         f"{report.assignments} assignments, {report.service_assignments} service link(s); uploaded {report.images_uploaded} picture(s)."
@@ -77,17 +80,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Deactivated assignment no longer in teams.yaml: {item}")
     for item in report.not_in_config:
         print(f"Left in database (not in config): {item}")
-    names = {t.id: t.name for t in cfg.teams}
-    games = {g.id: g.name for g in cfg.games}
     print("\nGame links:")
     for a in cfg.assignments:
-        mark = " (new)" if (a.team, a.game) in issued else ""
+        mark = " (new)" if (a.team, a.game) in report.issued else ""
         link = f"{settings.public_base_url.rstrip('/')}/play/{a.token}{mark}"
         print(f"  {names[a.team]} — {games[a.game]}: {link}")
     if cfg.service is not None:
         print("\nService (test) links — no time limits, resettable, never on a leaderboard:")
         for g in cfg.games:
-            mark = " (new)" if (cfg.service.team, g.id) in issued else ""
+            mark = " (new)" if (cfg.service.team, g.id) in report.issued else ""
             link = f"{settings.public_base_url.rstrip('/')}/play/{cfg.service.tokens[g.id]}{mark}"
             print(f"  {cfg.service.name} — {g.name}: {link}")
     return 0

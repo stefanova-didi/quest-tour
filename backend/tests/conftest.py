@@ -64,6 +64,10 @@ def settings(tmp_path) -> Settings:
         storage_backend="local",
         local_storage_dir=tmp_path / "blobs",
         static_dir=None,
+        admin_session_secret="test-secret-must-be-at-least-32-bytes-long",
+        admin_auth_provider="dev",
+        admin_dev_emails=["admin@example.com"],
+        config_dir=tmp_path / "empty-config",
     )
 
 
@@ -72,14 +76,13 @@ def app(settings, session_factory, blob_store, clock):
     # Imported here so the infrastructure collects before the API layer exists.
     from questtour.main import create_app
 
-    return create_app(
-        settings, session_factory=session_factory, blob_store=blob_store, clock=clock
-    )
+    return create_app(settings, session_factory=session_factory, blob_store=blob_store, clock=clock)
 
 
 @pytest.fixture
 def client(app) -> TestClient:
-    return TestClient(app, headers={"X-Device-Id": "device-aaaa-0001"})
+    with TestClient(app, headers={"X-Device-Id": "device-aaaa-0001"}) as c:
+        yield c
 
 
 @pytest.fixture

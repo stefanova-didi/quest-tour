@@ -1,0 +1,17 @@
+games:
+  - id: sofia-old-town
+    name: Sofia Old Town Quest
+    time_zone: Europe/Sofia
+    max_duration_minutes: 240
+    reveal: { attempts: 5, minutes: 20, penalty_minutes: 30 }   # N / X / P (R-6)
+    intro: |
+      Welcome to Sofia Old Town Quest! Your team will uncover landmarks hidden in riddles.
+
+      Solve each riddle, walk to the place it describes, take a team photo and learn its story.
+    tasks:
+      - lily-pond
+      - eagles-bridge
+      - sofia-university
+      - alexander-nevsky
+      - ivan-vazov-theatre
+      - ancient-serdika

@@ -3,8 +3,9 @@ import pytest
 from questtour.imagetypes import JPEG, PNG
 from questtour.models import Assignment, Photo
 from questtour.services import game as rules
-from questtour.services.game import Outcome
+from questtour.services.game import Outcome, bump
 from questtour.services.photos import save_photo
+from questtour.clock import utc_now
 
 DATA = b"\xff\xd8\xff\xe0" + b"\x00" * 64
 
@@ -115,3 +116,28 @@ def test_filename_uses_game_time_zone(session, blob_store, assignment, run, cloc
         "photos",
         "Sofia-Old-Town-Quest/The-Explorers/2026-10-14_11-30-05_01_Alexander-Nevsky-Cathedral.jpg",
     )
+
+
+def test_soft_deleted_photo_decrements_count_and_allows_replacement(
+    session, blob_store, assignment, run, clock
+):
+    answer_current(session, run, clock)
+    upload(session, blob_store, run, assignment, clock, 0)
+    photo = session.query(Photo).one()
+    assert run.tasks[0].photo_count == 1
+
+    photo.deleted_at = utc_now()
+    run.tasks[0].photo_count -= 1
+    bump(run)
+    session.commit()
+
+    assert run.tasks[0].photo_count == 0
+
+    replacement = DATA + b"_replacement"
+    assert (
+        save_photo(
+            session, blob_store, "photos", run, assignment, 0, replacement, JPEG, clock.now, "d1"
+        )
+        == Outcome.OK
+    )
+    assert run.tasks[0].photo_count == 1

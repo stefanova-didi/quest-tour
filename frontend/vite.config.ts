@@ -5,4 +5,16 @@ export default defineConfig({
   plugins: [react()],
   server: { proxy: { "/api": process.env.DEV_API_TARGET ?? "http://localhost:8000" } },
   test: { environment: "jsdom", globals: true, setupFiles: ["./src/test/setup.ts"] },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id?.includes("/src/admin/")) {
+            return "admin";
+          }
+          return null;
+        },
+      },
+    },
+  },
 });
