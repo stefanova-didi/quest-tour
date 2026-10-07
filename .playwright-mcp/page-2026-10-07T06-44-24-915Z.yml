@@ -1,0 +1,53 @@
+- generic [ref=f2e16]:
+  - navigation "Admin navigation" [ref=f2e17]:
+    - link "Dashboard" [ref=f2e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f2e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f2e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f2e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f2e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f2e23] [cursor=pointer]
+  - main [ref=f2e24]:
+    - generic [ref=f2e25]:
+      - heading "Edit team" [level=1] [ref=f2e83]
+      - paragraph [ref=f2e182]: "assignments.valid_until: valid_until must be after valid_from"
+      - generic [ref=f2e183]:
+        - generic [ref=f2e184]:
+          - generic [ref=f2e185]: Key
+          - textbox "Key" [ref=f2e186]: test-team
+        - generic [ref=f2e187]:
+          - generic [ref=f2e188]: Name
+          - textbox "Name" [ref=f2e189]: Test Team
+        - generic [ref=f2e190]:
+          - generic [ref=f2e191]: Participants
+          - textbox "Participants" [ref=f2e192]
+        - button "Update team" [ref=f2e193] [cursor=pointer]
+      - generic [ref=f2e194]:
+        - heading "Assignments" [level=2] [ref=f2e195]
+        - group "Assignment 1" [ref=f2e197]:
+          - generic [ref=f2e199]:
+            - generic [ref=f2e200]: Game
+            - combobox "Game" [ref=f2e201]:
+              - option "Assigned Game" [selected]
+              - option "Sofia Old Town Quest"
+          - generic [ref=f2e202]:
+            - generic [ref=f2e203]: Valid from
+            - textbox "Valid from" [ref=f2e204]: 2026-09-30T18:00
+          - generic [ref=f2e205]:
+            - generic [ref=f2e206]: Valid until
+            - textbox "Valid until" [ref=f2e207]: 2026-12-31T19:59
+          - generic [ref=f2e208]:
+            - generic [ref=f2e209]: Exit message
+            - textbox "Exit message" [ref=f2e210]
+          - generic [ref=f2e211]:
+            - generic [ref=f2e212]: Token issued
+            - button "Reissue token" [ref=f2e213] [cursor=pointer]
+            - button "Remove" [ref=f2e214] [cursor=pointer]
+        - generic [ref=f2e215]:
+          - button "Add assignment" [ref=f2e216] [cursor=pointer]
+          - button "Save assignments" [disabled] [ref=f2e217]
+      - button "Cancel" [ref=f2e219] [cursor=pointer]

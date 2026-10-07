@@ -1,0 +1,25 @@
+- generic [ref=f17e3]:
+  - navigation "Admin navigation" [ref=f17e4]:
+    - link "Dashboard" [ref=f17e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f17e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f17e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f17e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f17e9] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f17e10] [cursor=pointer]
+  - main [ref=f17e11]:
+    - generic [ref=f17e12]:
+      - heading "Dashboard" [level=1] [ref=f17e13]
+      - navigation "Admin sections" [ref=f17e14]:
+        - link "Landmarks" [ref=f17e15] [cursor=pointer]:
+          - /url: /admin/landmarks
+        - link "Games" [ref=f17e16] [cursor=pointer]:
+          - /url: /admin/games
+        - link "Teams" [ref=f17e17] [cursor=pointer]:
+          - /url: /admin/teams
+        - link "Photos" [ref=f17e18] [cursor=pointer]:
+          - /url: /admin/photos

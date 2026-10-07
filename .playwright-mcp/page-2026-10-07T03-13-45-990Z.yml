@@ -1,0 +1,59 @@
+- generic [ref=e16]:
+  - navigation "Admin navigation" [ref=e17]:
+    - link "Dashboard" [ref=e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - heading "Landmarks" [level=1] [ref=e25]
+      - button "New landmark" [ref=e86] [cursor=pointer]
+      - list [ref=e87]:
+        - listitem [ref=e88]:
+          - generic [ref=e89]:
+            - strong [ref=e90]: Alexander Nevsky Cathedral
+            - generic [ref=e91]: (alexander-nevsky)
+          - generic [ref=e92]:
+            - button "Edit" [ref=e93] [cursor=pointer]
+            - button "Delete" [ref=e94] [cursor=pointer]
+        - listitem [ref=e95]:
+          - generic [ref=e96]:
+            - strong [ref=e97]: Ancient Serdika Complex
+            - generic [ref=e98]: (ancient-serdika)
+          - generic [ref=e99]:
+            - button "Edit" [ref=e100] [cursor=pointer]
+            - button "Delete" [ref=e101] [cursor=pointer]
+        - listitem [ref=e102]:
+          - generic [ref=e103]:
+            - strong [ref=e104]: Eagles' Bridge
+            - generic [ref=e105]: (eagles-bridge)
+          - generic [ref=e106]:
+            - button "Edit" [ref=e107] [cursor=pointer]
+            - button "Delete" [ref=e108] [cursor=pointer]
+        - listitem [ref=e109]:
+          - generic [ref=e110]:
+            - strong [ref=e111]: Ivan Vazov National Theatre
+            - generic [ref=e112]: (ivan-vazov-theatre)
+          - generic [ref=e113]:
+            - button "Edit" [ref=e114] [cursor=pointer]
+            - button "Delete" [ref=e115] [cursor=pointer]
+        - listitem [ref=e116]:
+          - generic [ref=e117]:
+            - strong [ref=e118]: Lily Pond
+            - generic [ref=e119]: (lily-pond)
+          - generic [ref=e120]:
+            - button "Edit" [ref=e121] [cursor=pointer]
+            - button "Delete" [ref=e122] [cursor=pointer]
+        - listitem [ref=e123]:
+          - generic [ref=e124]:
+            - strong [ref=e125]: Sofia University (Rectorate)
+            - generic [ref=e126]: (sofia-university)
+          - generic [ref=e127]:
+            - button "Edit" [ref=e128] [cursor=pointer]
+            - button "Delete" [ref=e129] [cursor=pointer]

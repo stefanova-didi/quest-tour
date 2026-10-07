@@ -1,0 +1,24 @@
+- generic [ref=f4e3]:
+  - navigation "Admin navigation" [ref=f4e4]:
+    - link "Dashboard" [ref=f4e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f4e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f4e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f4e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f4e9] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f4e10]:
+    - generic [ref=f4e11]:
+      - heading "Admin sign-in" [level=1] [ref=f4e12]
+      - generic [ref=f4e13]:
+        - generic [ref=f4e14]:
+          - generic [ref=f4e15]: Email
+          - textbox "Email" [ref=f4e16]: admin@example.com
+        - button "Request magic link" [active] [ref=f4e17] [cursor=pointer]
+      - generic [ref=f4e18]:
+        - paragraph [ref=f4e19]: "Development-only link:"
+        - link "http://localhost:5173/api/admin/auth/magic/verify?token=eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwibm9uY2UiOiJHdTBBdzFVb1VPQSJ9.asW4PA.SPa2EAARhdCXs2A8Ly-16i6yrIw&email=admin@example.com" [ref=f4e20] [cursor=pointer]:
+          - /url: http://localhost:5173/api/admin/auth/magic/verify?token=eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwibm9uY2UiOiJHdTBBdzFVb1VPQSJ9.asW4PA.SPa2EAARhdCXs2A8Ly-16i6yrIw&email=admin@example.com

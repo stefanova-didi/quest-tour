@@ -1,0 +1,50 @@
+import { useState } from "react";
+import { adminApi } from "../api";
+
+export function LoginScreen() {
+  const [email, setEmail] = useState("");
+  const [url, setUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setUrl(null);
+    try {
+      const res = await adminApi.requestMagicLink(email);
+      setUrl(res.url);
+    } catch {
+      setError("Could not request magic link. Is this email on the allowlist?");
+    }
+  };
+
+  return (
+    <div className="admin-login">
+      <h1 className="t-title">Admin sign-in</h1>
+      <form onSubmit={submit}>
+        <label className="qc-field">
+          <span className="qc-field__label">Email</span>
+          <input
+            className="qc-input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <button className="qc-btn qc-btn--primary" type="submit">
+          Request magic link
+        </button>
+      </form>
+      {url && (
+        <div className="admin-magic-link">
+          <p className="t-caption">Development-only link:</p>
+          <a className="t-body" href={url}>
+            {url}
+          </a>
+        </div>
+      )}
+      {error && <p className="qc-field__error">{error}</p>}
+    </div>
+  );
+}

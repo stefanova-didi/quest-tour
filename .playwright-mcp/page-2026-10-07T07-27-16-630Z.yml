@@ -1,0 +1,37 @@
+- generic [ref=f5e16]:
+  - generic [ref=f5e17]:
+    - generic [ref=f5e18]:
+      - paragraph [ref=f5e34]: A city quest in 6 riddles
+      - heading "Sofia Old Town Quest" [level=1] [ref=f5e35]
+      - generic [ref=f5e36]: Welcome, Test Team
+    - main [ref=f5e40]:
+      - generic [ref=f5e41]:
+        - paragraph [ref=f5e42]: Welcome to Sofia Old Town Quest! Your team will uncover landmarks hidden in riddles.
+        - paragraph [ref=f5e43]: Solve each riddle, walk to the place it describes, take a team photo and learn its story.
+      - generic [ref=f5e44]:
+        - heading "How it works" [level=2] [ref=f5e45]
+        - list [ref=f5e46]:
+          - listitem [ref=f5e47]:
+            - generic [ref=f5e51]: Tasks are played in order – solve one to unlock the next.
+          - listitem [ref=f5e52]:
+            - generic [ref=f5e57]: The clock starts when you tap Start and runs without pause. You have up to 4 hours.
+          - listitem [ref=f5e58]:
+            - generic [ref=f5e62]:
+              - text: Stuck? Hint 1 adds
+              - generic [ref=f5e63]: +10 min
+              - text: ", hint 2 adds"
+              - generic [ref=f5e64]: +15 min
+              - text: .
+          - listitem [ref=f5e65]:
+            - generic [ref=f5e69]:
+              - text: Giving up on a task shows the answer and adds
+              - generic [ref=f5e70]: +30 min
+              - text: .
+          - listitem [ref=f5e71]:
+            - generic [ref=f5e76]: Take a team photo at every landmark to unlock the next riddle.
+      - paragraph [ref=f5e80]:
+        - strong [ref=f5e81]: About your photos.
+        - text: Photos you upload are collected and kept by your host. You won't see them in the app.
+  - generic [ref=f5e83]:
+    - button "Start the quest" [ref=f5e84] [cursor=pointer]
+    - paragraph [ref=f5e85]: You'll confirm before the clock starts.

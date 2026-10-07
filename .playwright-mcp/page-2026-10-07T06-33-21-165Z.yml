@@ -1,0 +1,11 @@
+- generic [ref=f5e3]:
+  - heading "Admin sign-in" [level=1] [ref=f5e4]
+  - generic [ref=f5e5]:
+    - generic [ref=f5e6]:
+      - generic [ref=f5e7]: Email
+      - textbox "Email" [ref=f5e8]: admin@example.com
+    - button "Request magic link" [active] [ref=f5e9] [cursor=pointer]
+  - generic [ref=f5e10]:
+    - paragraph [ref=f5e11]: "Development-only link:"
+    - link "http://localhost:5173/api/admin/auth/magic/verify?token=eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwibm9uY2UiOiJjTm1XVF9jcGJabyJ9.asXnsA.pjT52XJ30VfbI2Vh9ikqjyeUJhc&email=admin%40example.com" [ref=f5e12] [cursor=pointer]:
+      - /url: http://localhost:5173/api/admin/auth/magic/verify?token=eyJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwibm9uY2UiOiJjTm1XVF9jcGJabyJ9.asXnsA.pjT52XJ30VfbI2Vh9ikqjyeUJhc&email=admin%40example.com

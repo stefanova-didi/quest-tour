@@ -1,0 +1,89 @@
+- generic [ref=f12e16]:
+  - navigation "Admin navigation" [ref=f12e17]:
+    - link "Dashboard" [ref=f12e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f12e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f12e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f12e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f12e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f12e23] [cursor=pointer]
+  - main [ref=f12e24]:
+    - generic [ref=f12e25]:
+      - heading "Edit game" [level=1] [ref=f12e44]
+      - generic [ref=f12e118]:
+        - generic [ref=f12e119]:
+          - generic [ref=f12e120]: Key
+          - textbox "Key" [ref=f12e121]: sofia-old-town
+        - generic [ref=f12e122]:
+          - generic [ref=f12e123]: Name
+          - textbox "Name" [ref=f12e124]: Sofia Old Town Quest
+        - generic [ref=f12e125]:
+          - generic [ref=f12e126]: Intro
+          - textbox "Intro" [ref=f12e127]: Welcome to Sofia Old Town Quest! Your team will uncover landmarks hidden in riddles. Solve each riddle, walk to the place it describes, take a team photo and learn its story.
+        - generic [ref=f12e128]:
+          - generic [ref=f12e129]: Time zone
+          - textbox "Time zone" [ref=f12e130]: Europe/Sofia
+        - generic [ref=f12e131]:
+          - generic [ref=f12e132]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [ref=f12e133]: "240"
+        - generic [ref=f12e134]:
+          - generic [ref=f12e135]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=f12e136]: "5"
+        - generic [ref=f12e137]:
+          - generic [ref=f12e138]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=f12e139]: "20"
+        - generic [ref=f12e140]:
+          - generic [ref=f12e141]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=f12e142]: "30"
+        - button "Update game" [ref=f12e143] [cursor=pointer]
+      - generic [ref=f12e144]:
+        - heading "Tasks" [level=2] [ref=f12e145]
+        - list [ref=f12e146]:
+          - listitem [ref=f12e147]:
+            - generic [ref=f12e148]: Eagles' Bridge
+            - generic [ref=f12e149]:
+              - button "Up" [disabled] [ref=f12e150]
+              - button "Down" [ref=f12e151] [cursor=pointer]
+              - button "Remove Eagles' Bridge" [ref=f12e152] [cursor=pointer]: Remove
+          - listitem [ref=f12e153]:
+            - generic [ref=f12e154]: Lily Pond
+            - generic [ref=f12e155]:
+              - button "Up" [ref=f12e156] [cursor=pointer]
+              - button "Down" [ref=f12e157] [cursor=pointer]
+              - button "Remove Lily Pond" [ref=f12e158] [cursor=pointer]: Remove
+          - listitem [ref=f12e159]:
+            - generic [ref=f12e160]: Sofia University (Rectorate)
+            - generic [ref=f12e161]:
+              - button "Up" [ref=f12e162] [cursor=pointer]
+              - button "Down" [ref=f12e163] [cursor=pointer]
+              - button "Remove Sofia University (Rectorate)" [ref=f12e164] [cursor=pointer]: Remove
+          - listitem [ref=f12e165]:
+            - generic [ref=f12e166]: Alexander Nevsky Cathedral
+            - generic [ref=f12e167]:
+              - button "Up" [ref=f12e168] [cursor=pointer]
+              - button "Down" [ref=f12e169] [cursor=pointer]
+              - button "Remove Alexander Nevsky Cathedral" [ref=f12e170] [cursor=pointer]: Remove
+          - listitem [ref=f12e171]:
+            - generic [ref=f12e172]: Ivan Vazov National Theatre
+            - generic [ref=f12e173]:
+              - button "Up" [ref=f12e174] [cursor=pointer]
+              - button "Down" [ref=f12e175] [cursor=pointer]
+              - button "Remove Ivan Vazov National Theatre" [ref=f12e176] [cursor=pointer]: Remove
+          - listitem [ref=f12e177]:
+            - generic [ref=f12e178]: Ancient Serdika Complex
+            - generic [ref=f12e179]:
+              - button "Up" [ref=f12e180] [cursor=pointer]
+              - button "Down" [disabled] [ref=f12e181]
+              - button "Remove Ancient Serdika Complex" [ref=f12e182] [cursor=pointer]: Remove
+        - generic [ref=f12e183]:
+          - generic [ref=f12e184]:
+            - generic [ref=f12e185]: Add landmark
+            - combobox "Add landmark" [ref=f12e186]:
+              - option "Choose a landmark" [selected]
+          - button "Add landmark" [disabled] [ref=f12e187]
+        - button "Save tasks" [disabled] [ref=f12e188]
+      - button "Cancel" [ref=f12e190] [cursor=pointer]

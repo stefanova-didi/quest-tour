@@ -1,0 +1,40 @@
+- generic [ref=f2e16]:
+  - navigation "Admin navigation" [ref=f2e17]:
+    - link "Dashboard" [ref=f2e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f2e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f2e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f2e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f2e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f2e23] [cursor=pointer]
+  - main [ref=f2e24]:
+    - generic [ref=f2e25]:
+      - heading "Teams" [level=1] [ref=f2e220]
+      - paragraph [ref=f2e252]: Could not delete team.
+      - button "New team" [ref=f2e222] [cursor=pointer]
+      - list [ref=f2e223]:
+        - listitem [ref=f2e224]:
+          - generic [ref=f2e225]:
+            - strong [ref=f2e226]: QA Service
+            - generic [ref=f2e227]: (qa-service)
+          - generic [ref=f2e228]:
+            - button "Edit" [ref=f2e229] [cursor=pointer]
+            - button "Delete" [ref=f2e230] [cursor=pointer]
+        - listitem [ref=f2e231]:
+          - generic [ref=f2e232]:
+            - strong [ref=f2e233]: Test Team
+            - generic [ref=f2e234]: (test-team)
+          - generic [ref=f2e235]:
+            - button "Edit" [ref=f2e236] [cursor=pointer]
+            - button "Delete" [ref=f2e237] [cursor=pointer]
+        - listitem [ref=f2e238]:
+          - generic [ref=f2e239]:
+            - strong [ref=f2e240]: The Explorers
+            - generic [ref=f2e241]: (explorers)
+          - generic [ref=f2e242]:
+            - button "Edit" [ref=f2e243] [cursor=pointer]
+            - button "Delete" [ref=f2e244] [cursor=pointer]

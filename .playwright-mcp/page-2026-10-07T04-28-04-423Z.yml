@@ -1,0 +1,30 @@
+- generic [ref=f1e16]:
+  - navigation "Admin navigation" [ref=f1e17]:
+    - link "Dashboard" [ref=f1e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f1e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f1e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f1e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f1e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f1e23]:
+    - generic [ref=f1e24]:
+      - heading "Photos" [level=1] [ref=f1e25]
+      - generic [ref=f1e96]:
+        - generic [ref=f1e97]:
+          - generic [ref=f1e98]: Team
+          - combobox "Team" [ref=f1e99]:
+            - option "All teams" [selected]
+            - option "QA Service"
+            - option "Test Team Concurrent"
+            - option "The Explorers"
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]: Game
+          - combobox "Game" [ref=f1e102]:
+            - option "All games"
+            - option "Sofia Old Town Quest" [selected]
+        - button "Filter" [ref=f1e103] [cursor=pointer]
+      - paragraph [ref=f1e104]: No photos yet.

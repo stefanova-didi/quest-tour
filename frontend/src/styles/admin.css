@@ -1,0 +1,219 @@
+/* Admin panel additions on top of the qc-* design system */
+
+.admin-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+}
+
+.admin-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.admin-extra-fields {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.admin-filters {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.admin-assignments {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.admin-assignment {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-list-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.admin-list-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.admin-thumb {
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: var(--radius-md);
+  margin-top: var(--space-2);
+}
+
+.admin-shell {
+  display: flex;
+  min-height: 100dvh;
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+.admin-nav {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  width: 200px;
+  padding: var(--space-4);
+  border-right: 1px solid var(--line);
+  background: var(--surface-raised);
+}
+
+.admin-nav a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.admin-nav a:hover,
+.admin-nav a.active {
+  background: var(--patina-50);
+  color: var(--patina-800);
+}
+
+.admin-nav a.active {
+  box-shadow: inset 4px 0 0 0 var(--patina-600);
+}
+
+.admin-nav__logout {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.admin-nav__logout:hover {
+  background: var(--patina-50);
+  color: var(--patina-800);
+}
+
+.admin-nav a:focus-visible,
+.admin-nav__logout:focus-visible,
+.admin-login .qc-input:focus-visible,
+.admin-login .qc-btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.admin-main {
+  flex: 1 1 auto;
+  padding: var(--space-5);
+  overflow: auto;
+}
+
+.admin-section {
+  max-width: 960px;
+}
+
+.admin-section h1 {
+  margin-bottom: var(--space-4);
+}
+
+.admin-login {
+  max-width: 420px;
+}
+
+.admin-login form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.admin-login .qc-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.admin-login .qc-btn {
+  align-self: flex-start;
+}
+
+.admin-magic-link {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .admin-shell {
+    flex-direction: column;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    width: auto;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: var(--space-2);
+  }
+
+  .admin-nav a {
+    min-height: 40px;
+    padding: var(--space-2) var(--space-3);
+    white-space: nowrap;
+  }
+
+  .admin-nav a.active {
+    box-shadow: none;
+  }
+}

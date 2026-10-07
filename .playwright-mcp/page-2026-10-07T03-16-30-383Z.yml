@@ -1,0 +1,64 @@
+- generic [ref=e16]:
+  - navigation "Admin navigation" [ref=e17]:
+    - link "Dashboard" [ref=e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - heading "Edit game" [level=1] [ref=e43]
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]: Key
+          - textbox "Key" [ref=e47]: test-game
+        - generic [ref=e48]:
+          - generic [ref=e49]: Name
+          - textbox "Name" [ref=e50]: Test Game
+        - generic [ref=e51]:
+          - generic [ref=e52]: Intro
+          - textbox "Intro" [ref=e53]: Test intro
+        - generic [ref=e54]:
+          - generic [ref=e55]: Time zone
+          - textbox "Time zone" [ref=e56]: Europe/Sofia
+        - generic [ref=e57]:
+          - generic [ref=e58]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [ref=e59]: "120"
+        - generic [ref=e60]:
+          - generic [ref=e61]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=e62]: "3"
+        - generic [ref=e63]:
+          - generic [ref=e64]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=e65]: "10"
+        - generic [ref=e66]:
+          - generic [ref=e67]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=e68]: "15"
+        - button "Update game" [ref=e69] [cursor=pointer]
+      - generic [ref=e70]:
+        - heading "Tasks" [level=2] [ref=e71]
+        - list [ref=e72]:
+          - listitem [ref=e73]:
+            - generic [ref=e74]: Test Church (concurrent)
+            - generic [ref=e75]:
+              - button "Up" [disabled] [ref=e76]
+              - button "Down" [disabled] [ref=e77]
+              - button "Remove Test Church (concurrent)" [ref=e78] [cursor=pointer]: Remove
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - generic [ref=e81]: Add landmark
+            - combobox "Add landmark" [ref=e82]:
+              - option "Choose a landmark" [selected]
+              - option "Alexander Nevsky Cathedral"
+              - option "Ancient Serdika Complex"
+              - option "Eagles' Bridge"
+              - option "Ivan Vazov National Theatre"
+              - option "Lily Pond"
+              - option "Sofia University (Rectorate)"
+          - button "Add landmark" [disabled] [ref=e83]
+        - button "Save tasks" [disabled] [ref=e84]
+      - button "Cancel" [ref=e86] [cursor=pointer]

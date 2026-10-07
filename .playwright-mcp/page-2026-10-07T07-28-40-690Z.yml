@@ -1,0 +1,57 @@
+- generic [ref=f9e16]:
+  - navigation "Admin navigation" [ref=f9e17]:
+    - link "Dashboard" [ref=f9e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f9e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f9e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f9e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f9e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f9e23] [cursor=pointer]
+  - main [ref=f9e24]:
+    - generic [ref=f9e25]:
+      - heading "Edit team" [level=1] [ref=f9e51]
+      - paragraph [ref=f9e129]: "assignments.valid_until: valid_until must be after valid_from"
+      - generic [ref=f9e130]:
+        - generic [ref=f9e131]:
+          - generic [ref=f9e132]: Key
+          - textbox "Key" [ref=f9e133]: test-team
+        - generic [ref=f9e134]:
+          - generic [ref=f9e135]: Name
+          - textbox "Name" [ref=f9e136]: Test Team
+        - generic [ref=f9e137]:
+          - generic [ref=f9e138]: Participants
+          - textbox "Participants" [ref=f9e139]
+        - button "Update team" [ref=f9e140] [cursor=pointer]
+      - generic [ref=f9e141]:
+        - heading "Assignments" [level=2] [ref=f9e142]
+        - group "Assignment 1" [ref=f9e144]:
+          - generic [ref=f9e146]:
+            - generic [ref=f9e147]: Game
+            - combobox "Game" [ref=f9e148]:
+              - option "Sofia Old Town Quest" [selected]
+              - option "Test Game"
+          - generic [ref=f9e149]:
+            - generic [ref=f9e150]: Valid from
+            - textbox "Valid from" [ref=f9e151]: 2023-12-31T18:00
+          - generic [ref=f9e152]:
+            - generic [ref=f9e153]: Valid until
+            - textbox "Valid until" [ref=f9e154]: 2027-12-31T21:59
+          - generic [ref=f9e155]:
+            - generic [ref=f9e156]: Exit message
+            - textbox "Exit message" [ref=f9e157]
+          - generic [ref=f9e158]:
+            - generic [ref=f9e159]: Token issued
+            - generic [ref=f9e160]:
+              - link "http://localhost:5173/play/fltTuNjXJ6F55FQo1x6cn7cfY22sGqOCWv9cFnkKEh8" [ref=f9e161] [cursor=pointer]:
+                - /url: http://localhost:5173/play/fltTuNjXJ6F55FQo1x6cn7cfY22sGqOCWv9cFnkKEh8
+              - button "Copy" [ref=f9e162] [cursor=pointer]
+            - button "Reissue token" [ref=f9e163] [cursor=pointer]
+            - button "Remove" [ref=f9e164] [cursor=pointer]
+        - generic [ref=f9e165]:
+          - button "Add assignment" [ref=f9e166] [cursor=pointer]
+          - button "Save assignments" [disabled] [ref=f9e167]
+      - button "Cancel" [ref=f9e169] [cursor=pointer]

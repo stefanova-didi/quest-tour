@@ -1,0 +1,51 @@
+- generic [ref=f17e16]:
+  - navigation "Admin navigation" [ref=f17e17]:
+    - link "Dashboard" [ref=f17e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f17e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f17e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f17e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f17e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f17e23] [cursor=pointer]
+  - main [ref=f17e24]:
+    - generic [ref=f17e25]:
+      - heading "Edit team" [level=1] [ref=f17e58]
+      - generic [ref=f17e97]:
+        - generic [ref=f17e98]:
+          - generic [ref=f17e99]: Key
+          - textbox "Key" [ref=f17e100]: player-team
+        - generic [ref=f17e101]:
+          - generic [ref=f17e102]: Name
+          - textbox "Name" [ref=f17e103]: Player Team
+        - generic [ref=f17e104]:
+          - generic [ref=f17e105]: Participants
+          - textbox "Participants" [ref=f17e106]
+        - button "Update team" [ref=f17e107] [cursor=pointer]
+      - generic [ref=f17e108]:
+        - heading "Assignments" [level=2] [ref=f17e109]
+        - group "Assignment 1" [ref=f17e111]:
+          - generic [ref=f17e113]:
+            - generic [ref=f17e114]: Game
+            - combobox "Game" [ref=f17e115]:
+              - option "Assigned Game"
+              - option "Sofia Old Town Quest" [selected]
+          - generic [ref=f17e116]:
+            - generic [ref=f17e117]: Valid from
+            - textbox "Valid from" [ref=f17e118]: 2026-09-30T21:00
+          - generic [ref=f17e119]:
+            - generic [ref=f17e120]: Valid until
+            - textbox "Valid until" [ref=f17e121]: 2026-12-31T21:59
+          - generic [ref=f17e122]:
+            - generic [ref=f17e123]: Exit message
+            - textbox "Exit message" [ref=f17e124]
+          - generic [ref=f17e125]:
+            - button "Reissue token" [ref=f17e126] [cursor=pointer]
+            - button "Remove" [ref=f17e127] [cursor=pointer]
+        - generic [ref=f17e128]:
+          - button "Add assignment" [ref=f17e129] [cursor=pointer]
+          - button "Save assignments" [disabled] [ref=f17e130]
+      - button "Cancel" [ref=f17e132] [cursor=pointer]

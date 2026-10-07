@@ -1,0 +1,32 @@
+- generic [ref=f1e3]:
+  - navigation "Admin navigation" [ref=f1e4]:
+    - link "Dashboard" [ref=f1e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f1e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f1e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f1e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f1e9] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f1e10] [cursor=pointer]
+  - main [ref=f1e11]:
+    - generic [ref=f1e12]:
+      - heading "Games" [level=1] [ref=f1e188]
+      - button "New game" [ref=f1e190] [cursor=pointer]
+      - list [ref=f1e191]:
+        - listitem [ref=f1e192]:
+          - generic [ref=f1e193]:
+            - strong [ref=f1e194]: Assigned Game
+            - generic [ref=f1e195]: (assigned-game)
+          - generic [ref=f1e196]:
+            - button "Edit" [ref=f1e197] [cursor=pointer]
+            - button "Delete" [ref=f1e198] [cursor=pointer]
+        - listitem [ref=f1e199]:
+          - generic [ref=f1e200]:
+            - strong [ref=f1e201]: Sofia Old Town Quest
+            - generic [ref=f1e202]: (sofia-old-town)
+          - generic [ref=f1e203]:
+            - button "Edit" [ref=f1e204] [cursor=pointer]
+            - button "Delete" [ref=f1e205] [cursor=pointer]

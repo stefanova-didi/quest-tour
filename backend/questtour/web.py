@@ -23,6 +23,8 @@ def install_frontend(app: FastAPI, static_dir: Path | None) -> None:
             return HTMLResponse(index_html, headers=NO_CACHE)
 
         app.add_api_route("/", spa_home, methods=["GET"], include_in_schema=False)
+        app.add_api_route("/admin", spa_home, methods=["GET"], include_in_schema=False)
+        app.add_api_route("/admin/{path:path}", spa_home, methods=["GET"], include_in_schema=False)
         app.add_api_route("/play/{token}", spa_play, methods=["GET"], include_in_schema=False)
 
     async def not_found(request: Request, exc: StarletteHTTPException):

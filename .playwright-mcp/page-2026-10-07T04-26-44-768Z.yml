@@ -1,0 +1,38 @@
+- generic [ref=f1e16]:
+  - navigation "Admin navigation" [ref=f1e17]:
+    - link "Dashboard" [ref=f1e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f1e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f1e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f1e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f1e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f1e23]:
+    - generic [ref=f1e24]:
+      - heading "Photos" [level=1] [ref=f1e25]
+      - generic [ref=f1e44]:
+        - generic [ref=f1e45]:
+          - generic [ref=f1e46]: Team
+          - combobox "Team" [ref=f1e47]:
+            - option "All teams"
+            - option "QA Service" [selected]
+            - option "Test Team Concurrent"
+            - option "The Explorers"
+        - generic [ref=f1e48]:
+          - generic [ref=f1e49]: Game
+          - combobox "Game" [ref=f1e50]:
+            - option "All games" [selected]
+            - option "Sofia Old Town Quest"
+        - button "Filter" [ref=f1e51] [cursor=pointer]
+      - list [ref=f1e52]:
+        - listitem [ref=f1e53]:
+          - generic [ref=f1e54]:
+            - strong [ref=f1e55]: Test Team Concurrent
+            - generic [ref=f1e56]: — Sofia Old Town Quest
+            - generic [ref=f1e57]: at 10/7/2026, 7:26:31 AM
+            - link "View photo" [ref=f1e59] [cursor=pointer]:
+              - /url: http://localhost:5173/api/admin/photos/1/download
+          - button "Delete" [ref=f1e61] [cursor=pointer]

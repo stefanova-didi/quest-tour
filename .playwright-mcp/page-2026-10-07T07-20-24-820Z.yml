@@ -1,0 +1,61 @@
+- generic [ref=f5e16]:
+  - navigation "Admin navigation" [ref=f5e17]:
+    - link "Dashboard" [ref=f5e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f5e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f5e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f5e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f5e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f5e23] [cursor=pointer]
+  - main [ref=f5e24]:
+    - generic [ref=f5e25]:
+      - heading "Edit game" [level=1] [ref=f5e44]
+      - paragraph [ref=f5e86]: "max_duration_minutes: Input should be greater than 0"
+      - generic [ref=f5e45]:
+        - generic [ref=f5e46]:
+          - generic [ref=f5e47]: Key
+          - textbox "Key" [ref=f5e48]: test-game
+        - generic [ref=f5e49]:
+          - generic [ref=f5e50]: Name
+          - textbox "Name" [ref=f5e51]: Test Game
+        - generic [ref=f5e52]:
+          - generic [ref=f5e53]: Intro
+          - textbox "Intro" [ref=f5e54]: This is a test game.
+        - generic [ref=f5e55]:
+          - generic [ref=f5e56]: Time zone
+          - textbox "Time zone" [ref=f5e57]: UTC
+        - generic [ref=f5e58]:
+          - generic [ref=f5e59]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [invalid] [ref=f5e60]: "0"
+          - paragraph [ref=f5e87]: Input should be greater than 0
+        - generic [ref=f5e61]:
+          - generic [ref=f5e62]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=f5e63]: "5"
+        - generic [ref=f5e64]:
+          - generic [ref=f5e65]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=f5e66]: "20"
+        - generic [ref=f5e67]:
+          - generic [ref=f5e68]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=f5e69]: "30"
+        - button "Update game" [ref=f5e70] [cursor=pointer]
+      - generic [ref=f5e71]:
+        - heading "Tasks" [level=2] [ref=f5e72]
+        - paragraph [ref=f5e73]: No tasks yet.
+        - generic [ref=f5e74]:
+          - generic [ref=f5e75]:
+            - generic [ref=f5e76]: Add landmark
+            - combobox "Add landmark" [ref=f5e77]:
+              - option "Choose a landmark" [selected]
+              - option "Alexander Nevsky Cathedral"
+              - option "Ancient Serdika Complex"
+              - option "Eagles' Bridge"
+              - option "Ivan Vazov National Theatre"
+              - option "Lily Pond"
+              - option "Sofia University (Rectorate)"
+          - button "Add landmark" [disabled] [ref=f5e78]
+        - button "Save tasks" [disabled] [ref=f5e79]
+      - button "Cancel" [ref=f5e81] [cursor=pointer]

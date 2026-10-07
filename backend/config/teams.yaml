@@ -14,6 +14,9 @@ assignments:
 # Service (test) team (R-25): sync-config gives it one link per game and writes the tokens below.
 # Those links ignore validity windows, max duration and reveal waiting times, can be reset from
 # the game screen, and never appear on a leaderboard. Delete this block to switch them off.
+    token: _zG1crvofdLR8tTikzYjGgHixZoo8l65HyxakYxI6_8
 service:
   team: qa-service
   name: QA Service
+  tokens:
+    sofia-old-town: IN6t5vd03oopvBHQg92z6WO0B7TVXol9S0D-EspNuOw

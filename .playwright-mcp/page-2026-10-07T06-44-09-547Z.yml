@@ -1,0 +1,76 @@
+- generic [ref=f2e16]:
+  - navigation "Admin navigation" [ref=f2e17]:
+    - link "Dashboard" [ref=f2e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f2e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f2e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f2e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f2e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f2e23] [cursor=pointer]
+  - main [ref=f2e24]:
+    - generic [ref=f2e25]:
+      - heading "Edit team" [level=1] [ref=f2e83]
+      - paragraph [ref=f2e180]: "assignments: duplicate game in assignments"
+      - generic [ref=f2e121]:
+        - generic [ref=f2e122]:
+          - generic [ref=f2e123]: Key
+          - textbox "Key" [ref=f2e124]: test-team
+        - generic [ref=f2e125]:
+          - generic [ref=f2e126]: Name
+          - textbox "Name" [ref=f2e127]: Test Team
+        - generic [ref=f2e128]:
+          - generic [ref=f2e129]: Participants
+          - textbox "Participants" [ref=f2e130]
+        - button "Update team" [ref=f2e131] [cursor=pointer]
+      - generic [ref=f2e132]:
+        - heading "Assignments" [level=2] [ref=f2e133]
+        - generic [ref=f2e134]:
+          - group "Assignment 1" [ref=f2e135]:
+            - generic [ref=f2e137]:
+              - generic [ref=f2e138]: Game
+              - combobox "Game" [ref=f2e139]:
+                - option "Assigned Game" [selected]
+                - option "Sofia Old Town Quest"
+            - generic [ref=f2e140]:
+              - generic [ref=f2e141]: Valid from
+              - textbox "Valid from" [ref=f2e142]: 2026-09-30T21:00
+            - generic [ref=f2e143]:
+              - generic [ref=f2e144]: Valid until
+              - textbox "Valid until" [ref=f2e145]: 2026-12-31T21:59
+            - generic [ref=f2e146]:
+              - generic [ref=f2e147]: Exit message
+              - textbox "Exit message" [ref=f2e148]
+            - generic [ref=f2e149]:
+              - generic [ref=f2e150]: Token issued
+              - generic [ref=f2e151]:
+                - link "http://localhost:5173/play/DCr9jGqht8Q9c4HbEJT1OMNEnkW_LmlaJXHjSP-O69o" [ref=f2e161] [cursor=pointer]:
+                  - /url: http://localhost:5173/play/DCr9jGqht8Q9c4HbEJT1OMNEnkW_LmlaJXHjSP-O69o
+                - button "Copy" [ref=f2e153] [cursor=pointer]
+              - button "Reissue token" [ref=f2e154] [cursor=pointer]
+              - button "Remove" [ref=f2e155] [cursor=pointer]
+          - group "Assignment 2" [ref=f2e162]:
+            - generic [ref=f2e164]:
+              - generic [ref=f2e165]: Game
+              - combobox "Game" [ref=f2e166]:
+                - option "Assigned Game"
+                - option "Sofia Old Town Quest" [selected]
+            - generic [ref=f2e167]:
+              - generic [ref=f2e168]: Valid from
+              - textbox "Valid from" [ref=f2e169]: 2026-12-31T23:59
+            - generic [ref=f2e170]:
+              - generic [ref=f2e171]: Valid until
+              - textbox "Valid until" [ref=f2e172]: 2026-10-01T00:00
+            - generic [ref=f2e173]:
+              - generic [ref=f2e174]: Exit message
+              - textbox "Exit message" [ref=f2e175]
+            - generic [ref=f2e176]:
+              - button "Reissue token" [ref=f2e177] [cursor=pointer]
+              - button "Remove" [ref=f2e178] [cursor=pointer]
+        - generic [ref=f2e156]:
+          - button "Add assignment" [ref=f2e157] [cursor=pointer]
+          - button "Save assignments" [ref=f2e158] [cursor=pointer]
+      - button "Cancel" [ref=f2e160] [cursor=pointer]

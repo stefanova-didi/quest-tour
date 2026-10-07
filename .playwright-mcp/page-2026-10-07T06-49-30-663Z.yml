@@ -1,0 +1,50 @@
+- generic [ref=f5e16]:
+  - navigation "Admin navigation" [ref=f5e17]:
+    - link "Dashboard" [ref=f5e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f5e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f5e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f5e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f5e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f5e23] [cursor=pointer]
+  - main [ref=f5e24]:
+    - generic [ref=f5e25]:
+      - heading "New landmark" [level=1] [ref=f5e79]
+      - generic [ref=f5e80]:
+        - generic [ref=f5e81]:
+          - generic [ref=f5e82]: Key
+          - textbox "Key" [ref=f5e83]
+        - generic [ref=f5e84]:
+          - generic [ref=f5e85]: Name
+          - textbox "Name" [ref=f5e86]
+        - generic [ref=f5e87]:
+          - generic [ref=f5e88]: Task
+          - textbox "Task" [ref=f5e89]
+        - generic [ref=f5e90]:
+          - generic [ref=f5e91]: Accepted answers
+          - generic [ref=f5e92]:
+            - generic [ref=f5e112]:
+              - textbox "Accepted answers 1" [ref=f5e113]
+              - button "Remove" [ref=f5e114] [cursor=pointer]
+            - button "Add Accepted answers" [active] [ref=f5e93] [cursor=pointer]
+        - generic [ref=f5e94]:
+          - generic [ref=f5e95]: Hint 1
+          - textbox "Hint 1" [ref=f5e96]
+        - generic [ref=f5e97]:
+          - generic [ref=f5e98]: Hint 2
+          - textbox "Hint 2" [ref=f5e99]
+        - generic [ref=f5e100]:
+          - generic [ref=f5e101]: Tourist info
+          - textbox "Tourist info" [ref=f5e102]
+        - generic [ref=f5e103]:
+          - generic [ref=f5e104]: Latitude
+          - textbox "Latitude" [ref=f5e105]
+        - generic [ref=f5e106]:
+          - generic [ref=f5e107]: Longitude
+          - textbox "Longitude" [ref=f5e108]
+        - button "Create landmark" [ref=f5e109] [cursor=pointer]
+      - button "Cancel" [ref=f5e111] [cursor=pointer]

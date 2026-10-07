@@ -1,0 +1,69 @@
+- generic [ref=e16]:
+  - navigation "Admin navigation" [ref=e17]:
+    - link "Dashboard" [ref=e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - heading "Edit game" [level=1] [ref=e160]
+      - generic [ref=e161]:
+        - generic [ref=e162]:
+          - generic [ref=e163]: Key
+          - textbox "Key" [ref=e164]: test-game
+        - generic [ref=e165]:
+          - generic [ref=e166]: Name
+          - textbox "Name" [ref=e167]: Test Game
+        - generic [ref=e168]:
+          - generic [ref=e169]: Intro
+          - textbox "Intro" [ref=e170]: Test intro
+        - generic [ref=e171]:
+          - generic [ref=e172]: Time zone
+          - textbox "Time zone" [ref=e173]: Europe/Sofia
+        - generic [ref=e174]:
+          - generic [ref=e175]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [ref=e176]: "120"
+        - generic [ref=e177]:
+          - generic [ref=e178]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=e179]: "3"
+        - generic [ref=e180]:
+          - generic [ref=e181]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=e182]: "10"
+        - generic [ref=e183]:
+          - generic [ref=e184]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=e185]: "15"
+        - button "Update game" [ref=e186] [cursor=pointer]
+      - generic [ref=e187]:
+        - heading "Tasks" [level=2] [ref=e188]
+        - list [ref=e189]:
+          - listitem [ref=e190]:
+            - generic [ref=e191]: Eagles' Bridge
+            - generic [ref=e192]:
+              - button "Up" [disabled] [ref=e193]
+              - button "Down" [ref=e194] [cursor=pointer]
+              - button "Remove Eagles' Bridge" [ref=e195] [cursor=pointer]: Remove
+          - listitem [ref=e196]:
+            - generic [ref=e197]: Test Church (concurrent)
+            - generic [ref=e198]:
+              - button "Up" [ref=e199] [cursor=pointer]
+              - button "Down" [disabled] [ref=e200]
+              - button "Remove Test Church (concurrent)" [ref=e201] [cursor=pointer]: Remove
+        - generic [ref=e202]:
+          - generic [ref=e203]:
+            - generic [ref=e204]: Add landmark
+            - combobox "Add landmark" [ref=e205]:
+              - option "Choose a landmark" [selected]
+              - option "Alexander Nevsky Cathedral"
+              - option "Ancient Serdika Complex"
+              - option "Ivan Vazov National Theatre"
+              - option "Lily Pond"
+              - option "Sofia University (Rectorate)"
+          - button "Add landmark" [disabled] [ref=e206]
+        - button "Save tasks" [disabled] [ref=e207]
+      - button "Cancel" [ref=e209] [cursor=pointer]

@@ -1,0 +1,59 @@
+- generic [ref=f1e3]:
+  - navigation "Admin navigation" [ref=f1e4]:
+    - link "Dashboard" [ref=f1e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f1e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f1e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f1e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f1e9] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f1e10]:
+    - generic [ref=f1e11]:
+      - heading "Edit game" [level=1] [ref=f1e70]
+      - generic [ref=f1e71]:
+        - generic [ref=f1e72]:
+          - generic [ref=f1e73]: Key
+          - textbox "Key" [ref=f1e74]: test-game
+        - generic [ref=f1e75]:
+          - generic [ref=f1e76]: Name
+          - textbox "Name" [ref=f1e77]: Test Game
+        - generic [ref=f1e78]:
+          - generic [ref=f1e79]: Intro
+          - textbox "Intro" [ref=f1e80]: Test intro
+        - generic [ref=f1e81]:
+          - generic [ref=f1e82]: Time zone
+          - textbox "Time zone" [ref=f1e83]: Europe/Sofia
+        - generic [ref=f1e84]:
+          - generic [ref=f1e85]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [ref=f1e86]: "120"
+        - generic [ref=f1e87]:
+          - generic [ref=f1e88]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=f1e89]: "3"
+        - generic [ref=f1e90]:
+          - generic [ref=f1e91]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=f1e92]: "10"
+        - generic [ref=f1e93]:
+          - generic [ref=f1e94]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=f1e95]: "15"
+        - button "Update game" [ref=f1e96] [cursor=pointer]
+      - generic [ref=f1e97]:
+        - heading "Tasks" [level=2] [ref=f1e98]
+        - paragraph [ref=f1e99]: No tasks yet.
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]:
+            - generic [ref=f1e102]: Add landmark
+            - combobox "Add landmark" [ref=f1e103]:
+              - option "Choose a landmark"
+              - option "Alexander Nevsky Cathedral"
+              - option "Ancient Serdika Complex"
+              - option "Eagles' Bridge"
+              - option "Ivan Vazov National Theatre"
+              - option "Lily Pond"
+              - option "Sofia University (Rectorate)"
+              - option "Test Church" [selected]
+          - button "Add landmark" [ref=f1e104] [cursor=pointer]
+        - button "Save tasks" [disabled] [ref=f1e105]
+      - button "Cancel" [ref=f1e107] [cursor=pointer]

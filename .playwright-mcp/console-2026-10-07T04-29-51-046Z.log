@@ -1,0 +1,2 @@
+[      74ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=34301b5d:22162
+[   27874ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Entity) @ http://localhost:5173/api/play/gAUQA7H2y6ljmz2INleaknRiunCVrz6WCpBaX8001B0/answer:0

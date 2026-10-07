@@ -10,13 +10,25 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     false,
+    func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from questtour.clock import utc_now
 from questtour.db import Base, UTCDateTime
 
 
-class Landmark(Base):
+class Timestamped:
+    updated_at: Mapped[datetime] = mapped_column(
+        UTCDateTime,
+        default=utc_now,
+        onupdate=utc_now,
+        nullable=False,
+        server_default=func.now(),
+    )
+
+
+class Landmark(Timestamped, Base):
     __tablename__ = "landmarks"
     __table_args__ = (UniqueConstraint("host_id", "key", name="uq_landmarks_host_key"),)
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -34,7 +46,7 @@ class Landmark(Base):
     coordinates_lon: Mapped[float | None] = mapped_column(Float)
 
 
-class Game(Base):
+class Game(Timestamped, Base):
     __tablename__ = "games"
     __table_args__ = (UniqueConstraint("host_id", "key", name="uq_games_host_key"),)
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -62,7 +74,7 @@ class GameTask(Base):
     landmark: Mapped[Landmark] = relationship()
 
 
-class Team(Base):
+class Team(Timestamped, Base):
     __tablename__ = "teams"
     __table_args__ = (
         UniqueConstraint("host_id", "key", name="uq_teams_host_key"),
@@ -77,7 +89,7 @@ class Team(Base):
     is_service: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
 
-class Assignment(Base):
+class Assignment(Timestamped, Base):
     __tablename__ = "assignments"
     __table_args__ = (UniqueConstraint("team_id", "game_id", name="uq_assignments_team_game"),)
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -90,6 +102,7 @@ class Assignment(Base):
     exit_message: Mapped[str] = mapped_column(Text)
     # R-25: a reset bumps this past the deleted run's version so phones never drop the fresh state
     version_floor: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    issued_at: Mapped[datetime | None] = mapped_column(UTCDateTime)
     team: Mapped[Team] = relationship()
     game: Mapped[Game] = relationship()
 
@@ -101,7 +114,9 @@ class GameRun(Base):
     started_at: Mapped[datetime] = mapped_column(UTCDateTime)
     finished_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # last task completed
     ended_at: Mapped[datetime | None] = mapped_column(UTCDateTime)  # clock stopped (any reason)
-    end_reason: Mapped[str | None] = mapped_column(String(20))  # finished|max_duration|window_closed
+    end_reason: Mapped[str | None] = mapped_column(
+        String(20)
+    )  # finished|max_duration|window_closed
     current_position: Mapped[int] = mapped_column(Integer)
     version: Mapped[int] = mapped_column(Integer)  # +1 on every state change; clients drop older
     assignment: Mapped[Assignment] = relationship()
@@ -152,6 +167,10 @@ class Photo(Base):
     blob_name: Mapped[str] = mapped_column(String(500), unique=True)
     content_type: Mapped[str] = mapped_column(String(50))
     size_bytes: Mapped[int] = mapped_column(Integer)
+    updated_at: Mapped[datetime] = mapped_column(
+        UTCDateTime, default=utc_now, onupdate=utc_now, nullable=False, server_default=func.now()
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True, index=True)
 
 
 class RunDevice(Base):

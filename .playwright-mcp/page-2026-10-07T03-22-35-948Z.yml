@@ -1,0 +1,38 @@
+- generic [ref=f5e16]:
+  - navigation "Admin navigation" [ref=f5e17]:
+    - link "Dashboard" [ref=f5e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f5e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f5e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f5e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f5e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f5e23]:
+    - generic [ref=f5e24]:
+      - heading "Teams" [level=1] [ref=f5e147]
+      - button "New team" [ref=f5e149] [cursor=pointer]
+      - list [ref=f5e150]:
+        - listitem [ref=f5e151]:
+          - generic [ref=f5e152]:
+            - strong [ref=f5e153]: QA Service
+            - generic [ref=f5e154]: (qa-service)
+          - generic [ref=f5e155]:
+            - button "Edit" [ref=f5e156] [cursor=pointer]
+            - button "Delete" [ref=f5e157] [cursor=pointer]
+        - listitem [ref=f5e158]:
+          - generic [ref=f5e159]:
+            - strong [ref=f5e160]: Test Team
+            - generic [ref=f5e161]: (test-team)
+          - generic [ref=f5e162]:
+            - button "Edit" [ref=f5e163] [cursor=pointer]
+            - button "Delete" [ref=f5e164] [cursor=pointer]
+        - listitem [ref=f5e165]:
+          - generic [ref=f5e166]:
+            - strong [ref=f5e167]: The Explorers
+            - generic [ref=f5e168]: (explorers)
+          - generic [ref=f5e169]:
+            - button "Edit" [ref=f5e170] [cursor=pointer]
+            - button "Delete" [ref=f5e171] [cursor=pointer]

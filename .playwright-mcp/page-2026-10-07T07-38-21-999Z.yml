@@ -1,0 +1,67 @@
+- generic [ref=f22e3]:
+  - navigation "Admin navigation" [ref=f22e4]:
+    - link "Dashboard" [ref=f22e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f22e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f22e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f22e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f22e9] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f22e10] [cursor=pointer]
+  - main [ref=f22e11]:
+    - generic [ref=f22e12]:
+      - heading "Landmarks" [level=1] [ref=f22e13]
+      - button "New landmark" [ref=f22e15] [cursor=pointer]
+      - list [ref=f22e16]:
+        - listitem [ref=f22e17]:
+          - generic [ref=f22e18]:
+            - strong [ref=f22e19]: Alexander Nevsky Cathedral
+            - generic [ref=f22e20]: (alexander-nevsky)
+          - generic [ref=f22e21]:
+            - button "Edit" [ref=f22e22] [cursor=pointer]
+            - button "Delete" [ref=f22e23] [cursor=pointer]
+        - listitem [ref=f22e24]:
+          - generic [ref=f22e25]:
+            - strong [ref=f22e26]: Ancient Serdika Complex
+            - generic [ref=f22e27]: (ancient-serdika)
+          - generic [ref=f22e28]:
+            - button "Edit" [ref=f22e29] [cursor=pointer]
+            - button "Delete" [ref=f22e30] [cursor=pointer]
+        - listitem [ref=f22e31]:
+          - generic [ref=f22e32]:
+            - strong [ref=f22e33]: Duplicate Landmark
+            - generic [ref=f22e34]: (test-landmark-2)
+          - generic [ref=f22e35]:
+            - button "Edit" [ref=f22e36] [cursor=pointer]
+            - button "Delete" [ref=f22e37] [cursor=pointer]
+        - listitem [ref=f22e38]:
+          - generic [ref=f22e39]:
+            - strong [ref=f22e40]: Eagles' Bridge
+            - generic [ref=f22e41]: (eagles-bridge)
+          - generic [ref=f22e42]:
+            - button "Edit" [ref=f22e43] [cursor=pointer]
+            - button "Delete" [ref=f22e44] [cursor=pointer]
+        - listitem [ref=f22e45]:
+          - generic [ref=f22e46]:
+            - strong [ref=f22e47]: Ivan Vazov National Theatre
+            - generic [ref=f22e48]: (ivan-vazov-theatre)
+          - generic [ref=f22e49]:
+            - button "Edit" [ref=f22e50] [cursor=pointer]
+            - button "Delete" [ref=f22e51] [cursor=pointer]
+        - listitem [ref=f22e52]:
+          - generic [ref=f22e53]:
+            - strong [ref=f22e54]: Lily Pond
+            - generic [ref=f22e55]: (lily-pond)
+          - generic [ref=f22e56]:
+            - button "Edit" [ref=f22e57] [cursor=pointer]
+            - button "Delete" [ref=f22e58] [cursor=pointer]
+        - listitem [ref=f22e59]:
+          - generic [ref=f22e60]:
+            - strong [ref=f22e61]: Sofia University (Rectorate)
+            - generic [ref=f22e62]: (sofia-university)
+          - generic [ref=f22e63]:
+            - button "Edit" [ref=f22e64] [cursor=pointer]
+            - button "Delete" [ref=f22e65] [cursor=pointer]

@@ -1,0 +1,65 @@
+- generic [ref=f1e3]:
+  - navigation "Admin navigation" [ref=f1e4]:
+    - link "Dashboard" [ref=f1e5] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f1e6] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f1e7] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f1e8] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f1e9] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=f1e10] [cursor=pointer]
+  - main [ref=f1e11]:
+    - generic [ref=f1e12]:
+      - heading "Edit game" [level=1] [ref=f1e31]
+      - generic [ref=f1e81]:
+        - generic [ref=f1e82]:
+          - generic [ref=f1e83]: Key
+          - textbox "Key" [ref=f1e84]: new-game
+        - generic [ref=f1e85]:
+          - generic [ref=f1e86]: Name
+          - textbox "Name" [ref=f1e87]: New Game
+        - generic [ref=f1e88]:
+          - generic [ref=f1e89]: Intro
+          - textbox "Intro" [ref=f1e90]: A test game.
+        - generic [ref=f1e91]:
+          - generic [ref=f1e92]: Time zone
+          - textbox "Time zone" [ref=f1e93]: Europe/Sofia
+        - generic [ref=f1e94]:
+          - generic [ref=f1e95]: Duration (minutes)
+          - spinbutton "Duration (minutes)" [ref=f1e96]: "120"
+        - generic [ref=f1e97]:
+          - generic [ref=f1e98]: Reveal attempts
+          - spinbutton "Reveal attempts" [ref=f1e99]: "5"
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]: Reveal minutes
+          - spinbutton "Reveal minutes" [ref=f1e102]: "20"
+        - generic [ref=f1e103]:
+          - generic [ref=f1e104]: Reveal penalty (minutes)
+          - spinbutton "Reveal penalty (minutes)" [ref=f1e105]: "30"
+        - button "Update game" [ref=f1e106] [cursor=pointer]
+      - generic [ref=f1e107]:
+        - heading "Tasks" [level=2] [ref=f1e108]
+        - list [ref=f1e109]:
+          - listitem [ref=f1e110]:
+            - generic [ref=f1e111]: Ancient Serdika Complex
+            - generic [ref=f1e112]:
+              - button "Up" [disabled] [ref=f1e113]
+              - button "Down" [disabled] [ref=f1e114]
+              - button "Remove Ancient Serdika Complex" [ref=f1e115] [cursor=pointer]: Remove
+        - generic [ref=f1e116]:
+          - generic [ref=f1e117]:
+            - generic [ref=f1e118]: Add landmark
+            - combobox "Add landmark" [ref=f1e119]:
+              - option "Choose a landmark" [selected]
+              - option "Alexander Nevsky Cathedral"
+              - option "Eagles' Bridge"
+              - option "Ivan Vazov National Theatre"
+              - option "Lily Pond"
+              - option "Sofia University (Rectorate)"
+              - option "St. Nedelya"
+          - button "Add landmark" [disabled] [ref=f1e120]
+        - button "Save tasks" [disabled] [ref=f1e121]
+      - button "Cancel" [ref=f1e123] [cursor=pointer]

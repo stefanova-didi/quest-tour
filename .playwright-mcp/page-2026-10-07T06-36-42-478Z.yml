@@ -1,0 +1,51 @@
+- generic [ref=e16]:
+  - navigation "Admin navigation" [ref=e17]:
+    - link "Dashboard" [ref=e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=e22] [cursor=pointer]:
+      - /url: /admin/photos
+    - button "Logout" [ref=e23] [cursor=pointer]
+  - main [ref=e24]:
+    - generic [ref=e25]:
+      - heading "New landmark" [level=1] [ref=e79]
+      - paragraph [ref=e118]: "key: key already exists"
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - generic [ref=e82]: Key
+          - textbox "Key" [ref=e83]: st-nedelya
+        - generic [ref=e84]:
+          - generic [ref=e85]: Name
+          - textbox "Name" [ref=e86]: Another St Nedelya
+        - generic [ref=e87]:
+          - generic [ref=e88]: Task
+          - textbox "Task" [ref=e89]: Duplicate test.
+        - generic [ref=e90]:
+          - generic [ref=e91]: Accepted answers
+          - generic [ref=e92]:
+            - generic [ref=e112]:
+              - textbox "Accepted answers 1" [ref=e113]: answer
+              - button "Remove" [ref=e114] [cursor=pointer]
+            - button "Add Accepted answers" [ref=e93] [cursor=pointer]
+        - generic [ref=e94]:
+          - generic [ref=e95]: Hint 1
+          - textbox "Hint 1" [ref=e96]
+        - generic [ref=e97]:
+          - generic [ref=e98]: Hint 2
+          - textbox "Hint 2" [ref=e99]
+        - generic [ref=e100]:
+          - generic [ref=e101]: Tourist info
+          - textbox "Tourist info" [ref=e102]: Tourist info text.
+        - generic [ref=e103]:
+          - generic [ref=e104]: Latitude
+          - textbox "Latitude" [ref=e105]
+        - generic [ref=e106]:
+          - generic [ref=e107]: Longitude
+          - textbox "Longitude" [ref=e108]
+        - button "Create landmark" [ref=e109] [cursor=pointer]
+      - button "Cancel" [ref=e111] [cursor=pointer]

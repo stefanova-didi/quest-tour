@@ -1,0 +1,45 @@
+- generic [ref=f6e16]:
+  - navigation "Admin navigation" [ref=f6e17]:
+    - link "Dashboard" [ref=f6e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f6e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f6e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f6e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f6e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f6e23]:
+    - generic [ref=f6e24]:
+      - heading "New landmark" [level=1] [ref=f6e71]
+      - generic [ref=f6e72]:
+        - generic [ref=f6e73]:
+          - generic [ref=f6e74]: Key
+          - textbox "Key" [ref=f6e75]
+        - generic [ref=f6e76]:
+          - generic [ref=f6e77]: Name
+          - textbox "Name" [ref=f6e78]
+        - generic [ref=f6e79]:
+          - generic [ref=f6e80]: Task
+          - textbox "Task" [ref=f6e81]
+        - generic [ref=f6e82]:
+          - generic [ref=f6e83]: Accepted answers
+          - button "Add Accepted answers" [ref=f6e85] [cursor=pointer]
+        - generic [ref=f6e86]:
+          - generic [ref=f6e87]: Hint 1
+          - textbox "Hint 1" [ref=f6e88]
+        - generic [ref=f6e89]:
+          - generic [ref=f6e90]: Hint 2
+          - textbox "Hint 2" [ref=f6e91]
+        - generic [ref=f6e92]:
+          - generic [ref=f6e93]: Tourist info
+          - textbox "Tourist info" [ref=f6e94]
+        - generic [ref=f6e95]:
+          - generic [ref=f6e96]: Latitude
+          - textbox "Latitude" [ref=f6e97]
+        - generic [ref=f6e98]:
+          - generic [ref=f6e99]: Longitude
+          - textbox "Longitude" [ref=f6e100]
+        - button "Create landmark" [ref=f6e101] [cursor=pointer]
+      - button "Cancel" [ref=f6e103] [cursor=pointer]

@@ -17,10 +17,15 @@ dependencies = [
   "ruamel.yaml>=0.18",
   "Unidecode>=1.3",
   "tzdata>=2024.1",          # zoneinfo data on Windows
+  "authlib>=1.3",
+  "httpx>=0.27",
+  "itsdangerous>=2.2",
+  "email-validator>=2.0",
 ]
 
 [project.scripts]
 sync-config = "questtour.cli.sync_config:main"
+import-yaml = "questtour.cli.sync_config:main"
 db-setup = "questtour.cli.db_setup:main"
 
 [dependency-groups]

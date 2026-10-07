@@ -1,0 +1,49 @@
+- generic [ref=f5e16]:
+  - navigation "Admin navigation" [ref=f5e17]:
+    - link "Dashboard" [ref=f5e18] [cursor=pointer]:
+      - /url: /admin/dashboard
+    - link "Landmarks" [ref=f5e19] [cursor=pointer]:
+      - /url: /admin/landmarks
+    - link "Games" [ref=f5e20] [cursor=pointer]:
+      - /url: /admin/games
+    - link "Teams" [ref=f5e21] [cursor=pointer]:
+      - /url: /admin/teams
+    - link "Photos" [ref=f5e22] [cursor=pointer]:
+      - /url: /admin/photos
+  - main [ref=f5e23]:
+    - generic [ref=f5e24]:
+      - heading "Edit team" [level=1] [ref=f5e50]
+      - generic [ref=f5e51]:
+        - generic [ref=f5e52]:
+          - generic [ref=f5e53]: Key
+          - textbox "Key" [ref=f5e54]: test-team
+        - generic [ref=f5e55]:
+          - generic [ref=f5e56]: Name
+          - textbox "Name" [ref=f5e57]: Test Team
+        - generic [ref=f5e58]:
+          - generic [ref=f5e59]: Participants
+          - textbox "Participants" [ref=f5e60]
+        - button "Update team" [ref=f5e61] [cursor=pointer]
+      - generic [ref=f5e62]:
+        - heading "Assignments" [level=2] [ref=f5e63]
+        - group "Assignment 1" [ref=f5e65]:
+          - generic [ref=f5e67]:
+            - generic [ref=f5e68]: Game
+            - combobox "Game" [ref=f5e69]:
+              - option "Sofia Old Town Quest (concurrent)" [selected]
+          - generic [ref=f5e70]:
+            - generic [ref=f5e71]: Valid from
+            - textbox "Valid from" [ref=f5e72]: 2026-10-06T21:00
+          - generic [ref=f5e73]:
+            - generic [ref=f5e74]: Valid until
+            - textbox "Valid until" [ref=f5e75]: 2026-10-07T21:00
+          - generic [ref=f5e76]:
+            - generic [ref=f5e77]: Exit message
+            - textbox "Exit message" [ref=f5e78]
+          - generic [ref=f5e79]:
+            - button "Reissue token" [ref=f5e80] [cursor=pointer]
+            - button "Remove" [ref=f5e81] [cursor=pointer]
+        - generic [ref=f5e82]:
+          - button "Add assignment" [ref=f5e83] [cursor=pointer]
+          - button "Save assignments" [disabled] [ref=f5e84]
+      - button "Cancel" [ref=f5e86] [cursor=pointer]

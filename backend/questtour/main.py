@@ -1,13 +1,21 @@
+import hashlib
 import logging
+from contextlib import asynccontextmanager
 from datetime import datetime
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from sqlalchemy import func, select
 from sqlalchemy.orm import sessionmaker
+from starlette.middleware.sessions import SessionMiddleware
 
+from questtour.admin import admin_router
+from questtour.admin.errors import register_admin_exception_handlers
 from questtour.api import health, images, play
+from questtour.auth import auth_router
 from questtour.clock import Clock, utc_now
 from questtour.db import make_engine
+from questtour.models import Landmark
 from questtour.services.access import LinkNotValid
 from questtour.settings import Settings, get_settings
 from questtour.storage import BlobStore, make_blob_store
@@ -37,6 +45,51 @@ log = logging.getLogger("questtour")
 UPLOAD_OVERHEAD_BYTES = 1024 * 1024  # multipart boundaries + the position field
 
 
+def _acquire_seed_lock(session, settings: Settings) -> None:
+    """Use a deterministic Postgres advisory lock id derived from the host id.
+
+    Advisory locks are Postgres-specific; other dialects (e.g. SQLite in tests) skip locking
+    because they do not run concurrent app instances.
+    """
+    if session.bind.dialect.name != "postgresql":
+        return
+    lock_input = f"{settings.host_id}:questtour_seed".encode()
+    lock_id = int(hashlib.sha256(lock_input).hexdigest()[:16], 16) & 0x7FFFFFFFFFFFFFFF
+    session.execute(select(func.pg_advisory_xact_lock(lock_id)))
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    settings = app.state.settings
+    app.state.seed_error = None
+    if settings.config_dir.is_dir():
+        try:
+            with app.state.session_factory() as session:  # noqa: SIM117
+                with session.begin():
+                    _acquire_seed_lock(session, settings)
+                    count = session.scalar(
+                        select(func.count(Landmark.id)).where(Landmark.host_id == settings.host_id)
+                    )
+                    if count == 0:
+                        from questtour.services.seed import import_yaml
+
+                        result = import_yaml(
+                            session=session,
+                            store=app.state.blob_store,
+                            settings=settings,
+                            write_back=False,
+                            autocommit=False,
+                        )
+                        if isinstance(result, list):
+                            app.state.seed_error = "; ".join(result)
+                            raise RuntimeError("seed validation failed")
+        except Exception:
+            log.exception("seed import failed")
+            if app.state.seed_error is None:
+                app.state.seed_error = "seed import failed; see logs"
+    yield
+
+
 def create_app(
     settings: Settings | None = None,
     *,
@@ -46,13 +99,30 @@ def create_app(
 ) -> FastAPI:
     logging.basicConfig(level=logging.INFO)
     settings = settings or get_settings()
-    app = FastAPI(title="Quest City Tour", docs_url=None, redoc_url=None, openapi_url=None)
+    app = FastAPI(
+        title="Quest City Tour",
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+        lifespan=lifespan,
+    )
+    register_admin_exception_handlers(app)
+    app.add_middleware(
+        SessionMiddleware,
+        secret_key=settings.admin_session_secret,
+        session_cookie="questtour_admin_session",
+        max_age=settings.admin_session_max_age_minutes * 60,
+        same_site="lax",
+        https_only=settings.admin_session_secure,
+    )
     app.state.settings = settings
     app.state.session_factory = session_factory or sessionmaker(
         make_engine(settings), expire_on_commit=False
     )
     app.state.blob_store = blob_store or make_blob_store(settings)
     app.state.clock = clock
+    app.include_router(auth_router)  # full /api/admin/auth/* routes
+    app.include_router(admin_router)  # prefix /api/admin
     if blob_store is None:
         _ensure_containers(app.state.blob_store, settings)
 
