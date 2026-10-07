@@ -16,7 +16,8 @@ Teammates on several phones share one run: if one phone solves a task, the other
 
 The backend is FastAPI + SQLAlchemy (PostgreSQL, or SQLite for a quick local run) with blob storage
 for photos and pictures (Azure Blob / Azurite, or plain files). The frontend is a React + Vite SPA.
-The specs are in `specs/`, the design mocks in `frontend-mocks/`.
+The specs are in `specs/`, the design mocks in `frontend-mocks/`, and the look-and-feel proposals
+(directions, variants, self-hosted fonts) in `design/` — open `design/index.html` in a browser.
 
 ## Prerequisites
 

@@ -1,21 +1,26 @@
-/* Quest City Tour mocks — tokens from the Quest City Tour design system (tokens.json) as CSS variables,
-   plus screen-level layout. Component classes (qc-btn, qc-header, …) come from ds/questcity/components/bundle.css. */
+/* Quest City Tour — tokens from the design system (tokens.json) as CSS variables, plus screen-level layout.
+   Component classes (qc-btn, qc-header, …) live in questcity.css. */
+/* Direction 02c "Evening Domes · Cards" (design/02c-evening-cards.html, PR #13): deep patina bands with a
+   gold rule, a light sage reading surface, raised white cards, solid gold penalty chips, Onest + JetBrains Mono.
+   Token names are unchanged from tokens.json so every component still reads the same variables. */
 :root {
-  --surface: #faf7f0; --surface-raised: #ffffff; --surface-sunken: #efe9dc;
-  --line: #d6cdb9; --line-strong: #857b68;
-  --ink: #1c2420; --ink-muted: #4a544e; --ink-inverse: #ffffff;
-  --patina-50: #e8f1ea; --patina-300: #86aa92; --patina-600: #2f6a55; --patina-800: #1f4a3b;
-  --gold-100: #fbf1d4; --gold-300: #e8d390; --gold-500: #d6a836; --gold-700: #7d5c12;
-  --theatre-100: #f7e3df; --theatre-500: #a5524b; --theatre-600: #93413a; --theatre-800: #6b2b26;
+  --surface: #e9efe9; --surface-raised: #ffffff; --surface-sunken: #dfe6df;
+  --line: #c3cfc5; --line-strong: #5c6f62;
+  --ink: #0f1b16; --ink-muted: #3f5048; --ink-inverse: #f4f1e6;
+  --patina-50: #ddeee4; --patina-300: #7fae95; --patina-600: #1f6b4f; --patina-800: #0f3a2c;
+  --gold-100: #f8efd3; --gold-300: #e6cd86; --gold-500: #cfa43c; --gold-700: #6f5210;
+  --theatre-100: #f6e2dc; --theatre-500: #b04a3b; --theatre-600: #9d3f32; --theatre-800: #66251c;
   --accent: var(--patina-600); --accent-strong: var(--patina-800); --on-accent: var(--ink-inverse); --focus: var(--patina-800);
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Atkinson Hyperlegible Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px; --space-7: 48px;
-  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px; --radius-pill: 999px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-pill: 999px;
   --tap-min: 48px; --header-height: 88px;
-  --shadow-raised: 0 1px 2px rgba(28,36,32,0.08), 0 4px 12px rgba(28,36,32,0.08);
-  --shadow-overlay: 0 -4px 24px rgba(28,36,32,0.18);
+  --shadow-raised: 0 1px 2px rgba(15,27,22,0.08), 0 6px 18px rgba(15,27,22,0.10);
+  --shadow-overlay: 0 -4px 24px rgba(15,27,22,0.18);
+  --shadow-actions: 0 -6px 18px rgba(15,27,22,0.06);
+  --seg-gap: var(--patina-800);                      /* colour between progress segments = header ground */
 }
 
 /* Screen frame: header → banner → content (scrolls) → action zone pinned to the bottom */
@@ -24,14 +29,14 @@
 .qs *, .qs *::before, .qs *::after { box-sizing: border-box; }
 .qs-main { flex: 1 1 auto; min-height: 0; overflow: hidden; padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-5); }
 .qs-main--center { justify-content: center; align-items: center; text-align: center; padding: var(--space-7) var(--space-5); }
-.qs-actions { flex: none; padding: var(--space-4); display: grid; gap: var(--space-3); background: var(--surface); border-top: 1px solid var(--line); }
-.qs-actions--plain { border-top: 0; }
+.qs-actions { flex: none; padding: var(--space-4); display: grid; gap: var(--space-3); background: var(--surface-raised); box-shadow: var(--shadow-actions); position: relative; }
+.qs-actions--plain { box-shadow: var(--shadow-actions); }
 .qs-fade { position: relative; }
 
 /* Type styles */
-.t-display-xl { font: 700 40px/44px var(--font-display); letter-spacing: -0.01em; margin: 0; }
-.t-display-l { font: 700 30px/36px var(--font-display); margin: 0; }
-.t-title { font: 600 22px/28px var(--font-display); margin: 0; }
+.t-display-xl { font: 800 44px/46px var(--font-display); letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+.t-display-l { font: 800 30px/34px var(--font-display); letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
+.t-title { font: 800 22px/28px var(--font-display); letter-spacing: -0.02em; margin: 0; }
 .t-riddle { font: 400 20px/30px var(--font-sans); margin: 0; }
 .t-body { font: 400 17px/26px var(--font-sans); margin: 0; }
 .t-label { font: 700 17px/22px var(--font-sans); margin: 0; }
@@ -40,9 +45,13 @@
 .t-timer { font: 700 22px/28px var(--font-mono); font-variant-numeric: tabular-nums; }
 .t-timer-xl { font: 700 44px/48px var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 
-/* Eyebrow above a block: icon + caption-sized label */
-.qs-eyebrow { display: flex; align-items: center; gap: var(--space-2); font: 700 15px/20px var(--font-sans); color: var(--patina-600); margin: 0; }
-.qs-eyebrow svg { width: 18px; height: 18px; flex: none; }
+/* Eyebrow above a block: a patina chip (gold or muted variants for answer / recap blocks) */
+.qs-eyebrow { display: inline-flex; align-items: center; gap: var(--space-1); width: max-content; max-width: 100%; margin: 0;
+  padding: 4px var(--space-3) 4px var(--space-2); border-radius: var(--radius-pill); background: var(--accent-strong); color: var(--ink-inverse);
+  font: 700 12px/16px var(--font-sans); letter-spacing: .06em; text-transform: uppercase; }
+.qs-eyebrow svg { width: 16px; height: 16px; flex: none; }
+.qs-eyebrow--gold { background: var(--gold-500); color: var(--ink); }
+.qs-eyebrow--muted { background: var(--surface-sunken); color: var(--ink-muted); }
 
 .qs-pic { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: var(--radius-lg); background: var(--surface-sunken); }
 .qs-card { background: var(--surface-raised); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised); padding: var(--space-4); display: grid; gap: var(--space-3); }
@@ -52,22 +61,22 @@
 /* Rules list on Welcome */
 .qs-rules { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
 .qs-rules li { display: grid; grid-template-columns: 36px 1fr; gap: var(--space-3); align-items: start; font: 400 17px/26px var(--font-sans); }
-.qs-rules .ic { width: 36px; height: 36px; border-radius: var(--radius-md); display: grid; place-items: center; background: var(--patina-50); color: var(--patina-800); }
+.qs-rules .ic { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--patina-50); color: var(--patina-800); }
 .qs-rules .ic svg { width: 20px; height: 20px; }
 .qs-rules .ic--gold { background: var(--gold-100); color: var(--gold-700); }
 
-.qs-note { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--surface-sunken); }
-.qs-note svg { width: 22px; height: 22px; color: var(--ink-muted); margin-top: 2px; }
+.qs-note { display: grid; grid-template-columns: 32px 1fr; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); background: var(--surface-raised); box-shadow: var(--shadow-raised); align-items: start; }
+.qs-note svg { width: 32px; height: 32px; padding: 7px; border-radius: 50%; background: var(--patina-50); color: var(--patina-800); }
 
 /* Welcome hero */
-.qs-hero { position: relative; background: var(--accent-strong); color: var(--on-accent); padding: var(--space-6) var(--space-4) var(--space-5); display: grid; gap: var(--space-3); overflow: hidden; }
+.qs-hero { position: relative; background: var(--accent-strong); color: var(--on-accent); padding: var(--space-6) var(--space-4) var(--space-5); display: grid; gap: var(--space-3); overflow: hidden; border-bottom: 2px solid var(--gold-500); }
 .qs-hero__art { position: absolute; right: -8px; top: 0; width: 170px; height: 120px; }
-.qs-hero__kicker { font: 700 15px/20px var(--font-sans); color: var(--gold-300); margin: 0; }
-.qs-team { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-3); border-radius: var(--radius-pill); background: var(--gold-300); color: var(--ink); font: 700 17px/22px var(--font-sans); }
+.qs-hero__kicker { font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--gold-300); margin: 0; }
+.qs-team { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-3); border-radius: var(--radius-sm); background: var(--gold-500); color: var(--ink); font: 700 17px/22px var(--font-sans); }
 .qs-team svg { width: 20px; height: 20px; }
 
 /* Curtain band on Finish and Time's up */
-.qs-curtain { position: relative; background: var(--theatre-500); color: var(--ink-inverse); padding: var(--space-7) var(--space-4) var(--space-6); display: grid; gap: var(--space-2); overflow: hidden; }
+.qs-curtain { position: relative; background: var(--accent-strong); color: var(--ink-inverse); padding: var(--space-7) var(--space-4) var(--space-6); display: grid; gap: var(--space-2); overflow: hidden; border-bottom: 2px solid var(--gold-500); }
 .qs-curtain p { position: relative; }
 .qs-curtain__art { position: absolute; inset: 0; width: 100%; height: 100%; }
 
@@ -77,13 +86,13 @@
 .qs-sum__row dt { color: var(--ink); }
 .qs-sum__row dd { margin: 0; font: 700 17px/22px var(--font-mono); font-variant-numeric: tabular-nums; }
 .qs-sum__row dd.pen { color: var(--gold-700); font-family: var(--font-sans); }
-.qs-sum__total { border-top: 2px solid var(--ink); padding-top: var(--space-2); font-weight: 700; }
+.qs-sum__total { border-top: 2px solid var(--gold-500); padding-top: var(--space-2); font-weight: 700; }
 
 /* Revealed answer */
 .qs-answer { background: var(--gold-100); border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-2); border: 2px solid var(--gold-500); }
 
 /* Correct moment */
-.qs-badge { width: 96px; height: 96px; border-radius: 50%; background: var(--patina-600); color: var(--ink-inverse); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--patina-50); }
+.qs-badge { width: 96px; height: 96px; border-radius: var(--radius-lg); background: var(--gold-500); color: var(--ink); display: grid; place-items: center; box-shadow: 0 0 0 12px var(--patina-50); }
 .qs-badge svg { width: 52px; height: 52px; }
 .qs-confetti { position: absolute; inset: 0; pointer-events: none; }
 

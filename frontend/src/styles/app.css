@@ -12,7 +12,8 @@ body { background: var(--surface); }
 .qs-hint-meta { font: 400 15px/20px var(--font-sans); }
 .qs-reveal-locked { display: grid; gap: 2px; text-align: left; }
 .qs-hint-btn--two-line { padding-top: 8px; padding-bottom: 8px; }
-.qs-riddle-card { gap: 12px; padding: 24px 20px; }
+.qs-riddle-card { gap: 12px; padding: var(--space-4); }
+.qs-hints-card { gap: 12px; }
 .qs-main--top { padding-top: 24px; }                                 /* Photo mocks */
 .qs-main--top-lg { padding-top: 32px; }                              /* TaskNoPicture, Revealed */
 .qs-main.qs-main--end { justify-content: safe flex-end; }             /* LandmarkLast; `safe` keeps overflow scrollable */
@@ -20,8 +21,8 @@ body { background: var(--surface); }
 /* Mocks put inline position:relative on content above the absolutely positioned confetti/curtain art */
 .qs-curtain > :not(svg), .qs-main--center > :not(svg) { position: relative; }
 /* TimesUp: light progress bar (mock inline style; .qc-progress itself is styled for the dark header) */
-.qs-progress--light { height: 10px; background: #efe9dc; }
-.qs-progress--light > span { background: #2f6a55; }
+.qs-progress--light { height: 10px; background: var(--surface-sunken); }
+.qs-progress--light > span { background: var(--patina-600); }
 /* LandmarkLast card: icon column (mock inline style) */
 .qs-last-card { display: grid; grid-template-columns: 40px 1fr; align-items: start; gap: 12px; }
 .qs-last-card > svg { width: 32px; height: 32px; color: var(--patina-800); }

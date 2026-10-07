@@ -20,7 +20,7 @@ export function FinishScreen({ state, frame }: { state: GameState; frame: FrameP
           <Confetti />
           <CurtainArt />
           {results.rank !== null && (
-            <span className="qs-team" style={{ background: "#ffffff" }}>
+            <span className="qs-team">
               <Icon name="trophy" />{results.shared_rank ? "Shared " : ""}{ordinal(results.rank)} place
             </span>
           )}
@@ -42,7 +42,7 @@ export function FinishScreen({ state, frame }: { state: GameState; frame: FrameP
           </section>
           <Leaderboard rows={results.leaderboard} gameName={game.name} />
           <section className="qs-card qs-host-card" aria-labelledby="host-label">
-            <p className="qs-eyebrow" id="host-label" style={{ color: "var(--patina-800)" }}><Icon name="gift" />From your host</p>
+            <p className="qs-eyebrow qs-eyebrow--gold" id="host-label"><Icon name="gift" />From your host</p>
             <Paragraphs text={results.exit_message} />
           </section>
         </main>

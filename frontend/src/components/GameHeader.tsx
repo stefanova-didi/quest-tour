@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import type { Clock } from "../api/types";
 import { formatHms, formatLeft, formatPenalty } from "../lib/format";
 import { useNow } from "../lib/useNow";
@@ -36,8 +36,9 @@ export function GameHeader({ clock, position, taskCount, receivedAt, onTimeUp }:
       </div>
       <div className="qc-header__progress">
         <span>Task {taskNo} of {taskCount}{warning && penalty ? ` · ${penalty}` : ""}</span>
-        <div className="qc-progress" role="progressbar" aria-label="Quest progress"
-             aria-valuenow={taskNo} aria-valuemin={0} aria-valuemax={taskCount}>
+        <div className="qc-progress qc-progress--seg" role="progressbar" aria-label="Quest progress"
+             aria-valuenow={taskNo} aria-valuemin={0} aria-valuemax={taskCount}
+             style={{ "--segments": taskCount } as CSSProperties}>
           <span style={{ width: `${(taskNo / taskCount) * 100}%` }} />
         </div>
       </div>

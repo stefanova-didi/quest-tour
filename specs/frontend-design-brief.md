@@ -26,6 +26,8 @@ Quest City Tour is a self-guided, gamified city walking tour played in a phone b
 
 No brand identity is defined yet. Propose a visual direction (colour palette, type, icon style) that fits a city adventure, and keep it easy to re-brand per host later (logo and accent colour swappable).
 
+**Chosen direction (October 2026): 02c "Evening Domes · Cards"** from the proposals in [`design/`](../design/index.html): deep patina bands (header, hero, finish) with a thin gold rule, a light sage reading surface, raised white cards for riddle / hints / rules / leaderboard, sunken flat controls, solid gold penalty chips, a progress bar segmented per task, filled icons, and Onest + JetBrains Mono (self-hosted, full Cyrillic). Token values live in `frontend-mocks/ds/questcity/tokens.json`; the mock-ups in `frontend-mocks/` predate this direction and remain the reference for layout and states, while `design/02c-evening-cards.html` is the reference for look and feel.
+
 ## 4. Layout frame
 
 - Design at **390 × 844** (iPhone 14/15) as the primary frame; check that nothing breaks at **360 × 740** (small Android).
