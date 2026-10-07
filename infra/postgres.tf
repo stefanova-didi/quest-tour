@@ -43,10 +43,21 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
   end_ip_address   = "0.0.0.0"
 }
 
+# Each admin entry is either a single IPv4 ("1.2.3.4") or a CIDR range ("10.0.0.0/24");
+# a range opens the whole network (network address .. broadcast) to Postgres.
+locals {
+  admin_rules = {
+    for k, v in var.admin_ip_addresses : k => {
+      start = can(regex("/", v)) ? cidrhost(v, 0) : v
+      end   = can(regex("/", v)) ? cidrhost(v, pow(2, 32 - tonumber(split("/", v)[1])) - 1) : v
+    }
+  }
+}
+
 resource "azurerm_postgresql_flexible_server_firewall_rule" "admin" {
-  for_each         = var.admin_ip_addresses
+  for_each         = local.admin_rules
   name             = "admin-${each.key}"
   server_id        = azurerm_postgresql_flexible_server.db.id
-  start_ip_address = each.value
-  end_ip_address   = each.value
+  start_ip_address = each.value.start
+  end_ip_address   = each.value.end
 }

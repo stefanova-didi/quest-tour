@@ -46,10 +46,14 @@ def build_plan(
         plan.server.append(f"CREATE ROLE {owner} NOLOGIN")
     for member in dict.fromkeys([state.current_user, app_role, *members]):
         plan.server.append(f"GRANT {owner} TO {quote_ident(member)} WITH INHERIT TRUE, SET TRUE")
+    # PG 15+ does not give members of the (database-owning) role CREATE on the public schema;
+    # the app role inherits it only from an explicit grant, so grant on first run too — not
+    # just on re-runs.
     if state.database_exists:
         plan.database.append(f"GRANT USAGE, CREATE ON SCHEMA public TO {owner}")
     else:
         plan.server.append(f"CREATE DATABASE {quote_ident(database)} OWNER {owner}")
+        plan.database.append(f"GRANT USAGE, CREATE ON SCHEMA public TO {owner}")
     return plan
 
 

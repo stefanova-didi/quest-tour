@@ -104,6 +104,26 @@ run "budget_start_override" {
   }
 }
 
+run "cidr_admin_rules" {
+  command = plan
+
+  variables {
+    admin_ip_addresses = {
+      home = "203.0.113.10"
+      site = "198.51.100.0/24"
+    }
+  }
+
+  assert {
+    condition     = azurerm_postgresql_flexible_server_firewall_rule.admin["home"].start_ip_address == "203.0.113.10"
+    error_message = "a bare IPv4 becomes a single-host rule"
+  }
+  assert {
+    condition     = azurerm_postgresql_flexible_server_firewall_rule.admin["site"].start_ip_address == "198.51.100.0" && azurerm_postgresql_flexible_server_firewall_rule.admin["site"].end_ip_address == "198.51.100.255"
+    error_message = "a CIDR becomes network address .. broadcast"
+  }
+}
+
 run "rejects_bad_app_name" {
   command = plan
 
