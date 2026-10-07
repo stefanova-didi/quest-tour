@@ -1,10 +1,11 @@
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from urllib.parse import parse_qs, urlparse
 
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 from starlette.middleware.sessions import SessionMiddleware
@@ -16,6 +17,21 @@ from questtour.db import Base
 from questtour.models import Assignment, Team
 from questtour.settings import Settings
 from questtour.storage import LocalBlobStore
+
+
+@contextmanager
+def count_queries(engine, substring):
+    counts = {"n": 0}
+
+    def handler(conn, cursor, statement, parameters, context, executemany):
+        if substring in statement:
+            counts["n"] += 1
+
+    event.listen(engine, "before_cursor_execute", handler)
+    try:
+        yield counts
+    finally:
+        event.remove(engine, "before_cursor_execute", handler)
 
 
 @pytest.fixture
@@ -468,3 +484,61 @@ def test_delete_game_succeeds_when_unused(admin_client):
     resp = admin_client.delete(f"/api/admin/games/{game_id}")
     assert resp.status_code == 200
     assert resp.json() == {"deleted": True}
+
+
+def test_list_games_avoids_landmark_n_plus_one(admin_client, engine):
+    _login(admin_client)
+    landmark_ids = []
+    for i in range(5):
+        landmark_ids.append(
+            _create_landmark(admin_client, f"n1-lm-{i}", f"Landmark {i}")
+        )
+    create_resp = admin_client.post(
+        "/api/admin/games",
+        json={
+            "key": "n1-list",
+            "name": "N+1 List",
+            "intro": "Intro.",
+            "time_zone": "Europe/Sofia",
+            "max_duration_minutes": 60,
+        },
+    )
+    game_id = create_resp.json()["id"]
+    admin_client.put(
+        f"/api/admin/games/{game_id}/tasks",
+        json={"landmark_ids": landmark_ids},
+    )
+
+    with count_queries(engine, "FROM landmarks") as counts:
+        resp = admin_client.get("/api/admin/games")
+    assert resp.status_code == 200
+    assert counts["n"] <= 1
+
+
+def test_get_game_avoids_landmark_n_plus_one(admin_client, engine):
+    _login(admin_client)
+    landmark_ids = []
+    for i in range(5):
+        landmark_ids.append(
+            _create_landmark(admin_client, f"n1-get-{i}", f"Landmark {i}")
+        )
+    create_resp = admin_client.post(
+        "/api/admin/games",
+        json={
+            "key": "n1-get",
+            "name": "N+1 Get",
+            "intro": "Intro.",
+            "time_zone": "Europe/Sofia",
+            "max_duration_minutes": 60,
+        },
+    )
+    game_id = create_resp.json()["id"]
+    admin_client.put(
+        f"/api/admin/games/{game_id}/tasks",
+        json={"landmark_ids": landmark_ids},
+    )
+
+    with count_queries(engine, "FROM landmarks") as counts:
+        resp = admin_client.get(f"/api/admin/games/{game_id}")
+    assert resp.status_code == 200
+    assert counts["n"] <= 1

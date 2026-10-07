@@ -2,11 +2,11 @@ export type Status = "not_started" | "playing" | "finished" | "timed_out";
 export type Phase = "task" | "photo" | "info" | "results";
 export type Outcome = "ok" | "already_started" | "correct" | "wrong" | "stale" | "locked" | "not_available" | "game_over";
 
-export interface Hint { number: 1 | 2; penalty_minutes: number; available: boolean; opened: boolean; text: string | null; }
+export interface Hint { number: 1 | 2; penalty_minutes: number; available: boolean; opened: boolean; text: string | null; text_i18n: Record<string, string>; }
 export interface Compass { opened: boolean; lat: number; lon: number; penalty_minutes: number; }
-export interface LandmarkInfo { name: string; info: string; picture_url: string | null; }
+export interface LandmarkInfo { name: string; info: string; picture_url: string | null; name_i18n: Record<string, string>; info_i18n: Record<string, string>; }
 export interface Task {
-  number: number; text: string; picture_url: string | null; hints: Hint[]; wrong_attempts: number;
+  number: number; text: string; text_i18n: Record<string, string>; picture_url: string | null; hints: Hint[]; wrong_attempts: number;
   reveal_unlocked: boolean; reveal_unlocks_in_seconds: number | null;
   completion: "answered" | "revealed" | null; revealed_answer: string | null; reveal_penalty_minutes: number;
   landmark: LandmarkInfo | null; photo_count: number; compass: Compass | null;
@@ -15,6 +15,7 @@ export interface Clock { elapsed_seconds: number; running: boolean; penalty_minu
 export interface GameInfo {
   name: string; intro: string; task_count: number; time_zone: string; max_duration_minutes: number;
   hint_penalties: number[]; reveal_after_attempts: number; reveal_after_minutes: number; reveal_penalty_minutes: number;
+  available_languages: string[];
 }
 export interface LeaderboardRow { rank: number; team_name: string; total_seconds: number; hints_used: number; is_you: boolean; }
 export interface Results {

@@ -47,11 +47,16 @@ describe("adminRequest", () => {
     await adminApi.updateLandmark(1, {
       key: "old-town",
       name: "Old Town",
+      name_i18n: null,
       task: "Find the statue",
+      task_i18n: null,
       accepted_answers: ["statue"],
       hint1: null,
+      hint1_i18n: null,
       hint2: null,
+      hint2_i18n: null,
       tourist_info: "Historic center",
+      tourist_info_i18n: null,
       coordinates: null,
     });
     const [, options] = lastFetchCall();
@@ -59,11 +64,16 @@ describe("adminRequest", () => {
     expect(options.body).toBe(JSON.stringify({
       key: "old-town",
       name: "Old Town",
+      name_i18n: null,
       task: "Find the statue",
+      task_i18n: null,
       accepted_answers: ["statue"],
       hint1: null,
+      hint1_i18n: null,
       hint2: null,
+      hint2_i18n: null,
       tourist_info: "Historic center",
+      tourist_info_i18n: null,
       coordinates: null,
     }));
   });
@@ -121,22 +131,32 @@ describe("error handling", () => {
     await expect(adminApi.createLandmark({
       key: "dup",
       name: "Dup",
+      name_i18n: null,
       task: "x",
+      task_i18n: null,
       accepted_answers: ["x"],
       hint1: null,
+      hint1_i18n: null,
       hint2: null,
+      hint2_i18n: null,
       tourist_info: "x",
+      tourist_info_i18n: null,
       coordinates: null,
     })).rejects.toBeInstanceOf(HttpErrorWithBody);
     try {
       await adminApi.createLandmark({
         key: "dup",
         name: "Dup",
+        name_i18n: null,
         task: "x",
+        task_i18n: null,
         accepted_answers: ["x"],
         hint1: null,
+        hint1_i18n: null,
         hint2: null,
+        hint2_i18n: null,
         tourist_info: "x",
+        tourist_info_i18n: null,
         coordinates: null,
       });
     } catch (err) {
@@ -154,11 +174,16 @@ describe("error handling", () => {
       await adminApi.updateLandmark(1, {
         key: "old-town",
         name: "Old Town",
+        name_i18n: null,
         task: "Find the statue",
+        task_i18n: null,
         accepted_answers: ["statue"],
         hint1: null,
+        hint1_i18n: null,
         hint2: null,
+        hint2_i18n: null,
         tourist_info: "Historic center",
+        tourist_info_i18n: null,
         coordinates: null,
       });
     } catch (err) {

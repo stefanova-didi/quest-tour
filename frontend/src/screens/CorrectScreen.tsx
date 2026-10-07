@@ -2,8 +2,11 @@ import type { GameState } from "../api/types";
 import { Confetti } from "../components/art";
 import { GameFrame, type FrameProps } from "../components/GameFrame";
 import { Icon } from "../components/Icon";
+import { pickText } from "../lib/i18n";
 
-export function CorrectScreen({ state, frame, onContinue }: { state: GameState; frame: FrameProps; onContinue(): void }) {
+export function CorrectScreen({ state, frame, language, onContinue }: { state: GameState; frame: FrameProps; language: string; onContinue(): void }) {
+  const landmark = state.task!.landmark;
+  const landmarkName = pickText(landmark?.name ?? "", landmark?.name_i18n, language);
   return (
     <GameFrame
       frame={frame}
@@ -22,7 +25,7 @@ export function CorrectScreen({ state, frame, onContinue }: { state: GameState; 
       <h1 className="t-display-xl" style={{ marginTop: 12 }}>Correct!</h1>
       <div style={{ display: "grid", gap: 4 }}>
         <p className="t-body t-muted">You explored a new landmark:</p>
-        <p className="t-display-l">{state.task!.landmark?.name}</p>
+        <p className="t-display-l">{landmarkName}</p>
       </div>
     </GameFrame>
   );

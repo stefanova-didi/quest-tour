@@ -20,11 +20,16 @@ const landmark: Landmark = {
   id: 1,
   key: "nevsky",
   name: "Nevsky Prospekt",
+  name_i18n: { de: "Nevsky Prospekt DE" },
   task: "Find the statue",
+  task_i18n: { de: "Finde die Statue" },
   accepted_answers: ["statue"],
   hint1: "Look left",
+  hint1_i18n: { de: "Schau links" },
   hint2: "Look right",
+  hint2_i18n: { de: "Schau rechts" },
   tourist_info: "Main street",
+  tourist_info_i18n: { de: "Hauptstraße" },
   coordinates: { lat: 59.934, lon: 30.33 },
   task_image_url: null,
   info_image_url: null,
@@ -212,6 +217,59 @@ describe("LandmarksScreen", () => {
     const event = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(true);
+  });
+
+  it("creates a landmark with translations", async () => {
+    const user = userEvent.setup();
+    vi.mocked(adminApi.createLandmark).mockResolvedValueOnce(landmark);
+    vi.stubGlobal("prompt", vi.fn(() => "sr"));
+
+    render(<LandmarksScreen subPath="landmarks" />);
+    await waitFor(() => screen.getByText("Nevsky Prospekt"));
+
+    await user.click(screen.getByRole("button", { name: "New landmark" }));
+    await user.type(screen.getByLabelText("Key"), "new-key");
+    await user.type(screen.getByLabelText("Name"), "New Landmark");
+    await user.type(screen.getByLabelText("Task"), "Task text");
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    await user.type(screen.getByPlaceholderText("Name (sr)"), "Srpski naziv");
+    await user.type(screen.getByPlaceholderText("Task (sr)"), "Srpski zadatak");
+    await user.click(screen.getByRole("button", { name: "Create landmark" }));
+
+    await waitFor(() => {
+      expect(adminApi.createLandmark).toHaveBeenCalled();
+    });
+    const args = vi.mocked(adminApi.createLandmark).mock.calls[0];
+    expect(args[0].name_i18n).toEqual({ sr: "Srpski naziv" });
+    expect(args[0].task_i18n).toEqual({ sr: "Srpski zadatak" });
+
+    vi.unstubAllGlobals();
+  });
+
+  it("strips blank translation entries before saving", async () => {
+    const user = userEvent.setup();
+    vi.mocked(adminApi.createLandmark).mockResolvedValueOnce(landmark);
+    vi.stubGlobal("prompt", vi.fn(() => "de"));
+
+    render(<LandmarksScreen subPath="landmarks" />);
+    await waitFor(() => screen.getByText("Nevsky Prospekt"));
+
+    await user.click(screen.getByRole("button", { name: "New landmark" }));
+    await user.type(screen.getByLabelText("Key"), "new-key");
+    await user.type(screen.getByLabelText("Name"), "New Landmark");
+    await user.type(screen.getByLabelText("Task"), "Task text");
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    await user.type(screen.getByPlaceholderText("Name (de)"), "German name");
+    await user.clear(screen.getByPlaceholderText("Name (de)"));
+    await user.click(screen.getByRole("button", { name: "Create landmark" }));
+
+    await waitFor(() => {
+      expect(adminApi.createLandmark).toHaveBeenCalled();
+    });
+    const args = vi.mocked(adminApi.createLandmark).mock.calls[0];
+    expect(args[0].name_i18n).toEqual({});
+
+    vi.unstubAllGlobals();
   });
 
   it("uploads a picture", async () => {

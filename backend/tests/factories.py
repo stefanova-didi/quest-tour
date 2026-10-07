@@ -21,14 +21,7 @@ class Seed:
     assignment_id: int
 
 
-def seed_game(
-    session,
-    now: datetime,
-    *,
-    valid_from: datetime | None = None,
-    valid_until: datetime | None = None,
-    max_duration_minutes: int = 240,
-) -> Seed:
+def _default_landmarks() -> list[Landmark]:
     nevsky = Landmark(
         host_id="default",
         key="nevsky",
@@ -65,6 +58,19 @@ def seed_game(
         info_text="Constantine called it 'my Rome'.",
         info_image=None,
     )
+    return [nevsky, rotunda, serdika]
+
+
+def seed_game(
+    session,
+    now: datetime,
+    *,
+    valid_from: datetime | None = None,
+    valid_until: datetime | None = None,
+    max_duration_minutes: int = 240,
+    landmarks: list[Landmark] | None = None,
+) -> Seed:
+    landmarks = landmarks if landmarks is not None else _default_landmarks()
     game = Game(
         host_id="default",
         key="sofia-old-town",
@@ -77,7 +83,7 @@ def seed_game(
         reveal_penalty_minutes=30,
     )
     game.tasks = [
-        GameTask(position=i, landmark=lm) for i, lm in enumerate([nevsky, rotunda, serdika])
+        GameTask(position=i, landmark=lm) for i, lm in enumerate(landmarks)
     ]
     explorers = Team(host_id="default", key="explorers", name="The Explorers", participants=4)
     owls = Team(host_id="default", key="owls", name="Night Owls", participants=3)

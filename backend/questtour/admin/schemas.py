@@ -18,11 +18,16 @@ class CoordinatesIn(BaseModel):
 class LandmarkCreate(BaseModel):
     key: str = Field(pattern=SLUG)
     name: str = Field(min_length=1)
+    name_i18n: dict[str, str] | None = None
     task: str = Field(min_length=1)
+    task_i18n: dict[str, str] | None = None
     accepted_answers: list[str] = Field(min_length=1)
     hint1: str | None = None
+    hint1_i18n: dict[str, str] | None = None
     hint2: str | None = None
+    hint2_i18n: dict[str, str] | None = None
     tourist_info: str = Field(min_length=1)
+    tourist_info_i18n: dict[str, str] | None = None
     coordinates: CoordinatesIn | None = None
 
 
@@ -36,11 +41,16 @@ class LandmarkOut(BaseModel):
     id: int
     key: str
     name: str
+    name_i18n: dict[str, str] | None
     task: str
+    task_i18n: dict[str, str] | None
     accepted_answers: list[str]
     hint1: str | None
+    hint1_i18n: dict[str, str] | None
     hint2: str | None
+    hint2_i18n: dict[str, str] | None
     tourist_info: str
+    tourist_info_i18n: dict[str, str] | None
     coordinates: CoordinatesIn | None
     updated_at: datetime
     task_image: str | None = Field(exclude=True)
@@ -57,11 +67,16 @@ class LandmarkOut(BaseModel):
                 "id": data.id,
                 "key": data.key,
                 "name": data.name,
+                "name_i18n": data.name_i18n,
                 "task": data.task_text,
+                "task_i18n": data.task_text_i18n,
                 "accepted_answers": data.accepted_answers,
                 "hint1": data.hint1,
+                "hint1_i18n": data.hint1_i18n,
                 "hint2": data.hint2,
+                "hint2_i18n": data.hint2_i18n,
                 "tourist_info": data.info_text,
+                "tourist_info_i18n": data.info_text_i18n,
                 "coordinates": coords,
                 "task_image": data.task_image,
                 "info_image": data.info_image,
@@ -111,6 +126,7 @@ class GameOut(BaseModel):
     reveal: RevealSettings
     updated_at: datetime
     task_landmark_ids: list[int]
+    available_languages: list[str]
 
 
 class GameTasksUpdate(BaseModel):
@@ -186,11 +202,16 @@ def _validate_landmark(data: LandmarkCreate) -> None:
         LandmarkBaseCfg.model_validate({
             "id": data.key,
             "name": data.name,
+            "name_i18n": data.name_i18n,
             "task": data.task,
+            "task_i18n": data.task_i18n,
             "accepted_answers": data.accepted_answers,
             "hint1": data.hint1,
+            "hint1_i18n": data.hint1_i18n,
             "hint2": data.hint2,
+            "hint2_i18n": data.hint2_i18n,
             "tourist_info": data.tourist_info,
+            "tourist_info_i18n": data.tourist_info_i18n,
             "coordinates": data.coordinates.model_dump() if data.coordinates else None,
         })
     except ValidationError as exc:

@@ -395,3 +395,96 @@ def test_delete_landmark_succeeds_when_unused(admin_client):
     resp = admin_client.delete(f"/api/admin/landmarks/{landmark_id}")
     assert resp.status_code == 200
     assert resp.json() == {"deleted": True}
+
+
+def test_create_landmark_with_i18n(admin_client):
+    _login(admin_client)
+    payload = {
+        "key": "i18n-lm",
+        "name": "Base",
+        "name_i18n": {"de": "DE"},
+        "task": "Task",
+        "task_i18n": {"de": "DE task"},
+        "accepted_answers": ["1"],
+        "hint1": "Hint 1",
+        "hint1_i18n": {"de": "DE hint1"},
+        "tourist_info": "Info",
+        "tourist_info_i18n": {"de": "DE info"},
+    }
+    res = admin_client.post("/api/admin/landmarks", json=payload)
+    assert res.status_code == 201
+    body = res.json()
+    assert body["name_i18n"] == {"de": "DE"}
+    assert body["task_i18n"] == {"de": "DE task"}
+    assert body["hint1_i18n"] == {"de": "DE hint1"}
+    assert body["tourist_info_i18n"] == {"de": "DE info"}
+
+
+def test_create_landmark_rejects_blank_i18n_value(admin_client):
+    _login(admin_client)
+    payload = {
+        "key": "blank-i18n",
+        "name": "Base",
+        "name_i18n": {"de": ""},
+        "task": "Task",
+        "accepted_answers": ["1"],
+        "tourist_info": "Info",
+    }
+    res = admin_client.post("/api/admin/landmarks", json=payload)
+    assert res.status_code == 422
+    assert "errors" in res.json()
+
+
+def test_create_landmark_rejects_hint1_i18n_without_hint1(admin_client):
+    _login(admin_client)
+    payload = {
+        "key": "hint1-i18n-only",
+        "name": "Base",
+        "task": "Task",
+        "accepted_answers": ["1"],
+        "tourist_info": "Info",
+        "hint1_i18n": {"de": "DE hint1"},
+    }
+    res = admin_client.post("/api/admin/landmarks", json=payload)
+    assert res.status_code == 422
+    assert "errors" in res.json()
+
+
+def test_game_available_languages_are_sorted_union(admin_client):
+    _login(admin_client)
+    lm1 = admin_client.post(
+        "/api/admin/landmarks",
+        json={
+            "key": "lm-de",
+            "name": "LM DE",
+            "name_i18n": {"de": "DE"},
+            "task": "Task",
+            "accepted_answers": ["1"],
+            "tourist_info": "Info",
+        },
+    ).json()
+    lm2 = admin_client.post(
+        "/api/admin/landmarks",
+        json={
+            "key": "lm-sr",
+            "name": "LM SR",
+            "task_i18n": {"sr": "SR"},
+            "task": "Task",
+            "accepted_answers": ["1"],
+            "tourist_info": "Info",
+        },
+    ).json()
+    game = admin_client.post(
+        "/api/admin/games",
+        json={
+            "key": "lang-game",
+            "name": "Lang Game",
+            "intro": "Intro",
+            "time_zone": "Europe/Sofia",
+            "max_duration_minutes": 60,
+        },
+    ).json()
+    admin_client.put(f"/api/admin/games/{game['id']}/tasks", json={"landmark_ids": [lm1["id"], lm2["id"]]})
+    res = admin_client.get(f"/api/admin/games/{game['id']}")
+    assert res.status_code == 200
+    assert res.json()["available_languages"] == ["de", "sr"]

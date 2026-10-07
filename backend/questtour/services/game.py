@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from enum import StrEnum
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from questtour.models import AnswerAttempt, Assignment, Game, GameRun, RunDevice, RunTask
 from questtour.normalize import is_correct
@@ -26,7 +26,12 @@ class Outcome(StrEnum):
 
 def load_run(session: Session, assignment_id: int) -> GameRun | None:
     """Locks the run row: every action is serialised per team (technical §3, R-18)."""
-    stmt = select(GameRun).where(GameRun.assignment_id == assignment_id).with_for_update()
+    stmt = (
+        select(GameRun)
+        .where(GameRun.assignment_id == assignment_id)
+        .with_for_update()
+        .options(selectinload(GameRun.tasks).selectinload(RunTask.landmark))
+    )
     return session.scalars(stmt).one_or_none()
 
 
