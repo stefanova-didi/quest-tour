@@ -238,14 +238,17 @@ def reveal_answer(
     return Outcome.OK
 
 
-def advance(run: GameRun, position: int, now: datetime) -> Outcome:
-    """'Next riddle' / 'See results' (D1). Requires completion + at least one photo (R-1, R-10)."""
+def advance(run: GameRun, position: int, now: datetime, *, service: bool = False) -> Outcome:
+    """'Next riddle' / 'See results' (D1). Requires completion + at least one photo (R-1, R-10).
+
+    Service runs (R-25) may advance without a photo: for the test team the photo is optional.
+    """
     if run.end_reason in TIMED_OUT:
         return Outcome.GAME_OVER
     task = current_task(run)
     if run.current_position != position or task is None:
         return Outcome.STALE
-    if task.completed_at is None or task.photo_count == 0:
+    if task.completed_at is None or (task.photo_count == 0 and not service):
         return Outcome.LOCKED
     run.current_position += 1
     bump(run)

@@ -195,6 +195,14 @@ def test_advance_requires_completion_and_photo(session, run, clock):
     assert rules.advance(run, 0, later) == Outcome.STALE            # double press by a teammate
 
 
+def test_service_advance_needs_no_photo(session, run, clock):
+    """R-25: the service (test) team may advance without a photo; regular teams cannot (R-1, R-10)."""
+    rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
+    assert rules.advance(run, 0, clock.now) == Outcome.LOCKED
+    assert rules.advance(run, 0, clock.now, service=True) == Outcome.OK
+    assert run.current_position == 1
+
+
 def test_advance_wrong_position_is_stale(run, clock):
     assert rules.advance(run, 2, clock.now) == Outcome.STALE
 
