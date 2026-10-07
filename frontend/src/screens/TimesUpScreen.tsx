@@ -37,7 +37,7 @@ export function TimesUpScreen({ state, frame }: { state: GameState; frame: Frame
           </section>
           <Leaderboard rows={results.leaderboard} gameName={game.name} />
           <section className="qs-card qs-host-card" aria-labelledby="host-label">
-            <p className="qs-eyebrow" id="host-label" style={{ color: "var(--patina-800)" }}><Icon name="gift" />From your host</p>
+            <p className="qs-eyebrow qs-eyebrow--gold" id="host-label"><Icon name="gift" />From your host</p>
             <Paragraphs text={results.exit_message} />
           </section>
         </main>
