@@ -1,8 +1,0 @@
-- generic [ref=f2e3]:
-  - heading "Admin sign-in" [level=1] [ref=f2e4]
-  - generic [ref=f2e5]:
-    - generic [ref=f2e6]:
-      - generic [ref=f2e7]: Email
-      - textbox "Email" [ref=f2e8]: notallowed@example.com
-    - button "Request magic link" [active] [ref=f2e9] [cursor=pointer]
-  - paragraph [ref=f2e10]: Could not request magic link. Is this email on the allowlist?

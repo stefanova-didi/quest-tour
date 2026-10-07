@@ -1,7 +1,0 @@
-- generic [ref=f5e3]:
-  - heading "Admin sign-in" [level=1] [ref=f5e4]
-  - generic [ref=f5e5]:
-    - generic [ref=f5e6]:
-      - generic [ref=f5e7]: Email
-      - textbox "Email" [ref=f5e8]
-    - button "Request magic link" [ref=f5e9] [cursor=pointer]

@@ -1,8 +1,0 @@
-[     110ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=34301b5d:22162
-[    9738ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=34301b5d:22162
-[   15757ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=34301b5d:22162
-[   42939ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/admin/teams/3:0
-[   58496ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Entity) @ http://localhost:5173/api/admin/teams/3:0
-[   66859ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/admin/teams/3:0
-[   91423ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/admin/teams/3/assignments:0
-[  108874ms] [ERROR] Failed to load resource: the server responded with a status of 422 (Unprocessable Entity) @ http://localhost:5173/api/play/cjBqu1hS3h8lR79u3bRaXqxigL77ieKBfqe0u_Skl-4/photo?position=0:0

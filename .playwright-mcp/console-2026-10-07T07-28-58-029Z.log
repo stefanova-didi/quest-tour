@@ -1,3 +1,0 @@
-[      64ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/react-dom_client.js?v=34301b5d:22162
-[   11394ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/admin/teams/1:0
-[   51327ms] [ERROR] Failed to load resource: the server responded with a status of 409 (Conflict) @ http://localhost:5173/api/admin/teams/3:0
