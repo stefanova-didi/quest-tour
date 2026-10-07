@@ -35,7 +35,7 @@ export function LandmarkScreen({ state, frame, onNext }: {
       {landmark.picture_url && (pictureFailed
         ? <div className="qs-pic qs-pic--placeholder">{landmark.name}</div>
         : <img className="qs-pic" src={landmark.picture_url} alt={`Picture of ${landmark.name}`} onError={() => setPictureFailed(true)} />)}
-      <article className="qs-group">
+      <article className="qs-card">
         <div style={{ display: "grid", gap: 4 }}>
           <p className="qs-eyebrow">Landmark {state.position + 1} of {count}</p>
           <h1 className="t-display-l">{landmark.name}</h1>

@@ -115,14 +115,19 @@ Non-negotiable invariants (violating these is a bug even if tests pass):
 - Types mirror the backend API contract in `src/api/types.ts`; keep them in sync when changing
   `backend/questtour/api/schemas.py`.
 - Styling: the design system is `src/styles/questcity.css` (component classes `qc-*`, prefix of the
-  mocks in `frontend-mocks/`) on top of tokens from `frontend-mocks/ds/questcity/tokens.json` — warm
-  limestone surface, patina-green primary (`accent`), gold for penalties/warnings, theatre-red for
-  errors. Every value must read a CSS token, never a raw colour/size. Screen layout classes are `qs-*`
-  (`quest-screens.css`).
+  mocks in `frontend-mocks/`) on top of tokens from `frontend-mocks/ds/questcity/tokens.json` — the
+  chosen direction is 02c "Evening Domes · Cards" (`design/02c-evening-cards.html`): light sage
+  surface, deep patina (`accent-strong`) header/hero/finish bands with a gold rule, patina-green primary
+  (`accent`), solid gold chips for penalties/warnings, theatre-red for errors, raised white cards.
+  Every value must read a CSS token, never a raw colour/size. Screen layout classes are `qs-*`
+  (`quest-screens.css`). Icons (`components/Icon.tsx`) are filled glyphs; illustrations in `art.tsx`
+  read the tokens too.
 - Design at 390 × 844 first, verify nothing breaks at 360 × 740. Portrait only, mobile-first. Every
-  interactive element gets the 3px focus ring. Font is Atkinson Hyperlegible + Fraunces display.
+  interactive element gets the 3px focus ring. Fonts are Onest (display + text) and JetBrains Mono
+  (numerals), self-hosted from `src/fonts/` — never add a third-party font host.
 - When implementing or changing a screen, compare against the corresponding
-  `frontend-mocks/<Screen>.dc.html` (open it in a browser) and the design brief §5 mapping.
+  `frontend-mocks/<Screen>.dc.html` for layout and states (the mocks predate the chosen look) and
+  against `design/02c-evening-cards.html` for look and feel; the design brief §5 maps the screens.
 - Accessibility/tone: penalties are always shown *before* they are paid (confirmation sheets show the
   cost, e.g. "+10 min" in gold).
 

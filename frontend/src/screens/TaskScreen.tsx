@@ -105,9 +105,9 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
       )}
     >
       {task.picture_url
-        ? <><img className="qs-pic" src={task.picture_url} alt="Task picture" /><div className="qs-group" style={{ gap: 8 }}>{riddle}</div></>
+        ? <><img className="qs-pic" src={task.picture_url} alt="Task picture" /><div className="qs-card qs-riddle-card">{riddle}</div></>
         : <div className="qs-card qs-riddle-card">{riddle}</div>}
-      <div className="qs-group">
+      <div className="qs-card qs-hints-card">
         {task.hints.length > 0 && (
           <div className="qs-group-head"><h2 className="t-label">Need help?</h2><p className="t-caption">Hints add time to your total.</p></div>
         )}
