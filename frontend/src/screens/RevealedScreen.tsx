@@ -19,15 +19,15 @@ export function RevealedScreen({ state, frame, onContinue }: { state: GameState;
       }
     >
       <section className="qs-answer" aria-labelledby="answer-label">
-        <p className="qs-eyebrow" id="answer-label" style={{ color: "var(--gold-700)" }}><Icon name="flag" />The answer</p>
+        <p className="qs-eyebrow qs-eyebrow--gold" id="answer-label"><Icon name="flag" />The answer</p>
         <p className="t-display-l">{task.revealed_answer}</p>
-        <span className="qc-tag" style={{ justifySelf: "start", background: "#ffffff" }}>
+        <span className="qc-tag" style={{ justifySelf: "start" }}>
           {formatPenalty(task.reveal_penalty_minutes)} added
         </span>
       </section>
       <p className="t-body">Head there now – a team photo at {landmarkName} unlocks the next riddle.</p>
       <div className="qs-group" style={{ gap: 8 }}>
-        <p className="qs-eyebrow" style={{ color: "var(--ink-muted)" }}><Icon name="riddle" />The riddle was</p>
+        <p className="qs-eyebrow qs-eyebrow--muted"><Icon name="riddle" />The riddle was</p>
         <p className="t-body t-muted">{task.text}</p>
       </div>
     </GameFrame>

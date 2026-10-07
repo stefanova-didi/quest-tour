@@ -38,12 +38,12 @@ export function WelcomeScreen({ state, frame, onStart }: {
         <section className="qs-hero">
           <WelcomeSkyline />
           <p className="qs-hero__kicker">A city quest in {game.task_count} riddles</p>
-          <h1 className="t-display-l" style={{ color: "#ffffff" }}>{game.name}</h1>
+          <h1 className="t-display-l">{game.name}</h1>
           <span className="qs-team"><Icon name="team" />Welcome, {team.name}</span>
         </section>
         <main className="qs-main">
-          <div className="qs-group"><Paragraphs text={game.intro} /></div>
-          <div className="qs-group">
+          <div className="qs-card"><Paragraphs text={game.intro} /></div>
+          <div className="qs-card">
             <h2 className="t-title">How it works</h2>
             <ul className="qs-rules">
               {rule("list", "Tasks are played in order – solve one to unlock the next.")}
