@@ -1,11 +1,11 @@
 import pytest
 
+from questtour.clock import utc_now
 from questtour.imagetypes import JPEG, PNG
 from questtour.models import Assignment, Photo
 from questtour.services import game as rules
 from questtour.services.game import Outcome, bump
 from questtour.services.photos import save_photo
-from questtour.clock import utc_now
 
 DATA = b"\xff\xd8\xff\xe0" + b"\x00" * 64
 

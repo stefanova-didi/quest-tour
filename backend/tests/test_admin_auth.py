@@ -145,7 +145,7 @@ def test_dev_magic_link_url_encodes_email(auth_client):
     )
     assert resp.status_code == 200
     url = resp.json()["url"]
-    token, email = _extract_magic_params(url)
+    _token, email = _extract_magic_params(url)
     assert email == "admin+test@example.com"
     assert "%2B" in url  # '+' is encoded in query string
 
