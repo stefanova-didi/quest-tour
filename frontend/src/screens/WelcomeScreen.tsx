@@ -38,10 +38,12 @@ export function WelcomeScreen({ state, frame, language, onLanguageChange, onStar
       {frame.offline && <ConnectionBanner />}
       <div className="qs-scroll" inert={confirming}>
         <section className="qs-hero">
+          <div className="qs-langbar">
+            <LanguageToggle languages={game.available_languages} selected={language} onSelect={onLanguageChange} />
+          </div>
           <WelcomeSkyline />
           <p className="qs-hero__kicker">A city quest in {game.task_count} riddles</p>
           <h1 className="t-display-l">{game.name}</h1>
-          <LanguageToggle languages={game.available_languages} selected={language} onSelect={onLanguageChange} />
         </section>
         <main className="qs-main">
           <div className="qs-card"><Paragraphs text={game.intro} /></div>

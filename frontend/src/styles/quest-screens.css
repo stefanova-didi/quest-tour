@@ -78,6 +78,12 @@
 .qs-team svg { width: 20px; height: 20px; }
 
 /* Cover: the first screen before the game starts (skyline, titles, one button) */
+/* Language pill row at the top of the cover and of the welcome hero: the same corner the in-game
+   header puts it in, so the control never moves between screens */
+.qs-langbar { flex: none; display: flex; justify-content: flex-end; }
+.qs-cover__bar { padding: var(--space-4) var(--space-4) 0; }
+.qs-hero .qs-langbar { margin-bottom: calc(-1 * var(--space-2)); }
+
 .qs-cover { flex: 1 1 auto; min-height: 0; background: var(--accent-strong); color: var(--on-accent); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
 .qs-cover__art { flex: 1 1 auto; min-height: 0; display: flex; align-items: flex-end; padding: var(--space-6) var(--space-4) 0; }
 .qs-cover__art .qs-skyline { height: 96px; }

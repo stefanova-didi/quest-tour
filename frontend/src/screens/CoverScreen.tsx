@@ -16,12 +16,14 @@ export function CoverScreen({ state, frame, language, onLanguageChange, onContin
     <div className="qs">
       {frame.offline && <ConnectionBanner />}
       <section className="qs-cover" aria-label={game.name}>
+        <div className="qs-langbar qs-cover__bar">
+          <LanguageToggle languages={game.available_languages} selected={language} onSelect={onLanguageChange} />
+        </div>
         <div className="qs-cover__art"><WelcomeSkyline big /></div>
         <div className="qs-cover__text">
           <p className="qs-hero__kicker">A city quest in {game.task_count} riddles</p>
           <h1 className="t-display-xl">{game.name}</h1>
           <span className="qs-team"><Icon name="team" />Welcome, {team.name}</span>
-          <LanguageToggle languages={game.available_languages} selected={language} onSelect={onLanguageChange} />
         </div>
       </section>
       <div className="qs-actions qs-actions--cover">

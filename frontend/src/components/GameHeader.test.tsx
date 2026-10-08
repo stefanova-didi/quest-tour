@@ -35,7 +35,7 @@ it("renders the language menu with available languages", async () => {
   render(<GameHeader clock={base} position={0} taskCount={8} receivedAt={Date.now()} onTimeUp={() => {}} {...common} />);
   expect(screen.getByRole("button", { name: "Language, EN" })).toBeInTheDocument();
   await user.click(screen.getByRole("button", { name: "Language, EN" }));
-  expect(screen.getByRole("option", { name: "EN" })).toBeInTheDocument();
-  expect(screen.getByRole("option", { name: "DE" })).toBeInTheDocument();
-  expect(screen.getByRole("option", { name: "SR" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "English" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "Deutsch" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "Srpski" })).toBeInTheDocument();
 });
