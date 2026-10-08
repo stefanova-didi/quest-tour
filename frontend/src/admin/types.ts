@@ -74,6 +74,26 @@ export interface TokenReveal {
   url: string;
 }
 
+/** A stored memories-album PDF (issue #33) */
+export interface AlbumFileOut {
+  id: number;
+  size_bytes: number;
+  generated_at: string;
+  deleted_at: string | null;
+  url: string;
+}
+
+/** A run that has ended, with its album if one was generated */
+export interface AlbumRowOut {
+  assignment_id: number;
+  team_name: string;
+  game_name: string;
+  ended_at: string;
+  end_reason: "finished" | "max_duration" | "window_closed";
+  photo_count: number;
+  album: AlbumFileOut | null;
+}
+
 export interface TeamPhotoOut {
   id: number;
   team_name: string;

@@ -28,6 +28,12 @@ it("shows the shared place, the breakdown, the highlighted row and the host mess
   expect(screen.queryByRole("button")).toBeNull();
 });
 
+it("links to the memories album when the app knows the link (issue #33)", () => {
+  const state = makeState({ status: "finished", phase: "results", clock: null, task: null, results });
+  render(<FinishScreen state={state} frame={frame} albumUrl="/album/explorers-token" />);
+  expect(screen.getByRole("link", { name: "Open your memories album" })).toHaveAttribute("href", "/album/explorers-token");
+});
+
 it("omits 'Shared' for a unique rank", () => {
   render(<FinishScreen state={makeState({ status: "finished", phase: "results", clock: null, task: null, results: { ...results, rank: 1, shared_rank: false } })} frame={frame} />);
   expect(screen.getByText("1st place")).toBeInTheDocument();

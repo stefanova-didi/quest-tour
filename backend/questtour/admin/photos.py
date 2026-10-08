@@ -16,6 +16,7 @@ from questtour.auth import AdminSession, require_admin
 from questtour.clock import utc_now
 from questtour.imagetypes import CONFIG_IMAGE_TYPES
 from questtour.models import Assignment, Game, GameRun, Landmark, Photo, RunTask, Team
+from questtour.services.album_store import invalidate_album
 from questtour.services.game import bump
 
 router = APIRouter(prefix="", tags=["admin-photos"])
@@ -174,6 +175,7 @@ def _photo_host_id(session, photo_id: int) -> str | None:
 @router.delete("/photos/{id}")
 def delete_team_photo(
     id: int,
+    request: Request,
     session: SessionDep,
     host_id: Annotated[str, Depends(get_admin_host_id)],
     admin: Annotated[AdminSession, Depends(require_admin)],
@@ -191,6 +193,8 @@ def delete_team_photo(
         task.photo_count -= 1
     if run:
         bump(run)
+        # a stored album would now show the deleted photo: drop it, the next request renders afresh
+        invalidate_album(session, request.app.state.blob_store, request.app.state.settings, run.assignment_id)
     session.commit()
     return {"deleted": True}
 

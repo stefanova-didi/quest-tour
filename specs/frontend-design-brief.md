@@ -40,6 +40,19 @@ No brand identity is defined yet. Propose a visual direction (colour palette, ty
 - **Time warning state**: in the last 15 minutes before the game's maximum duration, the header switches to a warning style and shows the remaining time, e.g. `12:40 left` (R-8).
 - **Language pill** (only when the game has translations, issue #6): a ghost pill with a globe and the language code (`EN`) at the right end of the top row. It opens a bottom sheet that lists the languages by their own names (`English`, `Deutsch`, `Srpski`) with the current one ticked; a tap picks and closes. The cover and the welcome hero, which have no header, carry the same pill in the same top-right corner, so the control never moves between screens. Finish and Time is up have nothing to translate and no pill.
 
+**Memories album** (issue #33, outside the game): once the run has ended, the team's photos and the landmark
+information come together at `/album/{token}` (the game link's token; the Finish and Time is up screens link
+to it with "Open your memories album"; until the run ends the page says the album isn't ready). An A4
+document, not a game screen, with the same language pill as the game for the stories: a patina cover sheet with
+the skyline, "Team album", the game name, the team chip, the facts of the day (date, landmarks reached, total
+time, place) and the host's message; one sheet per landmark reached – `Landmark 3 of 6 · 11:42`, the
+landmark name, the team photo(s) with the time they were taken (first one large, the rest in a row of three)
+and what the place is, in two columns of small print (the riddles are not repeated); and a closing sheet with
+a contact sheet of every photo. Pages keep 20 mm margins (24 mm at the foot) so no printer cuts the text.
+On a desktop the sheets show as true A4 pages; on a phone they flow as cards. Text may be selected and
+copied. "Save as PDF" opens the print dialog with A4 pages and no browser header. Until the album API
+exists, `/album/preview` renders a mock album with dummy photos.
+
 **Connection banner** (any screen, R-23): a slim banner `No connection – retrying…`, which disappears automatically when the connection is back.
 
 ## 5. Screens to mock

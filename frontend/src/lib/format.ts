@@ -49,6 +49,12 @@ export function formatDateWeekday(iso: string, timeZone: string): string {
   return `${p.weekday}, ${p.day} ${p.month} ${p.year}`;
 }
 
+/** "Saturday, 3 October 2026": the full weekday, for a keepsake such as the team album. */
+export function formatDateFull(iso: string, timeZone: string): string {
+  const p = parts(iso, timeZone, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  return `${p.weekday}, ${p.day} ${p.month} ${p.year}`;
+}
+
 export function formatTime(iso: string, timeZone: string): string {
   const p = parts(iso, timeZone, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
   return `${p.hour}:${p.minute}`;

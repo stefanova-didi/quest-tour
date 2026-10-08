@@ -17,6 +17,14 @@ describe("App", () => {
     expect(screen.queryByText("Error 404")).not.toBeInTheDocument();
   });
 
+  it("serves the team album preview at /album/preview and copying is allowed there", () => {
+    render(<App path="/album/preview" />);
+    expect(screen.getByText("Team album")).toBeInTheDocument();
+    const event = new Event("copy", { bubbles: true, cancelable: true });
+    document.body.dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(false);
+  });
+
   it("shows the 404 page for a mangled %-escape in the token", () => {
     render(<App path="/play/%E0%A4%A" />);
     expect(screen.getByText("Page not found")).toBeInTheDocument();

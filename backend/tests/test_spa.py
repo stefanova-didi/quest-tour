@@ -14,6 +14,8 @@ def test_known_routes_200_unknown_404(tmp_path, settings, session_factory, blob_
 
     assert client.get("/").status_code == 200
     assert client.get("/play/abc").status_code == 200
+    assert client.get("/album/abc").status_code == 200
+    assert client.get("/album").status_code == 404
     missing = client.get("/play/abc/extra")
     assert missing.status_code == 404 and "id=root" in missing.text
     assert client.get("/assets/app.js").status_code == 200

@@ -61,6 +61,7 @@ Estimated cost: about €25–40/month (to be confirmed in the Azure pricing cal
 ## 5. Photo storage
 
 - Container `photos`, path `{GameName}/{TeamName}/{yyyy-MM-dd_HH-mm-ss}_{TaskNo}_{LandmarkName}.{ext}` (R-10), using the game's time zone. Folder and file names are built from the names at upload time.
+- Container `albums`, path `{GameName}/{TeamName}/{yyyy-MM-dd}_memories-album.pdf` (issue #33): the team's memories album, rendered on the server (fpdf2 + Pillow, Onest bundled under `questtour/assets/fonts`) on the first request of `GET /api/play/{token}/album.pdf` or of the admin's *Generate*, and recorded in `team_albums`. The admin API lists, generates, downloads and deletes albums under `/api/admin/albums`; a deleted album answers 410 on the team's link. Photos are downscaled to 1600 px JPEG inside the PDF; the originals stay untouched.
 - Upload goes through the backend, which checks the size (20 MB max) and the file type (JPEG, PNG, HEIC, WebP) and writes the blob. The original is never re-encoded.
 - The container is private; no public access. Hosts get read/delete access through Azure RBAC (role *Storage Blob Data Contributor*).
 

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -110,6 +111,40 @@ class GameState(BaseModel):
 class ActionResult(BaseModel):
     outcome: Outcome
     state: GameState
+
+
+# --- Memories album (issue #33): a finished run's photos and landmark stories ---------------------
+
+
+class AlbumPhotoOut(BaseModel):
+    id: int
+    url: str  # /api/play/{token}/photos/{id}; only answers once the run has ended
+    taken_at: datetime
+
+
+class AlbumChapterOut(BaseModel):
+    number: int
+    landmark: str
+    landmark_i18n: dict[str, str]
+    story: str
+    story_i18n: dict[str, str]
+    reached_at: datetime
+    photos: list[AlbumPhotoOut]
+
+
+class AlbumOut(BaseModel):
+    game: str
+    team: str
+    time_zone: str
+    played_on: datetime
+    ended_at: datetime
+    end_reason: Literal["finished", "max_duration", "window_closed"]
+    task_count: int
+    total_seconds: int | None  # None unless the run finished
+    rank: int | None
+    shared_rank: bool
+    host_message: str
+    chapters: list[AlbumChapterOut]
 
 
 class PositionIn(BaseModel):

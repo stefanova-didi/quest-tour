@@ -153,7 +153,7 @@ def _ensure_containers(store: BlobStore, settings: Settings) -> None:
     """A fresh or reset Azurite has no containers. Without this, every upload would be a 503
     until someone re-ran sync-config. Storage being down must not stop the app from starting."""
     try:
-        for container in (settings.photos_container, settings.images_container):
+        for container in (settings.photos_container, settings.images_container, settings.albums_container):
             store.ensure_container(container)
     except Exception:  # any SDK/network error: log it; uploads will report 503
         log.exception("could not create blob containers; uploads fail until storage is reachable")

@@ -178,6 +178,20 @@ class Photo(Base):
     deleted_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True, index=True)
 
 
+class TeamAlbum(Base):
+    """The stored memories album PDF of a finished run (issue #33): one per assignment, kept in the
+    albums container for the host; ``deleted_at`` set means the host removed it (players get 410)."""
+
+    __tablename__ = "team_albums"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    assignment_id: Mapped[int] = mapped_column(ForeignKey("assignments.id"), unique=True)
+    blob_name: Mapped[str] = mapped_column(String(500), unique=True)
+    size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+    generated_at: Mapped[datetime] = mapped_column(UTCDateTime, default=utc_now)
+    deleted_at: Mapped[datetime | None] = mapped_column(UTCDateTime, nullable=True)
+    assignment: Mapped[Assignment] = relationship()
+
+
 class RunDevice(Base):
     __tablename__ = "run_devices"
     run_id: Mapped[int] = mapped_column(

@@ -1,5 +1,7 @@
 import { NetworkError } from "../api/client";
 import type {
+  AlbumFileOut,
+  AlbumRowOut,
   AssignmentCreate,
   AssignmentOut,
   ConflictBody,
@@ -179,4 +181,9 @@ export const adminApi = {
   },
   deleteTeamPhoto: (id: number) =>
     adminRequest<{ deleted: boolean }>(`/api/admin/photos/${id}`, undefined, "DELETE"),
+  albums: () => adminRequest<AlbumRowOut[]>("/api/admin/albums", undefined, "GET"),
+  generateAlbum: (assignmentId: number) =>
+    adminRequest<AlbumFileOut>(`/api/admin/albums/${assignmentId}/generate`, {}, "POST"),
+  deleteAlbum: (id: number) =>
+    adminRequest<{ deleted: boolean }>(`/api/admin/albums/${id}`, undefined, "DELETE"),
 };

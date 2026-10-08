@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     local_storage_dir: Path = Path(".storage")
     photos_container: str = "photos"
     images_container: str = "images"
+    albums_container: str = "albums"  # stored memories-album PDFs (issue #33)
     static_dir: Path | None = None
     max_photo_bytes: int = 20 * 1024 * 1024
     # Version shown by /api/health; unset, the packaged VERSION file is used (questtour/version.py).

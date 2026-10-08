@@ -4,14 +4,17 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from questtour.api.deps import DeviceDep, NowDep, SessionDep
-from questtour.api.schemas import ActionResult, AnswerIn, GameState, HintIn, PositionIn
+from questtour.api.schemas import ActionResult, AlbumOut, AnswerIn, GameState, HintIn, PositionIn
 from questtour.imagetypes import sniff_photo
 from questtour.models import Assignment, GameRun
 from questtour.services import game as rules
 from questtour.services.access import ensure_link_usable, find_assignment
+from questtour.services.album import album_available, build_album, find_run_photo
+from questtour.services.album_store import PDF, album_file_name, ensure_album
 from questtour.services.photos import save_photo
 from questtour.services.reset import delete_photo_blobs, reset_run
 from questtour.services.state import build_state
@@ -182,6 +185,78 @@ def photo(
         log.exception("photo upload failed")
         raise HTTPException(503, "Storage unavailable, please retry") from exc
     return _respond(ctx, outcome, "photo")
+
+
+@router.get("/album", response_model=AlbumOut)
+def album(token: str, session: SessionDep, now: NowDep, device_id: DeviceDep) -> AlbumOut:
+    """The memories album (issue #33). 409 until the run has ended: during the game players never
+    see their photos (R-10)."""
+    ctx = _open(session, token, now, device_id)
+    if not album_available(ctx.run):
+        session.commit()
+        raise HTTPException(409, "album_not_ready")
+    result = build_album(session, ctx.assignment, ctx.run, token, now)
+    session.commit()
+    return result
+
+
+@router.get("/album.pdf")
+def album_pdf(
+    token: str, request: Request, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> Response:
+    """The album as a PDF file, rendered once and stored for the host (issue #33). 409 while the
+    game is on; 410 once the host has removed the album."""
+    ctx = _open(session, token, now, device_id)
+    if not album_available(ctx.run):
+        session.commit()
+        raise HTTPException(409, "album_not_ready")
+    settings = request.app.state.settings
+    store = request.app.state.blob_store
+    try:
+        record = ensure_album(session, store, settings, ctx.assignment, ctx.run, now)
+        found = store.get(settings.albums_container, record.blob_name) if record else None
+    except StorageUnavailable as exc:
+        session.rollback()
+        raise HTTPException(503, "Storage unavailable, please retry") from exc
+    session.commit()
+    if record is None:
+        raise HTTPException(410, "album_removed")
+    if found is None:
+        raise HTTPException(404, "Not Found")
+    data, _content_type = found
+    return Response(
+        data,
+        media_type=PDF,
+        headers={
+            "Content-Disposition": f'attachment; filename="{album_file_name(ctx.assignment.team.name)}"',
+            "Cache-Control": "private, no-store",
+        },
+    )
+
+
+@router.get("/photos/{photo_id}")
+def album_photo(
+    token: str, photo_id: int, request: Request, session: SessionDep, now: NowDep, device_id: DeviceDep
+) -> Response:
+    """A team photo for the album: this run's own, live photos only, and only once the run has ended."""
+    ctx = _open(session, token, now, device_id)
+    photo = find_run_photo(session, ctx.run, photo_id) if album_available(ctx.run) else None
+    session.commit()
+    if photo is None:
+        raise HTTPException(404, "Not Found")
+    settings = request.app.state.settings
+    try:
+        found = request.app.state.blob_store.get(settings.photos_container, photo.blob_name)
+    except StorageUnavailable as exc:
+        raise HTTPException(503, "Storage unavailable, please retry") from exc
+    if found is None:
+        raise HTTPException(404, "Not Found")
+    data, content_type = found
+    return Response(
+        data,
+        media_type=content_type,
+        headers={"Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff"},
+    )
 
 
 @router.post("/reset", response_model=ActionResult)

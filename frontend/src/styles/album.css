@@ -1,0 +1,149 @@
+/* Team album (design draft): the host's surprise for the team after the game, an A4 document. Prefix: qa-.
+   Markup is a cover sheet, one sheet per landmark (photo + what the place is; no riddles) and a closing sheet.
+   Two layouts from that one markup:
+   - phone (default): the sheets flow as bands and cards in the app's own type sizes;
+   - sheet mode (desktop ≥ 900px, and print): true A4 pages, 210 × 297 mm, every size inside a page expressed in
+     millimetres through container-query units (1 cqw of a 210 mm page = 2.1 mm), so the screen shows exactly
+     what "Save as PDF" produces. Every colour reads a token. */
+
+.qa { min-height: 100dvh; background: var(--surface); color: var(--ink); user-select: text; -webkit-user-select: text; }
+
+/* Toolbar: the game name and Save as PDF, sticky so the button is always at hand */
+.qa-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
+              gap: var(--space-3); padding: var(--space-2) var(--space-4); background: var(--accent-strong);
+              color: var(--on-accent); border-bottom: 1px solid var(--gold-500); }
+.qa-toolbar__title { font: 700 15px/20px var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qa-toolbar__tools { display: flex; align-items: center; gap: var(--space-2); flex: none; }
+.qa-toolbar .qa-save { min-height: 40px; padding: 0 var(--space-4); font-size: 15px; flex: none; }
+.qa-end__save { display: flex; justify-content: center; }
+
+/* ---------- Phone layout ---------- */
+.qa-doc { display: grid; gap: var(--space-6); padding-bottom: var(--space-6); }
+.qa-page { display: grid; gap: var(--space-3); }
+.qa-title { margin: 0; }
+.qa-foot { display: none; }
+
+.qa-sheet--cover .qa-page { background: var(--accent-strong); color: var(--on-accent);
+                            padding: var(--space-6) var(--space-4) var(--space-4); border-bottom: 2px solid var(--gold-500); }
+.qa-sheet--cover .qs-skyline { height: 56px; }
+.qa-facts { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: flex; flex-wrap: wrap;
+            gap: var(--space-2) var(--space-4); font: 600 15px/20px var(--font-sans); color: var(--gold-300); }
+.qa-facts li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.qa-facts svg { width: 18px; height: 18px; flex: none; }
+.qa-host { margin-top: var(--space-3); color: var(--ink); }
+
+.qa-sheet--chapter .qa-page { padding: 0 var(--space-4); }
+.qa-chapter__head { display: grid; gap: var(--space-2); }
+.qa-photo { margin: 0; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-raised); box-shadow: var(--shadow-raised); }
+.qa-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface-sunken); }
+.qa-photo figcaption { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4);
+                       font: 600 13px/18px var(--font-sans); color: var(--ink-muted); }
+.qa-photo figcaption svg { width: 16px; height: 16px; flex: none; }
+.qa-photo-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.qa-photo-row .qa-photo img { aspect-ratio: 1 / 1; }
+.qa-photo-row .qa-photo figcaption { padding: var(--space-1) var(--space-3); font-size: 12px; }
+.qa-story { background: var(--surface-raised); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised);
+            padding: var(--space-4); display: grid; gap: var(--space-2); }
+.qa-story__text { display: grid; gap: var(--space-3); }
+
+.qa-sheet--end .qa-page { padding: var(--space-5) var(--space-4) 0; justify-items: center; text-align: center;
+                          border-top: 2px solid var(--gold-500); margin: 0 var(--space-4); }
+.qa-sheet--end .qs-hero__kicker { color: var(--gold-700); }
+.qa-end__date { color: var(--ink-muted); }
+.qa-facts--light { color: var(--gold-700); justify-content: center; }
+.qa-route { list-style: none; margin: var(--space-2) 0 0; padding: 0; width: 100%; display: grid; text-align: left; }
+.qa-route li { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: var(--space-3);
+               padding: var(--space-2) 0; border-top: 1px solid var(--line); font: 400 15px/20px var(--font-sans); }
+.qa-route li:last-child { border-bottom: 1px solid var(--line); }
+.qa-route__no { display: grid; place-items: center; width: 24px; height: 24px; border-radius: var(--radius-pill);
+                background: var(--accent-strong); color: var(--on-accent); font: 700 12px/16px var(--font-mono); }
+.qa-route__name { font-weight: 600; }
+.qa-route__time { font: 600 14px/20px var(--font-mono); color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.qa-contact { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin: var(--space-2) 0; }
+.qa-contact img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+
+/* ---------- Sheet mode: desktop and print ---------- */
+@media print, (min-width: 900px) {
+  .qa-doc { padding: var(--space-5) var(--space-4) var(--space-6); gap: var(--space-5); justify-items: center; }
+  /* The sheet is the query container; its page uses cqw so that 1 "mm" is 1/210 of the sheet's width */
+  .qa-sheet { container-type: inline-size; width: 210mm; max-width: 100%; box-sizing: border-box; display: flex;
+              background: var(--surface-raised); box-shadow: var(--shadow-raised); }
+  /* Page margins of 20 mm (24 mm at the foot) keep the text clear of any printer's unprintable edge */
+  .qa-page { --mm: 0.47619cqw; position: relative; flex: 1 1 auto; box-sizing: border-box; min-height: calc(296.5 * var(--mm));
+             padding: calc(20 * var(--mm)) calc(20 * var(--mm)) calc(24 * var(--mm)); margin: 0; border: 0; border-radius: 0;
+             display: flex; flex-direction: column; align-items: stretch; justify-items: start; text-align: left;
+             gap: calc(4.5 * var(--mm)); font-size: calc(3.5 * var(--mm)); line-height: 1.45; }
+  .qa-page .t-body { font-size: calc(3.5 * var(--mm)); line-height: 1.5; }
+  .qa-page .t-display-l { font-size: calc(9 * var(--mm)); line-height: 1.08; }
+  .qa-page .qs-hero__kicker { font-size: calc(2.8 * var(--mm)); line-height: 1.3; }
+  .qa-page .qs-eyebrow { font-size: calc(2.6 * var(--mm)); line-height: 1.3; padding: calc(0.9 * var(--mm)) calc(2.4 * var(--mm)); gap: calc(1.2 * var(--mm)); }
+  .qa-page .qs-eyebrow svg { width: calc(3.2 * var(--mm)); height: calc(3.2 * var(--mm)); }
+  .qa-page .qs-team { align-self: flex-start; font-size: calc(3.6 * var(--mm)); line-height: 1.3; padding: calc(1.2 * var(--mm)) calc(2.8 * var(--mm)); gap: calc(1.6 * var(--mm)); }
+  /* The phone rules for these two sheets set their own padding; restate the page margins for A4 */
+  .qa-sheet--chapter .qa-page { padding: calc(20 * var(--mm)) calc(20 * var(--mm)) calc(24 * var(--mm)); }
+  .qa-sheet--end .qa-page { padding: calc(30 * var(--mm)) calc(20 * var(--mm)) calc(24 * var(--mm)); }
+  .qa-page .qs-team svg { width: calc(4.2 * var(--mm)); height: calc(4.2 * var(--mm)); }
+  .qa-page .qs-card { padding: calc(5 * var(--mm)); gap: calc(2.5 * var(--mm)); border-radius: calc(3 * var(--mm)); }
+  .qa-page .qs-version { font-size: calc(2.6 * var(--mm)); }
+
+  /* Cover: full-bleed patina page, facts one per line, the host's message at the foot of the page */
+  .qa-sheet--cover .qa-page { padding-top: calc(30 * var(--mm)); border-bottom: 0; gap: calc(5 * var(--mm)); }
+  .qa-sheet--cover .qs-skyline { height: calc(42 * var(--mm)); margin-bottom: calc(6 * var(--mm)); }
+  .qa-sheet--cover .t-display-l { font-size: calc(15 * var(--mm)); max-width: calc(150 * var(--mm)); }
+  .qa-facts { flex-direction: column; gap: calc(2.5 * var(--mm)); margin-top: calc(4 * var(--mm)); font-size: calc(3.8 * var(--mm)); line-height: 1.3; }
+  .qa-facts svg { width: calc(4.6 * var(--mm)); height: calc(4.6 * var(--mm)); }
+  .qa-facts li { gap: calc(2.5 * var(--mm)); }
+  .qa-host { margin-top: auto; }
+
+  /* Chapter: head, the photo, the riddle, the story in two columns, a running foot */
+  .qa-chapter__head { display: flex; align-items: flex-end; justify-content: space-between; gap: calc(6 * var(--mm)); }
+  .qa-chapter__head .qs-eyebrow { order: 2; flex: none; margin-bottom: calc(1 * var(--mm)); }
+  .qa-photo { border-radius: calc(3 * var(--mm)); box-shadow: none; border: 1px solid var(--line); }
+  .qa-photo--main img { aspect-ratio: auto; height: calc(108 * var(--mm)); }
+  .qa-photo-row { grid-template-columns: repeat(3, 1fr); gap: calc(4 * var(--mm)); }
+  .qa-photo-row .qa-photo img { aspect-ratio: auto; height: calc(40 * var(--mm)); }
+  .qa-photo figcaption { font-size: calc(2.6 * var(--mm)); line-height: 1.3; padding: calc(1.5 * var(--mm)) calc(3 * var(--mm)); gap: calc(1.5 * var(--mm)); }
+  .qa-photo-row .qa-photo figcaption { font-size: calc(2.4 * var(--mm)); padding: calc(1 * var(--mm)) calc(2.4 * var(--mm)); }
+  .qa-photo figcaption svg { width: calc(3.2 * var(--mm)); height: calc(3.2 * var(--mm)); }
+  /* The story in small print (≈ 8.5 pt), two columns: a chapter fits one A4 page */
+  .qa-story { box-shadow: none; padding: 0; gap: calc(2.5 * var(--mm)); background: transparent; }
+  .qa-story__text { display: block; column-count: 2; column-gap: calc(8 * var(--mm)); }
+  .qa-story__text .t-body { margin: 0 0 calc(2.5 * var(--mm)); font-size: calc(3 * var(--mm)); line-height: 1.4; }
+  .qa-foot { display: flex; justify-content: space-between; position: absolute; left: calc(20 * var(--mm)); right: calc(20 * var(--mm)); bottom: calc(12 * var(--mm));
+             font: 600 calc(2.6 * var(--mm)) / 1.3 var(--font-sans); color: var(--ink-muted); letter-spacing: 0.04em; }
+
+  /* The end: every photo as a contact sheet */
+  /* The end: a compact summary header, then the collage fills the rest of the page (the page is a fixed
+     A4 height here so the grid can share the remaining space between its rows) */
+  .qa-sheet--end .qa-page { margin: 0; border-top: 0; align-items: center; text-align: center; gap: calc(2.5 * var(--mm));
+                            height: calc(296.5 * var(--mm)); overflow: hidden; padding-top: calc(18 * var(--mm)); }
+  .qa-sheet--end .t-display-l { font-size: calc(7 * var(--mm)); }
+  .qa-sheet--end .qa-end__date { font-size: calc(3.2 * var(--mm)); }
+  .qa-sheet--end .qa-facts { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: calc(1.5 * var(--mm)) calc(5 * var(--mm)); margin-top: 0; font-size: calc(3 * var(--mm)); }
+  .qa-sheet--end .qa-facts svg { width: calc(3.6 * var(--mm)); height: calc(3.6 * var(--mm)); }
+  .qa-route { margin-top: calc(1 * var(--mm)); grid-template-columns: 1fr 1fr; column-gap: calc(8 * var(--mm)); }
+  .qa-route li { grid-template-columns: calc(5 * var(--mm)) 1fr auto; gap: calc(2 * var(--mm)); padding: calc(1 * var(--mm)) 0; font-size: calc(2.8 * var(--mm)); line-height: 1.3; }
+  .qa-route li:nth-last-child(2) { border-bottom: 1px solid var(--line); }   /* both columns end with a rule */
+  .qa-route__no { width: auto; height: auto; background: transparent; color: var(--ink-muted); font-size: calc(2.6 * var(--mm)); justify-items: start; }
+  .qa-route__time { font-size: calc(2.6 * var(--mm)); line-height: 1.3; }
+  /* Collage: three landscape tiles per row on a six-track grid, so one or two photos left on the last row
+     widen to fill it instead of leaving gaps; rows share the page's remaining height */
+  .qa-contact { flex: 1 1 auto; min-height: 0; grid-template-columns: repeat(6, 1fr); grid-auto-rows: minmax(0, 1fr);
+                gap: calc(3 * var(--mm)); margin: calc(2 * var(--mm)) 0 0; }
+  .qa-contact img { grid-column: span 2; width: 100%; height: 100%; min-height: 0; aspect-ratio: auto; object-fit: cover; border-radius: calc(2 * var(--mm)); }
+  .qa-contact img:nth-child(3n+1):last-child { grid-column: span 6; }
+  .qa-contact img:nth-child(3n+1):nth-last-child(2), .qa-contact img:nth-child(3n+2):last-child { grid-column: span 3; }
+  .qa-end__save, .qa-sheet--end .qs-version { display: none; }   /* the sticky toolbar has the button */
+}
+
+/* ---------- Print: one sheet per A4 page, no browser header or footer, colours kept ---------- */
+@page { size: A4; margin: 0; }
+@media print {
+  html, body, .qa { background: var(--surface-raised); min-height: 0; }
+  .qa { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .qa-toolbar, .qa-end__save, .qs-version { display: none; }
+  .qa-doc { display: block; padding: 0; }
+  .qa-sheet { width: 210mm; max-width: none; box-shadow: none; break-after: page; }
+  .qa-sheet:last-child { break-after: auto; }
+  .qa-photo, .qa-host, .qa-contact { break-inside: avoid; }
+}

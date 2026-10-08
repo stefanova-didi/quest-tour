@@ -7,6 +7,7 @@ from questtour.auth import AdminSession, require_admin
 admin_router = APIRouter(prefix="/api/admin")
 
 from questtour.admin.photos import router as photos_router
+from questtour.admin.router_albums import router as albums_router
 from questtour.admin.router_assignments import router as assignments_router
 from questtour.admin.router_games import router as games_router
 from questtour.admin.router_landmarks import router as landmarks_router
@@ -17,6 +18,7 @@ admin_router.include_router(games_router)
 admin_router.include_router(teams_router)
 admin_router.include_router(assignments_router)
 admin_router.include_router(photos_router)
+admin_router.include_router(albums_router)
 
 
 @admin_router.get("/seed-error")

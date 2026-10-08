@@ -41,3 +41,10 @@ resource "azurerm_storage_container" "images" {
   storage_account_id    = azurerm_storage_account.main.id
   container_access_type = "private"
 }
+
+# Memories-album PDFs, one per finished run (issue #33); the app renders and deletes them.
+resource "azurerm_storage_container" "albums" {
+  name                  = "albums"
+  storage_account_id    = azurerm_storage_account.main.id
+  container_access_type = "private"
+}

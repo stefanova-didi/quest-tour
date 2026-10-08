@@ -21,6 +21,14 @@ resource "azurerm_role_assignment" "host_photos" {
   principal_id         = each.value
 }
 
+# Hosts -> the stored memories albums as well (issue #33), same rights as on photos.
+resource "azurerm_role_assignment" "host_albums" {
+  for_each             = toset(var.host_principal_object_ids)
+  scope                = azurerm_storage_container.albums.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = each.value
+}
+
 resource "azurerm_role_assignment" "host_reader" {
   for_each             = toset(var.host_principal_object_ids)
   scope                = azurerm_storage_account.main.id
