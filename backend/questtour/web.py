@@ -35,6 +35,8 @@ def install_frontend(app: FastAPI, static_dir: Path | None) -> None:
         app.add_api_route("/admin", spa_home, methods=["GET"], include_in_schema=False)
         app.add_api_route("/admin/{path:path}", spa_home, methods=["GET"], include_in_schema=False)
         app.add_api_route("/play/{token}", spa_play, methods=["GET"], include_in_schema=False)
+        # The team album the host shares after the game (design draft: the SPA renders a preview).
+        app.add_api_route("/album/{token}", spa_play, methods=["GET"], include_in_schema=False)
 
     async def not_found(request: Request, exc: StarletteHTTPException):
         if (

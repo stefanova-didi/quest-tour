@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import { AlbumPage } from "./album/AlbumPage";
 import { GameApp } from "./game/GameApp";
 import { lastToken } from "./lib/storage";
 import { LoadingScreen } from "./screens/LoadingScreen";
@@ -11,7 +12,7 @@ const AdminApp = lazy(async () => {
 
 export function App({ path = window.location.pathname }: { path?: string }) {
   useEffect(() => {                          // belt-and-braces for copy paths CSS can't reach (Ctrl+A, long-press menus)
-    if (path.startsWith("/admin")) return;
+    if (path.startsWith("/admin") || path.startsWith("/album")) return;   // the album is a keepsake: copying is fine
     const block = (e: Event) => {
       const target = e.target as HTMLElement | null;
       if (!target?.closest("input, textarea")) e.preventDefault();
@@ -32,6 +33,11 @@ export function App({ path = window.location.pathname }: { path?: string }) {
   if (match) {
     const token = safeDecode(match[1]);
     return token === null ? <NotFoundScreen /> : <GameApp token={token} />;
+  }
+  const album = /^\/album\/([^/]+)$/.exec(path);
+  if (album) {
+    const token = safeDecode(album[1]);
+    return token === null ? <NotFoundScreen /> : <AlbumPage token={token} />;
   }
   if (path === "/") return <Home />;
   return <NotFoundScreen />;

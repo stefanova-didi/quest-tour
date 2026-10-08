@@ -1,0 +1,63 @@
+/* Team album (design draft): the host's surprise for the team after the game – a patina cover, the host's
+   message, one chapter per landmark (photos, riddle, story) and a closing band. Prefix: qa-. Phone first; on a
+   desktop it reads as a 640px column; in print each chapter starts a new page. Every value reads a token. */
+
+.qa { max-width: 640px; margin: 0 auto; min-height: 100dvh; background: var(--surface); color: var(--ink);
+      user-select: text; -webkit-user-select: text; }                      /* a keepsake: copying is welcome */
+
+/* Cover band */
+.qa-cover { background: var(--accent-strong); color: var(--on-accent); padding: var(--space-6) var(--space-4) var(--space-5);
+            display: grid; gap: var(--space-3); border-bottom: 2px solid var(--gold-500); }
+.qa-cover .qs-skyline { height: 56px; }
+.qa-cover .t-display-l { margin: 0; }
+.qa-facts { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: flex; flex-wrap: wrap;
+            gap: var(--space-2) var(--space-4); font: 600 15px/20px var(--font-sans); color: var(--gold-300); }
+.qa-facts li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.qa-facts svg { width: 18px; height: 18px; flex: none; }
+
+/* Save as PDF (print dialog) on the cover and in the closing band */
+.qa-save { display: grid; justify-items: start; gap: var(--space-1); margin-top: var(--space-2); }
+.qa-save__hint { margin: 0; font: 400 13px/18px var(--font-sans); opacity: 0.8; }
+.qa-end .qa-save { justify-items: center; }
+
+/* Chapters */
+.qa-main { padding: var(--space-4); display: grid; gap: var(--space-6); }
+.qa-chapter { display: grid; gap: var(--space-3); }
+.qa-chapter__title { margin: 0; }
+.qa-photo { margin: 0; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-raised);
+            box-shadow: var(--shadow-raised); }
+.qa-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface-sunken); }
+.qa-photo figcaption { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4);
+                       font: 600 13px/18px var(--font-sans); color: var(--ink-muted); }
+.qa-photo figcaption svg { width: 16px; height: 16px; flex: none; }
+.qa-photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.qa-photo--small img { aspect-ratio: 1 / 1; }
+.qa-photo--small figcaption { padding: var(--space-1) var(--space-3); font-size: 12px; }
+.qa-riddle { margin: 0; padding: var(--space-3) var(--space-4); border-left: 4px solid var(--gold-500);
+             background: var(--gold-100); border-radius: 0 var(--radius-md) var(--radius-md) 0; display: grid; gap: var(--space-2); }
+.qa-riddle .t-body { font-style: italic; }
+.qa-story { gap: var(--space-2); }
+
+/* Closing band */
+.qa-end { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-6) 0 var(--space-5);
+          text-align: center; color: var(--ink-muted); border-top: 2px solid var(--gold-500); }
+.qa-end .qs-hero__kicker { color: var(--gold-700); }
+
+@media (min-width: 640px) {
+  .qa-cover { padding: var(--space-7) var(--space-6) var(--space-6); }
+  .qa-main { padding: var(--space-6); }
+}
+
+/* "Save as PDF": A4, the cover on its own page, one chapter per page, bands and chips keep their colours */
+@page { size: A4; margin: 14mm; }
+@media print {
+  html, body { background: var(--surface-raised); }
+  .qa { max-width: none; min-height: 0; background: var(--surface-raised); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .qa-cover { break-after: page; border-radius: var(--radius-lg); }
+  .qa-chapter { break-before: page; }
+  .qa-photo, .qa-riddle, .qs-card { break-inside: avoid; }
+  .qa-photo, .qs-card { box-shadow: none; border: 1px solid var(--line); }
+  .qa-photo img { aspect-ratio: auto; max-height: 120mm; }
+  .qa-end { break-before: avoid; }
+  .qa-save, .qs-version { display: none; }
+}
