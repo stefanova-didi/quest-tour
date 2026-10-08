@@ -74,7 +74,12 @@ export function GameApp({ token }: { token: string }) {
                             upload={(file, onProgress) => game.track(api.uploadPhoto(token, position, file, onProgress))}
                             onFlowStart={() => setUi({ ackedPosition: position, photoFlowPosition: position })}
                             onUploaded={game.applyResult}
-                            onContinue={() => setUi((u) => ({ ...u, photoFlowPosition: null }))}
+                            onContinue={() => {
+                              // R-25: without a photo, service Continue must advance (the upload is
+                              // what normally flips the phase); with one, the usual landmark flow.
+                              if ((state.task?.photo_count ?? 0) > 0) setUi((u) => ({ ...u, photoFlowPosition: null }));
+                              else game.act(() => api.advance(token, position));
+                            }}
                             onError={game.fail} />;
       case "landmark":
         return <LandmarkScreen state={state} frame={frame} onNext={() => game.act(() => api.advance(token, position))} />;

@@ -135,7 +135,13 @@ def advance(
     token: str, body: PositionIn, session: SessionDep, now: NowDep, device_id: DeviceDep
 ) -> ActionResult:
     ctx = _open(session, token, now, device_id)
-    outcome = rules.Outcome.STALE if ctx.run is None else rules.advance(ctx.run, body.position, now)
+    outcome = (
+        rules.Outcome.STALE
+        if ctx.run is None
+        else rules.advance(
+            ctx.run, body.position, now, service=rules.is_service(ctx.assignment)
+        )
+    )
     return _respond(ctx, outcome, "advance")
 
 

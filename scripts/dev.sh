@@ -47,6 +47,16 @@ if ! uv sync 2>&1 | label_output backend "$C_BACKEND"; then
   uv sync --python 3.13 2>&1 | label_output backend "$C_BACKEND"
 fi
 
+# Fresh start on every run: drop the dev database so old runs (e.g. a team stuck on
+# "Time's up") don't linger; alembic recreates the schema and sync-config re-issues links.
+# The path comes from .env (written above; env vars win if the user customized it).
+# Non-sqlite URLs pass through unchanged and then fail the -f test, i.e. a no-op.
+db_file="$(grep -E '^DATABASE_URL=' "$ROOT/backend/.env" | head -1 | sed -E 's|^DATABASE_URL=sqlite:///\.?/?||')"
+if [ -n "$db_file" ] && [ -f "$ROOT/backend/$db_file" ]; then
+  rm -f "$ROOT/backend/$db_file" "$ROOT/backend/$db_file"-journal "$ROOT/backend/$db_file"-wal "$ROOT/backend/$db_file"-shm
+  banner backend "$C_BACKEND" "==> removed dev database $db_file (fresh start)"
+fi
+
 banner backend "$C_BACKEND" "==> alembic upgrade head"
 uv run alembic upgrade head 2>&1 | label_output backend "$C_BACKEND"
 

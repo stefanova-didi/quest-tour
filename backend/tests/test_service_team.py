@@ -52,6 +52,15 @@ def test_service_reveal_unlocked_immediately(client, service):
     assert r["outcome"] == "ok" and r["state"]["task"]["completion"] == "revealed"
 
 
+def test_service_advance_works_without_a_photo(client, service):
+    """R-25: the photo is optional for the test team; regular teams still need one (R-1, R-10)."""
+    play(client, service, "start")
+    play(client, service, "answer", position=0, answer="Alexander Nevsky")
+    assert client.get(f"/api/play/{service}").json()["phase"] == "photo"  # photo still offered
+    r = play(client, service, "advance", position=0)
+    assert r["outcome"] == "ok" and r["state"]["position"] == 1
+
+
 def test_service_run_stays_off_every_leaderboard(client, seed, service, clock):
     service_final = play_through(client, service, clock)
     assert service_final["status"] == "finished"

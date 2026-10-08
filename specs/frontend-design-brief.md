@@ -91,7 +91,7 @@ The main screen; players spend most of their time here.
 ### 5.7 Photo upload
 - Prompt: "Take a photo of your team at {Landmark name}." Players can take a new photo with the camera or choose one from the gallery. More than one photo is allowed.
 - **Important:** the app must **not** show a preview or thumbnail of the photo (it is a surprise album). After choosing, show only a neutral "1 photo ready" or similar, never the image.
-- The way forward (Continue) is locked until at least one photo is saved; there is no skip.
+- The way forward (Continue) is locked until at least one photo is saved; there is no skip — except for the service (test) team (R-25), whose Continue is enabled without a photo.
 - States:
   1. Prompt (nothing uploaded yet).
   2. Uploading, with a progress indicator.

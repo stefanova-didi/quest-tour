@@ -58,7 +58,8 @@ export function PhotoScreen({ state, frame, upload: uploadFile, onFlowStart, onU
   }
 
   const count = task.photo_count;
-  const canContinue = count > 0 && upload.kind !== "uploading";
+  // R-25: for the service (test) team the photo is optional — Continue is enabled without one.
+  const canContinue = (count > 0 || state.service) && upload.kind !== "uploading";
   const locked = (label: string) => (
     <button type="button" className="qc-btn qc-btn--locked qc-btn--block" disabled><Icon name="lock" />{label}</button>
   );

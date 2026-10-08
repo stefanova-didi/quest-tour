@@ -100,7 +100,7 @@
 9. When the last task is completed, the clock stops and the team's total time is recorded (R-7). After the last photo and landmark info, the team sees the finish screen: total time, leaderboard (R-12) and the exit message.
 
 **Rules**
-- **R-1 Order.** Tasks are played strictly in the order defined for the game. The next task is locked until the current one is completed (answered or revealed) and its photo is uploaded.
+- **R-1 Order.** Tasks are played strictly in the order defined for the game. The next task is locked until the current one is completed (answered or revealed) and its photo is uploaded (exception: the service team, R-25).
 - **R-2 Game clock.** The clock runs on wall-clock time. It starts when the first player presses Start and stops when the last task is completed (correct answer or reveal). It cannot be paused; walking, breaks and photo uploads all count. The server is the source of truth for time; the clock shown on phones is only a display of it.
 - **R-3 Task timestamps.** For statistics, every task records *shown at* and *completed at*. Photo upload times are recorded separately and do not affect the score.
 - **R-4 Hints.** Each task has up to 2 hints. Opening hint 1 adds **+10 min**; opening hint 2 adds a further **+15 min** (up to 25 min per task). Hint 2 is available only after hint 1 has been opened. Before a hint opens, a confirmation shows its penalty.
@@ -110,7 +110,7 @@
 - **R-8 Maximum duration.** Each game sets a maximum duration, measured as wall-clock time since Start (penalties excluded). From 15 minutes before the limit, a warning shows the remaining time. When the limit is reached, or the assignment's validity window closes, the game ends unfinished: the team sees a "Time is up" screen with the exit message and the leaderboard, and does not appear on the leaderboard. Photos uploaded up to that point are kept. (Service links, R-25, have no time limit.)
 - **R-9 Answer checking.** Players type the answer as free text. Before comparing, both the input and each accepted answer are normalised: lower-cased, leading/trailing/duplicate whitespace removed, punctuation removed, diacritics stripped. The answer is correct if it equals any accepted answer after normalisation. Checking happens on the server, so accepted answers are never sent to the browser.
 - **R-10 Landmark photo.**
-  - After a task is completed, the next task (or, after the last task, the finish screen) stays locked until at least one team member uploads a photo. There is no skip.
+  - After a task is completed, the next task (or, after the last task, the finish screen) stays locked until at least one team member uploads a photo. There is no skip — except for the service (test) team (R-25), which may continue without a photo; uploading one remains possible.
   - Photos are not checked; any image is accepted. Team members can upload more than one photo per landmark; all are kept.
   - Photos are visible only to the host. Players never see them in the app, not even a thumbnail, because the host later gives the team a photo album as a surprise gift. After an upload, the app only confirms "Photo saved".
   - Photos are stored at original resolution (no re-encoding) for print albums. The maximum upload size is 20 MB per photo.
@@ -170,7 +170,8 @@ Mock-ups of every screen and state: [frontend-mocks/](../frontend-mocks/README.m
 - **R-24 Scale.** v1 targets a few teams per day, with at most about 10 game runs at the same time.
 - **R-25 Service (test) team.** `teams.yaml` may define one service team. `sync-config` gives it one link per
   game, automatically for every game. Its links ignore the validity window, the maximum duration and the
-  reveal waiting time (reveal is available as soon as a task is shown; penalties are still charged). The game
+  reveal waiting time (reveal is available as soon as a task is shown; penalties are still charged), and the
+  photo is optional: the team may continue to the next task without uploading one (R-1, R-10). The game
   screen shows a "Reset test run" button that deletes the run with its answers and photos, so the link starts
   again from the beginning. Service runs never appear on any leaderboard.
 - **R-26 Compass.** Each task can offer a compass that shows the direction from the team to the task's landmark. Opening it adds **+5 min**. Before it opens, a confirmation shows the penalty. Once opened, it stays visible until the task is completed; it is charged at most once per task. It does not carry over to the next task.

@@ -53,6 +53,14 @@ it("locks Continue until a photo is saved", () => {
   expect(screen.getByText("Take a photo of your team at Alexander Nevsky Cathedral.")).toBeInTheDocument();
 });
 
+it("enables Continue without a photo for the service team (R-25)", async () => {
+  const onContinue = vi.fn();
+  render(<PhotoScreen state={makeState({ service: true, phase: "photo", task: makeTask({ completion: "answered", landmark: NEVSKY }) })}
+                      frame={frame} upload={vi.fn()} onFlowStart={vi.fn()} onUploaded={vi.fn()} onContinue={onContinue} onError={vi.fn()} />);
+  await userEvent.click(screen.getByRole("button", { name: "Continue" }));
+  expect(onContinue).toHaveBeenCalledTimes(1);
+});
+
 it("starts as saved when a photo already exists and continues", async () => {
   const onContinue = vi.fn();
   render(<PhotoScreen state={makeState({ phase: "photo", task: makeTask({ completion: "answered", landmark: NEVSKY, photo_count: 2 }) })}
