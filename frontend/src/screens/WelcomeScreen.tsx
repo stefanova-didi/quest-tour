@@ -12,7 +12,7 @@ import { formatHours, formatPenalty } from "../lib/format";
 export function WelcomeScreen({ state, frame, onStart }: {
   state: GameState; frame: FrameProps; onStart(): Promise<unknown> | void;
 }) {
-  const { game, team } = state;
+  const { game } = state;
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const limit = formatHours(game.max_duration_minutes);
@@ -39,7 +39,6 @@ export function WelcomeScreen({ state, frame, onStart }: {
           <WelcomeSkyline />
           <p className="qs-hero__kicker">A city quest in {game.task_count} riddles</p>
           <h1 className="t-display-l">{game.name}</h1>
-          <span className="qs-team"><Icon name="team" />Welcome, {team.name}</span>
         </section>
         <main className="qs-main">
           <div className="qs-card"><Paragraphs text={game.intro} /></div>

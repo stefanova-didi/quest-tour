@@ -71,9 +71,20 @@
 /* Welcome hero */
 .qs-hero { position: relative; background: var(--accent-strong); color: var(--on-accent); padding: var(--space-6) var(--space-4) var(--space-5); display: grid; gap: var(--space-3); overflow: hidden; border-bottom: 2px solid var(--gold-500); }
 .qs-hero__art { position: absolute; right: -8px; top: 0; width: 170px; height: 120px; }
+.qs-skyline { display: block; width: 100%; height: 64px; }
+.qs-hero .qs-skyline { height: 48px; }
 .qs-hero__kicker { font: 700 13px/18px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--gold-300); margin: 0; }
 .qs-team { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-2); padding: 6px var(--space-3); border-radius: var(--radius-sm); background: var(--gold-500); color: var(--ink); font: 700 17px/22px var(--font-sans); }
 .qs-team svg { width: 20px; height: 20px; }
+
+/* Cover: the first screen before the game starts (skyline, titles, one button) */
+.qs-cover { flex: 1 1 auto; min-height: 0; background: var(--accent-strong); color: var(--on-accent); display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; }
+.qs-cover__art { flex: 1 1 auto; min-height: 0; display: flex; align-items: flex-end; padding: var(--space-6) var(--space-4) 0; }
+.qs-cover__art .qs-skyline { height: 96px; }
+.qs-cover__text { display: grid; gap: var(--space-3); padding: var(--space-5) var(--space-4) var(--space-2); border-top: 2px solid var(--gold-500); }
+.qs-actions--cover { background: var(--accent-strong); box-shadow: none; }
+.qc-btn--gold { background: var(--gold-500); color: var(--ink); }
+.qc-btn--gold:active { background: var(--gold-300); }
 
 /* Curtain band on Finish and Time's up */
 .qs-curtain { position: relative; background: var(--accent-strong); color: var(--ink-inverse); padding: var(--space-7) var(--space-4) var(--space-6); display: grid; gap: var(--space-2); overflow: hidden; border-bottom: 2px solid var(--gold-500); }

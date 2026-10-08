@@ -1,7 +1,8 @@
 // Illustrations read the tokens, so a palette change (design/) recolours them with no edits here.
-export function WelcomeSkyline() {
+export function WelcomeSkyline({ big = false }: { big?: boolean }) {
+  // `big` fills the cover: the drawing is scaled up and the sides are cropped instead of being letterboxed.
   return (
-    <svg viewBox="0 0 358 64" width="358" height="64" aria-hidden="true" style={{ display: "block" }}>
+    <svg className="qs-skyline" viewBox="0 0 358 64" preserveAspectRatio={big ? "xMidYMax slice" : "xMidYMax meet"} aria-hidden="true">
       <path d="M0 64 V46 a14 14 0 0 1 28 0 V64 Z" fill="var(--patina-600)" />
       <rect x="40" y="22" width="26" height="42" fill="var(--patina-600)" />
       <path d="M40 22 a13 13 0 0 1 26 0 Z" fill="var(--patina-600)" />
