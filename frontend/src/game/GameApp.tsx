@@ -4,6 +4,7 @@ import { GameHeader } from "../components/GameHeader";
 import type { FrameProps } from "../components/GameFrame";
 import { ServiceBar } from "../components/ServiceBar";
 import { forgetToken, rememberToken } from "../lib/storage";
+import { useLanguage } from "../lib/language";
 import { CorrectScreen } from "../screens/CorrectScreen";
 import { CoverScreen } from "../screens/CoverScreen";
 import { FinishScreen } from "../screens/FinishScreen";
@@ -20,6 +21,7 @@ import { useGame } from "./useGame";
 
 export function GameApp({ token }: { token: string }) {
   const game = useGame(token);
+  const [language, setLanguage] = useLanguage();
   const [ui, setUi] = useState<LocalUi>(EMPTY_UI);
   const kind = game.view.kind;
   const invalidReason = game.view.kind === "invalid" ? game.view.info.reason : null;
@@ -43,7 +45,10 @@ export function GameApp({ token }: { token: string }) {
     offline: game.offline, notice: game.notice, onNoticeDone: game.clearNotice,
     header: state.clock && state.phase !== "results"
       ? <GameHeader clock={state.clock} position={position} taskCount={state.game.task_count}
-                    receivedAt={receivedAt} onTimeUp={onTimeUp} />
+                    receivedAt={receivedAt} onTimeUp={onTimeUp}
+                    availableLanguages={state.game.available_languages}
+                    language={language}
+                    onLanguageChange={setLanguage} />
       : null,
   };
   const ack = () => setUi((u) => ({ ...u, ackedPosition: position }));
@@ -59,19 +64,21 @@ export function GameApp({ token }: { token: string }) {
   function renderScreen() {
     switch (selectScreen(state, ui)) {
       case "cover":
-        return <CoverScreen state={state} frame={frame} onContinue={() => setUi((u) => ({ ...u, coverSeen: true }))} />;
+        return <CoverScreen state={state} frame={frame} language={language} onLanguageChange={setLanguage}
+                        onContinue={() => setUi((u) => ({ ...u, coverSeen: true }))} />;
       case "welcome":
-        return <WelcomeScreen state={state} frame={frame} onStart={() => game.act(() => api.start(token))} />;
+        return <WelcomeScreen state={state} frame={frame} language={language} onLanguageChange={setLanguage}
+                              onStart={() => game.act(() => api.start(token))} />;
       case "task":
-        return <TaskScreen key={position} state={state} receivedAt={receivedAt} frame={frame}
+        return <TaskScreen key={position} state={state} receivedAt={receivedAt} frame={frame} language={language}
                            onAnswer={(a) => game.act(() => api.answer(token, position, a))}
                            onHint={(n) => game.act(() => api.hint(token, position, n))}
                            onCompass={() => game.act(() => api.compass(token))}
                            onReveal={() => game.act(() => api.reveal(token, position))} />;
       case "correct":
-        return <CorrectScreen state={state} frame={frame} onContinue={ack} />;
+        return <CorrectScreen state={state} frame={frame} language={language} onContinue={ack} />;
       case "revealed":
-        return <RevealedScreen state={state} frame={frame} onContinue={ack} />;
+        return <RevealedScreen state={state} frame={frame} language={language} onContinue={ack} />;
       case "photo":
         return <PhotoScreen key={position} state={state} frame={frame}
                             upload={(file, onProgress) => game.track(api.uploadPhoto(token, position, file, onProgress))}
@@ -85,7 +92,8 @@ export function GameApp({ token }: { token: string }) {
                             }}
                             onError={game.fail} />;
       case "landmark":
-        return <LandmarkScreen state={state} frame={frame} onNext={() => game.act(() => api.advance(token, position))} />;
+        return <LandmarkScreen state={state} frame={frame} language={language}
+                               onNext={() => game.act(() => api.advance(token, position))} />;
       case "finish":
         return <FinishScreen state={state} frame={frame} />;
       case "timesup":

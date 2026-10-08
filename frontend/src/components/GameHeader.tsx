@@ -3,11 +3,14 @@ import type { Clock } from "../api/types";
 import { formatHms, formatLeft, formatPenalty } from "../lib/format";
 import { useNow } from "../lib/useNow";
 import { Icon } from "./Icon";
+import { LanguageToggle } from "./LanguageToggle";
 
 const WARNING_SECONDS = 15 * 60;
 
-export function GameHeader({ clock, position, taskCount, receivedAt, onTimeUp }: {
+export function GameHeader({ clock, position, taskCount, receivedAt, onTimeUp,
+                             availableLanguages, language, onLanguageChange }: {
   clock: Clock; position: number; taskCount: number; receivedAt: number; onTimeUp(): void;
+  availableLanguages: string[]; language: string; onLanguageChange(lang: string): void;
 }) {
   const now = useNow(clock.running ? 1000 : null);
   const drift = clock.running ? Math.max(0, Math.floor((now - receivedAt) / 1000)) : 0;
@@ -30,9 +33,17 @@ export function GameHeader({ clock, position, taskCount, receivedAt, onTimeUp }:
             aria-label={warning ? "Game status – time running out" : "Game status"} style={{ flex: "none" }}>
       <div className="qc-header__top">
         <span className="qc-header__clock"><Icon name="clock" />{formatHms(elapsed)}</span>
-        {warning
-          ? <span className="qc-header__left">{formatLeft(remaining!)}</span>
-          : penalty && <span className="qc-tag qc-tag--on-dark">{penalty}</span>}
+        <div className="qc-header__right">
+          {warning
+            ? <span className="qc-header__left">{formatLeft(remaining!)}</span>
+            : penalty && <span className="qc-tag qc-tag--on-dark">{penalty}</span>}
+          <LanguageToggle
+            languages={availableLanguages}
+            selected={language}
+            onSelect={onLanguageChange}
+            compact
+          />
+        </div>
       </div>
       <div className="qc-header__progress">
         <span>Task {taskNo} of {taskCount}{warning && penalty ? ` · ${penalty}` : ""}</span>

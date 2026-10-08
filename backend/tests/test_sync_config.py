@@ -376,3 +376,37 @@ def test_service_block_validation_errors(tmp_path):
     errors = load_config(tmp_path).errors
     assert any(e.startswith("teams.yaml: service team:") for e in errors)
     assert any(e.startswith("teams.yaml: service name:") for e in errors)
+
+
+I18N_LANDMARKS = """
+landmarks:
+  - {id: c, name: Gamma, task: Riddle C, accepted_answers: [Gamma], hint1: Hint1 C, hint2: Hint2 C,
+     tourist_info: Info C, name_i18n: {de: Gamma DE}, task_i18n: {de: Riddle C DE},
+     hint1_i18n: {de: Hint1 C DE}, hint2_i18n: {de: Hint2 C DE},
+     tourist_info_i18n: {de: Info C DE}}
+"""
+
+
+def test_landmark_i18n_maps_are_persisted_and_idempotent(tmp_path, session_factory, blob_store):
+    root = write_config(
+        tmp_path,
+        landmarks=I18N_LANDMARKS,
+        games="games: []\n",
+        teams="teams: []\nassignments: []\n",
+    )
+    sync(root, session_factory, blob_store)
+    with session_factory() as s:
+        c = s.scalars(select(Landmark).where(Landmark.key == "c")).one()
+        assert c.name_i18n == {"de": "Gamma DE"}
+        assert c.task_text_i18n == {"de": "Riddle C DE"}
+        assert c.hint1_i18n == {"de": "Hint1 C DE"}
+        assert c.hint2_i18n == {"de": "Hint2 C DE"}
+        assert c.info_text_i18n == {"de": "Info C DE"}
+    sync(root, session_factory, blob_store)
+    with session_factory() as s:
+        c = s.scalars(select(Landmark).where(Landmark.key == "c")).one()
+        assert c.name_i18n == {"de": "Gamma DE"}
+        assert c.task_text_i18n == {"de": "Riddle C DE"}
+        assert c.hint1_i18n == {"de": "Hint1 C DE"}
+        assert c.hint2_i18n == {"de": "Hint2 C DE"}
+        assert c.info_text_i18n == {"de": "Info C DE"}

@@ -11,11 +11,14 @@ class HintOut(BaseModel):
     available: bool
     opened: bool
     text: str | None
+    text_i18n: dict[str, str]
 
 
 class LandmarkOut(BaseModel):
     name: str
+    name_i18n: dict[str, str]
     info: str
+    info_i18n: dict[str, str]
     picture_url: str | None
 
 
@@ -29,6 +32,7 @@ class CompassOut(BaseModel):
 class TaskOut(BaseModel):
     number: int
     text: str
+    text_i18n: dict[str, str]
     picture_url: str | None
     hints: list[HintOut]
     wrong_attempts: int
@@ -60,6 +64,7 @@ class GameOut(BaseModel):
     reveal_after_attempts: int
     reveal_after_minutes: int
     reveal_penalty_minutes: int
+    available_languages: list[str]
 
 
 class TeamOut(BaseModel):

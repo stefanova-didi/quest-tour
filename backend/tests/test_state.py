@@ -217,7 +217,7 @@ def test_answered_task_does_not_reveal_answer(session, assignment, run, clock):
 
 def test_game_out_carries_rules_for_the_client(session, assignment, run, clock):
     state = build_state(session, assignment, run, clock.now)
-    assert state.game == build_game(assignment.game, 3)
+    assert state.game == build_game(assignment.game, run.tasks)
     assert (state.game.reveal_after_attempts, state.game.reveal_after_minutes) == (5, 20)
     assert state.game.reveal_penalty_minutes == 30
 

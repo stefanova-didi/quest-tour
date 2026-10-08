@@ -7,11 +7,16 @@ export interface Landmark {
   id: number;
   key: string;
   name: string;
+  name_i18n: Record<string, string> | null;
   task: string;
+  task_i18n: Record<string, string> | null;
   accepted_answers: string[];
   hint1: string | null;
+  hint1_i18n: Record<string, string> | null;
   hint2: string | null;
+  hint2_i18n: Record<string, string> | null;
   tourist_info: string;
+  tourist_info_i18n: Record<string, string> | null;
   coordinates: Coordinates | null;
   task_image_url: string | null;
   info_image_url: string | null;

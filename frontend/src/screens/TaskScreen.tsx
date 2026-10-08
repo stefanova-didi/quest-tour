@@ -6,13 +6,14 @@ import { ConfirmSheet } from "../components/ConfirmSheet";
 import { GameFrame, type FrameProps } from "../components/GameFrame";
 import { Icon } from "../components/Icon";
 import { formatPenalty } from "../lib/format";
+import { pickText } from "../lib/i18n";
 import { useNow } from "../lib/useNow";
 
 type Pending = { kind: "hint"; hint: Hint } | { kind: "reveal" } | { kind: "compass" } | null;
 type Act = Promise<ActOutcome>;
 
-export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onReveal, onCompass }: {
-  state: GameState; receivedAt: number; frame: FrameProps;
+export function TaskScreen({ state, receivedAt, frame, language, onAnswer, onHint, onReveal, onCompass }: {
+  state: GameState; receivedAt: number; frame: FrameProps; language: string;
   onAnswer(answer: string): Act; onHint(hint: 1 | 2): Act; onReveal(): Act; onCompass(): Act;
 }) {
   const task = state.task!;
@@ -60,7 +61,7 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
   const riddle = (
     <>
       <p className="qs-eyebrow"><Icon name="riddle" />Riddle</p>
-      <p className="t-riddle">{task.text}</p>
+      <p className="t-riddle">{pickText(task.text, task.text_i18n, language)}</p>
     </>
   );
 
@@ -115,7 +116,7 @@ export function TaskScreen({ state, receivedAt, frame, onAnswer, onHint, onRevea
           hint.opened ? (
             <div className="qc-hint" key={hint.number}>
               <div className="qc-hint__head"><span>Hint {hint.number}</span><span>{formatPenalty(hint.penalty_minutes)} added</span></div>
-              <p className="qc-hint__text">{hint.text}</p>
+              <p className="qc-hint__text">{pickText(hint.text ?? "", hint.text_i18n, language)}</p>
             </div>
           ) : hint.available ? (
             <button type="button" className="qc-hint-btn" key={hint.number} onClick={() => setPending({ kind: "hint", hint })}>

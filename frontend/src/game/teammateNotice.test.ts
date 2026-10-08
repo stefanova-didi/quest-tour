@@ -8,8 +8,8 @@ it("explains changes made on another phone", () => {
     .toBe("A teammate solved this task");
   expect(teammateNotice(task, makeState({ phase: "photo", task: makeTask({ completion: "revealed", landmark: NEVSKY }) })))
     .toBe("A teammate revealed the answer");
-  const hinted = makeTask({ hints: [{ number: 1, penalty_minutes: 10, available: false, opened: true, text: "x" },
-                                    { number: 2, penalty_minutes: 15, available: true, opened: false, text: null }] });
+  const hinted = makeTask({ hints: [{ number: 1, penalty_minutes: 10, available: false, opened: true, text: "x", text_i18n: {} },
+                                    { number: 2, penalty_minutes: 15, available: true, opened: false, text: null, text_i18n: {} }] });
   expect(teammateNotice(task, makeState({ task: hinted }))).toBe("A teammate opened hint 1");
   expect(teammateNotice(task, makeState({ position: 3 }))).toBe("A teammate moved on to the next riddle");
   const compassOpened = makeTask({ compass: { opened: true, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
