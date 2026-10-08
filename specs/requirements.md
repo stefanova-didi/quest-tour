@@ -112,7 +112,8 @@
 - **R-10 Landmark photo.**
   - After a task is completed, the next task (or, after the last task, the finish screen) stays locked until at least one team member uploads a photo. There is no skip — except for the service (test) team (R-25), which may continue without a photo; uploading one remains possible.
   - Photos are not checked; any image is accepted. Team members can upload more than one photo per landmark; all are kept.
-  - Photos are visible only to the host. Players never see them in the app, not even a thumbnail, because the host later gives the team a photo album as a surprise gift. After an upload, the app only confirms "Photo saved".
+  - During the game, photos are visible only to the host. Players never see them in the app, not even a thumbnail: they are the surprise. After an upload, the app only confirms "Photo saved".
+  - **Memories album (issue #33).** Once the run has ended (finished, or time is up), the app collects every photo the team took, with the landmark it belongs to and the landmark's information, into the team's memories album at `/album/{link token}`, reachable from the Finish and Time is up screens: a cover with the facts of the day, one page per landmark reached, and a closing summary. The album can be saved as a PDF. Photos the host has deleted leave the album.
   - Photos are stored at original resolution (no re-encoding) for print albums. The maximum upload size is 20 MB per photo.
   - The host browses the photos directly in storage (no UI in v1). They are organised per game and per team, with a timestamp in each file name:
     `{GameName}/{TeamName}/{yyyy-MM-dd_HH-mm-ss}_{TaskNo}_{LandmarkName}.{ext}`

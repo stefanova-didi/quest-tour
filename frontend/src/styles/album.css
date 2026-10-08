@@ -13,6 +13,7 @@
               gap: var(--space-3); padding: var(--space-2) var(--space-4); background: var(--accent-strong);
               color: var(--on-accent); border-bottom: 1px solid var(--gold-500); }
 .qa-toolbar__title { font: 700 15px/20px var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qa-toolbar__tools { display: flex; align-items: center; gap: var(--space-2); flex: none; }
 .qa-toolbar .qa-save { min-height: 40px; padding: 0 var(--space-4); font-size: 15px; flex: none; }
 .qa-end__save { display: flex; justify-content: center; }
 

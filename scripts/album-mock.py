@@ -22,21 +22,26 @@ photo_counts = [1, 2, 1, 3, 1, 2]
 
 chapters = []
 t = start
+photo_id = 0
 for i, lm_id in enumerate(order):
     lm = landmarks[lm_id]
     t = t + timedelta(minutes=gaps[i % len(gaps)])
     reached = t
     photos = []
     for p in range(photo_counts[i % len(photo_counts)]):
+        photo_id += 1
         taken = reached + timedelta(minutes=4 + 3 * p)
         photos.append({
+            "id": photo_id,
             "url": f"https://picsum.photos/seed/{lm_id}-{p + 1}/1200/900",   # dummy photo for the design draft
             "taken_at": taken.isoformat().replace("+00:00", "Z"),
         })
     chapters.append({
         "number": i + 1,
         "landmark": lm["name"],
+        "landmark_i18n": lm.get("name_i18n") or {},
         "story": lm["tourist_info"].strip(),
+        "story_i18n": {code: text.strip() for code, text in (lm.get("tourist_info_i18n") or {}).items()},
         "reached_at": reached.isoformat().replace("+00:00", "Z"),
         "photos": photos,
     })
@@ -47,6 +52,8 @@ album = {
     "team": "The Explorers",
     "time_zone": game.get("time_zone", "Europe/Sofia"),
     "played_on": start.isoformat().replace("+00:00", "Z"),
+    "ended_at": end.isoformat().replace("+00:00", "Z"),
+    "end_reason": "finished",
     "task_count": len(order),
     "total_seconds": int((end - start).total_seconds()) + 25 * 60,
     "rank": 2,

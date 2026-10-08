@@ -9,7 +9,7 @@ import { Paragraphs } from "../components/Paragraphs";
 import { Toast } from "../components/Toast";
 import { formatHms, formatPenalty, ordinal } from "../lib/format";
 
-export function FinishScreen({ state, frame }: { state: GameState; frame: FrameProps }) {
+export function FinishScreen({ state, frame, albumUrl }: { state: GameState; frame: FrameProps; albumUrl?: string }) {
   const results = state.results!;
   const { game, team } = state;
   const total = results.total_seconds ?? 0;
@@ -46,6 +46,11 @@ export function FinishScreen({ state, frame }: { state: GameState; frame: FrameP
             <p className="qs-eyebrow qs-eyebrow--gold" id="host-label"><Icon name="gift" />From your host</p>
             <Paragraphs text={results.exit_message} />
           </section>
+          {albumUrl && (
+            <a className="qc-btn qc-btn--primary qc-btn--block" href={albumUrl}>
+              <Icon name="gallery" />Open your memories album
+            </a>
+          )}
           <AppVersion />
         </main>
       </div>

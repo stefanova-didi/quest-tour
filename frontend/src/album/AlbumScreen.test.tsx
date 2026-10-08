@@ -1,25 +1,25 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
-import { AlbumPage } from "./AlbumPage";
 import { AlbumScreen } from "./AlbumScreen";
-import { MOCK_ALBUM } from "./mock";
 import type { Album } from "./types";
 
 const album: Album = {
   game: "Sofia Old Town Quest", team: "The Explorers", time_zone: "Europe/Sofia",
-  played_on: "2026-10-03T07:30:00Z", task_count: 6, total_seconds: 10710, rank: 2, shared_rank: false,
+  played_on: "2026-10-03T07:30:00Z", ended_at: "2026-10-03T10:28:30Z", end_reason: "finished",
+  task_count: 6, total_seconds: 10710, rank: 2, shared_rank: false,
   host_message: "Thank you for exploring Sofia with us!\n\nHere is your journey.",
   chapters: [
-    { number: 1, landmark: "Lily Pond", story: "Laid out by Daniel Neff.\n\nKnown as the Fish Pond.",
+    { number: 1, landmark: "Lily Pond", landmark_i18n: { de: "Seerosenteich" },
+      story: "Laid out by Daniel Neff.\n\nKnown as the Fish Pond.", story_i18n: { de: "Von Daniel Neff angelegt." },
       reached_at: "2026-10-03T07:58:00Z",
-      photos: [{ url: "https://example.test/lily-1.jpg", taken_at: "2026-10-03T08:02:00Z" }] },
-    { number: 2, landmark: "Eagles' Bridge", story: "Built in 1891.",
+      photos: [{ id: 1, url: "https://example.test/lily-1.jpg", taken_at: "2026-10-03T08:02:00Z" }] },
+    { number: 2, landmark: "Eagles' Bridge", landmark_i18n: {}, story: "Built in 1891.", story_i18n: {},
       reached_at: "2026-10-03T08:22:00Z",
       photos: [
-        { url: "https://example.test/bridge-1.jpg", taken_at: "2026-10-03T08:26:00Z" },
-        { url: "https://example.test/bridge-2.jpg", taken_at: "2026-10-03T08:29:00Z" },
-        { url: "https://example.test/bridge-3.jpg", taken_at: "2026-10-03T08:32:00Z" },
+        { id: 2, url: "https://example.test/bridge-1.jpg", taken_at: "2026-10-03T08:26:00Z" },
+        { id: 3, url: "https://example.test/bridge-2.jpg", taken_at: "2026-10-03T08:29:00Z" },
+        { id: 4, url: "https://example.test/bridge-3.jpg", taken_at: "2026-10-03T08:32:00Z" },
       ] },
   ],
 };
@@ -92,11 +92,15 @@ it("offers Save as PDF in the toolbar and at the end, which opens the print dial
   print.mockRestore();
 });
 
-it("renders the mock album for the preview token and nothing else for any other token", () => {
-  const { unmount } = render(<AlbumPage token="preview" />);
-  expect(screen.getByRole("heading", { level: 1, name: MOCK_ALBUM.game })).toBeInTheDocument();
-  expect(screen.getAllByRole("region").length).toBeGreaterThanOrEqual(MOCK_ALBUM.chapters.length);
-  unmount();
-  render(<AlbumPage token="someone-elses-token" />);
-  expect(screen.getByText("Album not found")).toBeInTheDocument();
+it("offers the game's languages and shows landmark and story in the chosen one", () => {
+  render(<AlbumScreen album={album} language="de" />);
+  expect(screen.getByRole("button", { name: "Language, DE" })).toBeInTheDocument();
+  expect(screen.getByRole("region", { name: "Seerosenteich" })).toHaveTextContent("Von Daniel Neff angelegt.");
+  expect(screen.getByRole("region", { name: "Eagles' Bridge" })).toHaveTextContent("Built in 1891.");   // no German: base text
+});
+
+it("shows no language pill when nothing is translated", () => {
+  const plain = { ...album, chapters: album.chapters.map((c) => ({ ...c, landmark_i18n: {}, story_i18n: {} })) };
+  render(<AlbumScreen album={plain} />);
+  expect(screen.queryByRole("button", { name: /^Language/ })).not.toBeInTheDocument();
 });

@@ -52,6 +52,7 @@ export function GameApp({ token }: { token: string }) {
       : null,
   };
   const ack = () => setUi((u) => ({ ...u, ackedPosition: position }));
+  const albumUrl = `/album/${encodeURIComponent(token)}`;   // the memories album (issue #33) uses the same link
 
   const screen = renderScreen();
   return (
@@ -95,9 +96,9 @@ export function GameApp({ token }: { token: string }) {
         return <LandmarkScreen state={state} frame={frame} language={language}
                                onNext={() => game.act(() => api.advance(token, position))} />;
       case "finish":
-        return <FinishScreen state={state} frame={frame} />;
+        return <FinishScreen state={state} frame={frame} albumUrl={albumUrl} />;
       case "timesup":
-        return <TimesUpScreen state={state} frame={frame} />;
+        return <TimesUpScreen state={state} frame={frame} albumUrl={albumUrl} />;
     }
   }
 }

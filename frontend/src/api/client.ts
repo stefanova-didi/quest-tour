@@ -1,3 +1,4 @@
+import type { Album } from "../album/types";
 import { getDeviceId } from "../lib/storage";
 import type { ActionResult, GameState, LinkNotValidInfo } from "./types";
 
@@ -52,6 +53,7 @@ async function request<T>(url: string, body?: unknown): Promise<T> {
 
 export const api = {
   state: (token: string) => request<GameState>(base(token)),
+  album: (token: string) => request<Album>(`${base(token)}/album`),   // 409 (HttpError) until the run has ended
   start: (token: string) => request<ActionResult>(`${base(token)}/start`, {}),
   answer: (token: string, position: number, answer: string) =>
     request<ActionResult>(`${base(token)}/answer`, { position, answer }),
