@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 import { GameHeader } from "./GameHeader";
 
@@ -29,9 +30,12 @@ it("asks the server once when the local countdown reaches zero", () => {
   expect(onTimeUp).toHaveBeenCalledTimes(1);
 });
 
-it("renders the language toggle with available languages", () => {
+it("renders the language menu with available languages", async () => {
+  const user = userEvent.setup();
   render(<GameHeader clock={base} position={0} taskCount={8} receivedAt={Date.now()} onTimeUp={() => {}} {...common} />);
-  expect(screen.getByRole("button", { name: "DE" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "SR" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "Base / EN" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Language, EN" })).toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Language, EN" }));
+  expect(screen.getByRole("option", { name: "EN" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "DE" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "SR" })).toBeInTheDocument();
 });

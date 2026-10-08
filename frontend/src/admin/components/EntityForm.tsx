@@ -137,7 +137,7 @@ export function EntityForm<T extends Record<string, unknown>>({
               className={`qc-btn ${activeLang === "en" ? "qc-btn--primary" : "qc-btn--secondary"}`}
               onClick={() => setActiveLang("en")}
             >
-              Base / EN
+              EN
             </button>
             {languages.map((code) => (
               <button

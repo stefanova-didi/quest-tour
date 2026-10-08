@@ -40,17 +40,19 @@ it("asks for confirmation before calling onStart", async () => {
   expect(onStart).toHaveBeenCalledTimes(1);
 });
 
-it("renders a language toggle for the game's available languages", () => {
+it("renders a language menu for the game's available languages", async () => {
+  const user = userEvent.setup();
   renderWelcome({ game: { available_languages: ["de", "sr"] } });
-  expect(screen.getByRole("group", { name: "Language" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "Base / EN" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "DE" })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "SR" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Language, EN" })).toBeInTheDocument();
+  await user.click(screen.getByRole("button", { name: "Language, EN" }));
+  expect(screen.getByRole("option", { name: "DE" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "SR" })).toBeInTheDocument();
 });
 
-it("calls onLanguageChange when a language button is clicked", async () => {
+it("calls onLanguageChange when a language is picked from the menu", async () => {
   const onLanguageChange = vi.fn();
   renderWelcome({ game: { available_languages: ["de", "sr"] }, onLanguageChange });
-  await userEvent.click(screen.getByRole("button", { name: "SR" }));
+  await userEvent.click(screen.getByRole("button", { name: "Language, EN" }));
+  await userEvent.click(screen.getByRole("option", { name: "SR" }));
   expect(onLanguageChange).toHaveBeenCalledWith("sr");
 });

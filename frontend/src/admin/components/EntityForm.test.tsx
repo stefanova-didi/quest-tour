@@ -256,7 +256,7 @@ describe("EntityForm", () => {
 
     await user.click(screen.getByRole("button", { name: "+ Add language" }));
     expect(alert).toHaveBeenCalledWith("'en' is reserved for the base language.");
-    expect(screen.queryByRole("button", { name: "EN" })).toBeNull();
+    expect(screen.getAllByRole("button", { name: "EN" })).toHaveLength(1);  // only the base tab
     expect(onSubmit).not.toHaveBeenCalled();
 
     vi.unstubAllGlobals();

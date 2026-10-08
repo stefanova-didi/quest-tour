@@ -49,10 +49,29 @@
 .qc-header--warning .qc-progress > span { background: var(--ink); }
 .qc-header__left { font: 700 17px/22px var(--font-sans); background: var(--ink); color: var(--gold-300); padding: 2px var(--space-2); border-radius: var(--radius-pill); }
 
-/* Language toggle */
+/* Language toggle (admin edit tabs) */
 .qc-lang-toggle { display: flex; flex-wrap: wrap; gap: 8px; }
 .qc-lang-toggle--compact { gap: 4px; }
 .qc-lang-toggle .qc-btn { padding: 4px 10px; font-size: 0.85rem; }
+
+/* Language menu (player dropdown) */
+.qc-lang { position: relative; display: inline-flex; }
+.qc-lang__trigger { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem; }
+.qc-lang__trigger svg { width: 14px; height: 14px; }
+.qc-lang--compact .qc-lang__trigger { padding: 4px 8px; font-size: 0.8rem; }
+.qc-lang__menu {
+  position: absolute; top: calc(100% + 4px); right: 0; z-index: 40;
+  min-width: 96px; margin: 0; padding: var(--space-2) 0; list-style: none;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(20, 24, 32, 0.25);
+}
+.qc-lang__menu li {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  padding: 8px var(--space-4); cursor: pointer; font-size: 0.9rem;
+}
+.qc-lang__menu li:hover { background: var(--surface-sunken); }
+.qc-lang__menu li[aria-selected="true"] { color: var(--accent); font-weight: 700; }
+.qc-lang__menu li svg { width: 16px; height: 16px; }
 
 /* Answer field */
 .qc-field { display: grid; gap: var(--space-2); }
