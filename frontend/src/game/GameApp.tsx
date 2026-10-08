@@ -5,6 +5,7 @@ import type { FrameProps } from "../components/GameFrame";
 import { ServiceBar } from "../components/ServiceBar";
 import { forgetToken, rememberToken } from "../lib/storage";
 import { CorrectScreen } from "../screens/CorrectScreen";
+import { CoverScreen } from "../screens/CoverScreen";
 import { FinishScreen } from "../screens/FinishScreen";
 import { LandmarkScreen } from "../screens/LandmarkScreen";
 import { LinkNotValidScreen } from "../screens/LinkNotValidScreen";
@@ -57,6 +58,8 @@ export function GameApp({ token }: { token: string }) {
 
   function renderScreen() {
     switch (selectScreen(state, ui)) {
+      case "cover":
+        return <CoverScreen state={state} frame={frame} onContinue={() => setUi((u) => ({ ...u, coverSeen: true }))} />;
       case "welcome":
         return <WelcomeScreen state={state} frame={frame} onStart={() => game.act(() => api.start(token))} />;
       case "task":
@@ -72,7 +75,7 @@ export function GameApp({ token }: { token: string }) {
       case "photo":
         return <PhotoScreen key={position} state={state} frame={frame}
                             upload={(file, onProgress) => game.track(api.uploadPhoto(token, position, file, onProgress))}
-                            onFlowStart={() => setUi({ ackedPosition: position, photoFlowPosition: position })}
+                            onFlowStart={() => setUi((u) => ({ ...u, ackedPosition: position, photoFlowPosition: position }))}
                             onUploaded={game.applyResult}
                             onContinue={() => {
                               // R-25: without a photo, service Continue must advance (the upload is

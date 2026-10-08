@@ -11,7 +11,7 @@ it("lists the rules with the reveal penalty from the game settings", () => {
   expect(screen.getByText("+30 min")).toBeInTheDocument();
   expect(screen.getByText(/You have up to 4 hours\./)).toBeInTheDocument();
   expect(screen.getByText("A city quest in 8 riddles")).toBeInTheDocument();
-  expect(screen.getByText("Welcome, The Explorers")).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Sofia Old Town Quest" })).toBeInTheDocument();
 });
 
 it("asks for confirmation before calling onStart", async () => {

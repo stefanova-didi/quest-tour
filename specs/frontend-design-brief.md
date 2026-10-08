@@ -45,10 +45,12 @@ No brand identity is defined yet. Propose a visual direction (colour palette, ty
 
 For each screen, the states listed must be mocked as separate frames.
 
+### 5.0 Cover
+The first screen of a team link while the game has not started: a full-screen patina band with the skyline illustration, the kicker ("A city quest in N riddles"), the game name, the team name and a single gold button, **How it works**, which opens the Welcome screen. No clock, no rules, no network call; shown once per page load. Players who open the link after the game has started land on the current state instead.
+
 ### 5.1 Welcome
-Shown when a player opens the team link before or during the game.
+Shown after the cover, when a player opens the team link before the game starts.
 - Game name and intro text (a few paragraphs, admin-provided).
-- Team name ("Welcome, The Explorers").
 - Rules summary: tasks are played in order; the clock runs without pause from Start; hint 1 = +10 min, hint 2 = +15 min; giving up on a task = +30 min (number set per game); a photo is required at every landmark.
 - **Photo privacy notice** (short, plain): photos you upload are collected and kept by the host.
 - Primary button: **Start the quest**.

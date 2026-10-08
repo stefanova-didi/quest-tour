@@ -4,7 +4,9 @@ import { EMPTY_UI, selectScreen } from "./selectScreen";
 
 describe("selectScreen", () => {
   it("routes by status", () => {
-    expect(selectScreen(makeState({ status: "not_started", phase: null, clock: null, task: null }), EMPTY_UI)).toBe("welcome");
+    const notStarted = makeState({ status: "not_started", phase: null, clock: null, task: null });
+    expect(selectScreen(notStarted, EMPTY_UI)).toBe("cover");
+    expect(selectScreen(notStarted, { ...EMPTY_UI, coverSeen: true })).toBe("welcome");
     expect(selectScreen(makeState({ status: "timed_out", phase: "results" }), EMPTY_UI)).toBe("timesup");
     expect(selectScreen(makeState({ status: "finished", phase: "results" }), EMPTY_UI)).toBe("finish");
     expect(selectScreen(makeState(), EMPTY_UI)).toBe("task");
