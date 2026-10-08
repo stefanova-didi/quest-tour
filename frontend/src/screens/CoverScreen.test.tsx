@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
+import { APP_VERSION, versionLabel } from "../lib/version";
 import { makeState } from "../test/fixtures";
 import { CoverScreen } from "./CoverScreen";
 
@@ -23,6 +24,11 @@ it("shows the game name, the riddle count and the team", () => {
   expect(screen.getByRole("heading", { name: "Sofia Old Town Quest" })).toBeInTheDocument();
   expect(screen.getByText("A city quest in 8 riddles")).toBeInTheDocument();
   expect(screen.getByText("Welcome, The Explorers")).toBeInTheDocument();
+});
+
+it("shows the running version in the footer (issue #29)", () => {
+  renderCover();
+  expect(screen.getByRole("contentinfo")).toHaveTextContent(versionLabel(APP_VERSION));
 });
 
 it("offers the language menu and continues to the Welcome page", async () => {

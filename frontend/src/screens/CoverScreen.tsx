@@ -1,4 +1,5 @@
 import type { GameState } from "../api/types";
+import { AppVersion } from "../components/AppVersion";
 import { WelcomeSkyline } from "../components/art";
 import { ConnectionBanner } from "../components/ConnectionBanner";
 import type { FrameProps } from "../components/GameFrame";
@@ -28,6 +29,7 @@ export function CoverScreen({ state, frame, language, onLanguageChange, onContin
       </section>
       <div className="qs-actions qs-actions--cover">
         <button type="button" className="qc-btn qc-btn--gold qc-btn--block" onClick={onContinue}>How it works<Icon name="arrow" /></button>
+        <AppVersion inverse />
       </div>
       {frame.notice && <Toast message={frame.notice} onDone={frame.onNoticeDone} />}
     </div>

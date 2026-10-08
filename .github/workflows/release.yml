@@ -1,0 +1,39 @@
+name: Release
+
+# A release is a version tag on main (vMAJOR.MINOR.PATCH, see CONTRIBUTING.md "Releasing"). Pushing
+# the tag publishes a GitHub Release with generated notes and deploys exactly that tag, so the version
+# the app footer and /api/health report is the release name rather than a "v1.1.0-7-gabc1234" build
+# number from the merge that preceded it.
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write # create the GitHub Release
+  actions: write # start the Deploy workflow
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the tag must be reachable from main, and the notes need the history
+      - name: Refuse a tag that is not on main
+        run: |
+          git fetch origin main --quiet
+          if ! git merge-base --is-ancestor "$TAG" origin/main; then
+            echo "::error::$TAG is not an ancestor of main; release tags are made on main only"; exit 1
+          fi
+      - name: Publish the GitHub Release
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "release $TAG already exists; leaving it as it is"
+          else
+            gh release create "$TAG" --verify-tag --generate-notes --title "$TAG"
+          fi
+      - name: Deploy the tag (Deploy workflow, ref = the tag)
+        run: gh workflow run deploy.yml --ref main -f "ref=$TAG"

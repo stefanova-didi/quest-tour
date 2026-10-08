@@ -111,6 +111,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
+          fetch-depth: 0 # tags and history, so `git describe` can name the version
+      - name: Resolve the version (release tag, or tag-relative build number)
+        run: |
+          APP_VERSION="$(git describe --tags --always)"
+          echo "APP_VERSION=$APP_VERSION" >>"$GITHUB_ENV"
+          echo "::notice title=Version::$APP_VERSION"
       - uses: actions/setup-node@v4
         with:
           node-version: 22

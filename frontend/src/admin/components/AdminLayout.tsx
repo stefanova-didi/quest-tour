@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AppVersion } from "../../components/AppVersion";
 import { adminApi } from "../api";
 
 const LINKS = [
@@ -39,6 +40,7 @@ export function AdminLayout({ active, children }: AdminLayoutProps) {
         >
           Logout
         </button>
+        <AppVersion inverse />
       </nav>
       <main className="admin-main">{children}</main>
     </div>

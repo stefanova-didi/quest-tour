@@ -76,11 +76,19 @@ jobs:
           app-name: ${{ vars.AZURE_WEBAPP_NAME }}
           resource-group-name: ${{ vars.AZURE_RESOURCE_GROUP }}
           package: app.zip
-      - name: Smoke check (waits for Oryx build + migrations + startup)
+      - name: Smoke check (waits for Oryx build + migrations + startup, then confirms the version)
         run: |
           HEALTH_URL="https://$WEBAPP.azurewebsites.net/api/health"
+          EXPECTED="$(unzip -p app.zip VERSION | tr -d '[:space:]')"
+          echo "deploying version $EXPECTED"
           for _ in $(seq 1 30); do
-            if curl -fsS --connect-timeout 10 --max-time 30 "$HEALTH_URL"; then echo; exit 0; fi
+            # A healthy answer from the previous version is not a finished deploy: wait for ours.
+            if health="$(curl -fsS --connect-timeout 10 --max-time 30 "$HEALTH_URL")"; then
+              echo "$health"
+              case "$health" in
+                *"\"version\":\"$EXPECTED\""*) echo "::notice title=Deployed::$EXPECTED"; exit 0 ;;
+              esac
+            fi
             sleep 10
           done
-          echo "::error::$HEALTH_URL did not become healthy; check 'az webapp log tail'"; exit 1
+          echo "::error::$HEALTH_URL did not come up as version $EXPECTED; check 'az webapp log tail'"; exit 1

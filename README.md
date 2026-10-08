@@ -182,8 +182,20 @@ Terraform in `infra/`; GitHub Actions does the rest:
 - **Infrastructure** changes go through the separate, manually run *Infrastructure (Terraform)*
   workflow: `plan`, then `apply` with `confirm = APPLY`.
 
+- **Releases** are version tags on `main` (`v1.2.0`). Pushing one runs the *Release* workflow: it
+  publishes a GitHub Release with generated notes and deploys that exact tag.
+
 Build the deploy package locally with `bash scripts/package-app.sh dist/app.zip` (after
 `npm run build` in `frontend/`) and check it with `bash scripts/smoke-package.sh dist/app.zip`.
+
+### Which version is running
+
+Every build carries its version, from `git describe`: the release tag (`v1.2.0`) when the build is a
+release, `v1.2.0-3-g6dd4e31` for a `main` build three commits past it, or a bare commit hash before the
+first tag. It is shown in the app footer (cover, welcome and finish screens, and the admin sidebar)
+and reported by `GET /api/health` as `{"status": "ok", "version": "v1.2.0"}`; the deploy's smoke check
+waits until production answers with the version it just shipped. The package carries it in a `VERSION`
+file; `APP_VERSION` in the environment overrides it, and a dev checkout shows `development build`.
 
 First-time setup, GitHub variables, day-2 operations and troubleshooting are in
 [`infra/README.md`](infra/README.md).

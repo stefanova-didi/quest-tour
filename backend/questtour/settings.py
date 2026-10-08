@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     images_container: str = "images"
     static_dir: Path | None = None
     max_photo_bytes: int = 20 * 1024 * 1024
+    # Version shown by /api/health; unset, the packaged VERSION file is used (questtour/version.py).
+    app_version: str | None = None
 
     # Admin auth / session settings
     admin_auth_provider: Literal["entra", "dev"] = "dev"

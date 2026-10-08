@@ -19,6 +19,7 @@ from questtour.models import Landmark
 from questtour.services.access import LinkNotValid
 from questtour.settings import Settings, get_settings
 from questtour.storage import BlobStore, make_blob_store
+from questtour.version import resolve_version
 from questtour.web import install_frontend
 
 
@@ -116,6 +117,8 @@ def create_app(
         https_only=settings.admin_session_secure,
     )
     app.state.settings = settings
+    app.state.version = resolve_version(settings)
+    log.info("Quest City Tour %s", app.state.version)
     app.state.session_factory = session_factory or sessionmaker(
         make_engine(settings), expire_on_commit=False
     )

@@ -21,9 +21,11 @@ trap cleanup EXIT
 uv run --no-project --python "$PY" python -m zipfile -e "$ZIP" "$WORK/app"
 
 for required in startup.sh requirements.txt alembic.ini alembic/env.py questtour/main.py \
-  static/index.html; do
+  static/index.html VERSION; do
   [ -f "$WORK/app/$required" ] || { echo "package is missing $required" >&2; exit 1; }
 done
+VERSION="$(tr -d '[:space:]' <"$WORK/app/VERSION")"
+[ -n "$VERSION" ] || { echo "package VERSION file is empty" >&2; exit 1; }
 for forbidden in config tests .env; do
   [ ! -e "$WORK/app/$forbidden" ] || { echo "package must not contain $forbidden" >&2; exit 1; }
 done
@@ -66,4 +68,15 @@ expect 200 /
 expect 200 /play/smoke-token
 expect 404 /no/such/page
 expect 404 /api/nope
-echo "Package smoke test passed."
+
+# The running app must report the packaged version, and the SPA must carry the same one in its bundle.
+health="$(curl -fsS "$BASE/api/health")"
+case "$health" in
+  *"\"version\":\"$VERSION\""*) ;;
+  *) echo "/api/health does not report version $VERSION: $health" >&2; exit 1 ;;
+esac
+if ! grep -rqF -- "$VERSION" static/assets; then
+  echo "the SPA bundle does not contain version $VERSION: build it with APP_VERSION=$VERSION" >&2
+  exit 1
+fi
+echo "Package smoke test passed (version $VERSION)."
