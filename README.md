@@ -35,11 +35,13 @@ The specs are in `specs/`, the design mocks in `frontend-mocks/`, and the look-a
 ```
 
 Runs the [no-Docker fallback](#no-docker-fallback) end to end in one foreground
-terminal: it writes `backend/.env` (SQLite + local file storage) on first run,
-installs dependencies, migrates, runs `sync-config` (which prints the team game
-links), then starts uvicorn and the Vite dev server together. Ctrl-C stops both;
-every output line is tagged `[backend]` or `[frontend]` so the interleaved logs
-stay readable.
+terminal: it writes `backend/.env` (SQLite + local file storage, with a seeded
+`ADMIN_DEV_EMAILS=admin@example.com`) on first run, installs dependencies,
+migrates, runs `sync-config` (which prints the team game links), then starts
+uvicorn and the Vite dev server together. The startup summary also prints the
+admin panel URL and the suggested dev sign-in email. Ctrl-C stops both; every
+output line is tagged `[backend]` or `[frontend]` so the interleaved logs stay
+readable.
 
 ## Docker dev path
 

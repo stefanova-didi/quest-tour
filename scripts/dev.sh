@@ -36,6 +36,7 @@ PUBLIC_BASE_URL=http://localhost:5173
 STORAGE_BACKEND=local
 LOCAL_STORAGE_DIR=.storage
 CONFIG_DIR=config
+ADMIN_DEV_EMAILS=admin@example.com
 EOF
   banner backend "$C_BACKEND" "==> wrote backend/.env (SQLite, local file storage)"
 fi
@@ -80,6 +81,14 @@ printf '[dev] Game links:\n'
 printf '%s\n' "$sync_output" | grep 'http' | sed 's/^[[:space:]]*//' | while IFS= read -r link; do
   printf '[dev]   %s\n' "$link"
 done
+
+# The suggested email is read from .env so the hint stays truthful after manual edits;
+# with an empty allowlist only the URL line is printed.
+printf '[dev] Admin panel: http://localhost:5173/admin\n'
+admin_email="$(grep -E '^ADMIN_DEV_EMAILS=' "$ROOT/backend/.env" | head -1 | cut -d= -f2- | cut -d, -f1 | xargs)"
+if [ -n "$admin_email" ]; then
+  printf '[dev]   sign in as %s — the magic link appears on the login screen\n' "$admin_email"
+fi
 
 # Job control in a script gives each background job its own process group, so a single
 # negative-PID kill takes down the whole pipeline (server + label filter). With groups
