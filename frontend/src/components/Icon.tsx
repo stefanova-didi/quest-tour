@@ -23,6 +23,7 @@ const FILLED = {
 // Stroke glyphs: lines and arrows have no fill to speak of
 const STROKED = {
   check: <path d="M5 12.5l4.5 4.5L19 7.5" />,
+  globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c-2.6 2.5-3.9 5.5-3.9 9s1.3 6.5 3.9 9c2.6-2.5 3.9-5.5 3.9-9S14.6 5.5 12 3z" /></>,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   retry: <path d="M4 12a8 8 0 0 1 14-5.3L20 9M20 4v5h-5M20 12a8 8 0 0 1-14 5.3L4 15M4 20v-5h5" />,
   wifiOff: <><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0" /><circle cx="12" cy="19.5" r="1.2" fill="currentColor" stroke="none" /><path d="M3 3l18 18" /></>,

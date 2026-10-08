@@ -38,6 +38,7 @@ No brand identity is defined yet. Propose a visual direction (colour palette, ty
 - **Penalty total** next to the timer, e.g. `+25 min`, shown once any penalty exists.
 - **Progress**: `Task 3 of 8` plus a progress bar.
 - **Time warning state**: in the last 15 minutes before the game's maximum duration, the header switches to a warning style and shows the remaining time, e.g. `12:40 left` (R-8).
+- **Language pill** (only when the game has translations, issue #6): a ghost pill with a globe and the language code (`EN`) at the right end of the top row. It opens a bottom sheet that lists the languages by their own names (`English`, `Deutsch`, `Srpski`) with the current one ticked; a tap picks and closes. The cover and the welcome hero, which have no header, carry the same pill in the same top-right corner, so the control never moves between screens. Finish and Time is up have nothing to translate and no pill.
 
 **Connection banner** (any screen, R-23): a slim banner `No connection – retrying…`, which disappears automatically when the connection is back.
 
@@ -159,5 +160,5 @@ Use realistic content, not lorem ipsum.
 - Admin or host screens (there are none in v1).
 - Maps, directions or navigation (finding the place is part of the riddle).
 - Any view of uploaded photos.
-- Languages other than English.
+- UI languages other than English (riddle and landmark content can be translated; see the language pill in §4).
 - Desktop layouts (the app should still be usable on desktop, but no separate design is needed).

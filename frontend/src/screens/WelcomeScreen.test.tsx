@@ -45,14 +45,19 @@ it("renders a language menu for the game's available languages", async () => {
   renderWelcome({ game: { available_languages: ["de", "sr"] } });
   expect(screen.getByRole("button", { name: "Language, EN" })).toBeInTheDocument();
   await user.click(screen.getByRole("button", { name: "Language, EN" }));
-  expect(screen.getByRole("option", { name: "DE" })).toBeInTheDocument();
-  expect(screen.getByRole("option", { name: "SR" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "Deutsch" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "Srpski" })).toBeInTheDocument();
+});
+
+it("shows no language control when the game has no translations", () => {
+  renderWelcome();
+  expect(screen.queryByRole("button", { name: /^Language/ })).not.toBeInTheDocument();
 });
 
 it("calls onLanguageChange when a language is picked from the menu", async () => {
   const onLanguageChange = vi.fn();
   renderWelcome({ game: { available_languages: ["de", "sr"] }, onLanguageChange });
   await userEvent.click(screen.getByRole("button", { name: "Language, EN" }));
-  await userEvent.click(screen.getByRole("option", { name: "SR" }));
+  await userEvent.click(screen.getByRole("option", { name: "Srpski" }));
   expect(onLanguageChange).toHaveBeenCalledWith("sr");
 });

@@ -30,7 +30,7 @@ it("offers the language menu and continues to the Welcome page", async () => {
   const onContinue = vi.fn();
   renderCover({ onLanguageChange, onContinue });
   await userEvent.click(screen.getByRole("button", { name: "Language, EN" }));
-  await userEvent.click(screen.getByRole("option", { name: "DE" }));
+  await userEvent.click(screen.getByRole("option", { name: "Deutsch" }));
   expect(onLanguageChange).toHaveBeenCalledWith("de");
   await userEvent.click(screen.getByRole("button", { name: "How it works" }));
   expect(onContinue).toHaveBeenCalledTimes(1);

@@ -37,12 +37,7 @@ export function GameHeader({ clock, position, taskCount, receivedAt, onTimeUp,
           {warning
             ? <span className="qc-header__left">{formatLeft(remaining!)}</span>
             : penalty && <span className="qc-tag qc-tag--on-dark">{penalty}</span>}
-          <LanguageToggle
-            languages={availableLanguages}
-            selected={language}
-            onSelect={onLanguageChange}
-            compact
-          />
+          <LanguageToggle languages={availableLanguages} selected={language} onSelect={onLanguageChange} />
         </div>
       </div>
       <div className="qc-header__progress">

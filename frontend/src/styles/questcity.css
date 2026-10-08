@@ -34,7 +34,7 @@
 /* Game header */
 .qc-header { background: var(--accent-strong); color: var(--on-accent); padding: var(--space-3) var(--space-4); display: grid; gap: var(--space-2); min-height: var(--header-height); box-sizing: border-box; border-bottom: 1px solid var(--gold-500); }
 .qc-header__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.qc-header__right { display: flex; align-items: center; gap: 8px; }
+.qc-header__right { display: flex; align-items: center; gap: var(--space-2); }
 .qc-header__clock { display: flex; align-items: center; gap: var(--space-2); font: 700 22px/28px var(--font-mono); font-variant-numeric: tabular-nums; }
 .qc-header__clock svg { width: 20px; height: 20px; }
 .qc-header__progress { display: flex; align-items: center; gap: var(--space-3); font: 400 15px/20px var(--font-sans); }
@@ -54,24 +54,35 @@
 .qc-lang-toggle--compact { gap: 4px; }
 .qc-lang-toggle .qc-btn { padding: 4px 10px; font-size: 0.85rem; }
 
-/* Language menu (player dropdown) */
-.qc-lang { position: relative; display: inline-flex; }
-.qc-lang__trigger { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem; }
-.qc-lang__trigger svg { width: 14px; height: 14px; }
-.qc-lang--compact .qc-lang__trigger { padding: 4px 8px; font-size: 0.8rem; }
-.qc-lang__menu {
-  position: absolute; top: calc(100% + 4px); right: 0; z-index: 40;
-  min-width: 96px; margin: 0; padding: var(--space-2) 0; list-style: none;
-  background: var(--surface); border: 1px solid var(--line); color: var(--ink);
-  border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(20, 24, 32, 0.25);
+/* Language pill (player): one control, the same on every dark band – header, cover, welcome hero.
+   A ghost pill, so it reads as chrome next to the clock rather than as a gold penalty chip. */
+.qc-lang {
+  flex: none; display: inline-flex; align-items: center; gap: var(--space-1);
+  min-height: 36px; padding: 0 var(--space-3) 0 10px; border-radius: var(--radius-pill);
+  border: 1px solid rgba(244,241,230,0.35); background: rgba(244,241,230,0.12); color: var(--on-accent);
+  font: 700 14px/18px var(--font-sans); letter-spacing: .04em; cursor: pointer;
 }
-.qc-lang__menu li {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
-  padding: 8px var(--space-4); cursor: pointer; font-size: 0.9rem;
+.qc-lang svg { width: 18px; height: 18px; flex: none; }
+.qc-lang:active { background: rgba(244,241,230,0.22); }
+.qc-lang:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }
+.qc-header--warning .qc-lang { border-color: rgba(28,36,32,0.3); background: rgba(28,36,32,0.1); color: var(--ink); }
+.qc-header--warning .qc-lang:focus-visible { outline-color: var(--ink); }
+
+/* Language sheet: the ConfirmSheet ground with a list of languages, each named in itself */
+.qc-lang-scrim { z-index: 40; }
+.qc-lang-sheet { gap: var(--space-3); padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom)); color: var(--ink); }  /* it is rendered inside a dark band, so do not inherit its text colour */
+.qc-lang-list { display: grid; gap: var(--space-1); }
+.qc-lang-option {
+  display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: var(--tap-min);
+  padding: 0 var(--space-3); border: 0; border-radius: var(--radius-md); background: transparent;
+  color: var(--ink); font: 400 17px/22px var(--font-sans); text-align: left; cursor: pointer;
 }
-.qc-lang__menu li:hover { background: var(--surface-sunken); }
-.qc-lang__menu li[aria-selected="true"] { color: var(--accent); font-weight: 700; }
-.qc-lang__menu li svg { width: 16px; height: 16px; }
+.qc-lang-option:active, .qc-lang-option[aria-selected="true"] { background: var(--surface-sunken); }
+.qc-lang-option[aria-selected="true"] { font-weight: 700; }
+.qc-lang-option:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.qc-lang-option__code { min-width: 28px; font: 700 13px/16px var(--font-mono); letter-spacing: .06em; color: var(--ink-muted); }
+.qc-lang-option__name { flex: 1 1 auto; }
+.qc-lang-option svg { width: 20px; height: 20px; color: var(--accent); flex: none; }
 
 /* Answer field */
 .qc-field { display: grid; gap: var(--space-2); }
