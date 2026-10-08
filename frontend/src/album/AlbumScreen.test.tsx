@@ -26,9 +26,10 @@ const album: Album = {
 
 it("opens with the game, the team and the facts of the day", () => {
   render(<AlbumScreen album={album} />);
-  expect(screen.getByRole("heading", { level: 1, name: "Sofia Old Town Quest" })).toBeInTheDocument();
-  expect(screen.getByText("The Explorers")).toBeInTheDocument();
-  const facts = screen.getByRole("list", { name: "The day in numbers" });
+  const cover = screen.getByRole("region", { name: "Cover" });
+  expect(within(cover).getByRole("heading", { level: 1, name: "Sofia Old Town Quest" })).toBeInTheDocument();
+  expect(within(cover).getByText("The Explorers")).toBeInTheDocument();
+  const facts = within(cover).getByRole("list", { name: "The day in numbers" });
   expect(facts).toHaveTextContent("Saturday, 3 October 2026");
   expect(facts).toHaveTextContent("2 of 6 landmarks");
   expect(facts).toHaveTextContent("02:58:30");
@@ -56,7 +57,17 @@ it("leaves out the time and the place for a run that ended unfinished", () => {
   expect(facts).not.toHaveTextContent("place");
 });
 
-it("offers Save as PDF on the cover and at the end, which opens the print dialog", async () => {
+it("closes with a contact sheet of every photo and numbered running feet", () => {
+  const { container } = render(<AlbumScreen album={album} />);
+  const contact = screen.getByLabelText("All the team's photos");
+  expect(within(contact).getAllByRole("img")).toHaveLength(4);
+  const feet = container.querySelectorAll(".qa-foot");
+  expect(feet).toHaveLength(3);                               // two chapters and the end; the cover has none
+  expect(feet[0]).toHaveTextContent("2 / 4");
+  expect(feet[2]).toHaveTextContent("4 / 4");
+});
+
+it("offers Save as PDF in the toolbar and at the end, which opens the print dialog", async () => {
   const print = vi.spyOn(window, "print").mockImplementation(() => {});
   render(<AlbumScreen album={album} />);
   const buttons = screen.getAllByRole("button", { name: "Save as PDF" });

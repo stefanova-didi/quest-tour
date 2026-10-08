@@ -1,63 +1,125 @@
-/* Team album (design draft): the host's surprise for the team after the game – a patina cover, the host's
-   message, one chapter per landmark (photos, riddle, story) and a closing band. Prefix: qa-. Phone first; on a
-   desktop it reads as a 640px column; in print each chapter starts a new page. Every value reads a token. */
+/* Team album (design draft): the host's surprise for the team after the game, an A4 document. Prefix: qa-.
+   Markup is a cover sheet, one sheet per landmark and a closing sheet. Two layouts from that one markup:
+   - phone (default): the sheets flow as bands and cards in the app's own type sizes;
+   - sheet mode (desktop ≥ 900px, and print): true A4 pages, 210 × 297 mm, every size inside a page expressed in
+     millimetres through container-query units (1 cqw of a 210 mm page = 2.1 mm), so the screen shows exactly
+     what "Save as PDF" produces. Every colour reads a token. */
 
-.qa { max-width: 640px; margin: 0 auto; min-height: 100dvh; background: var(--surface); color: var(--ink);
-      user-select: text; -webkit-user-select: text; }                      /* a keepsake: copying is welcome */
+.qa { min-height: 100dvh; background: var(--surface); color: var(--ink); user-select: text; -webkit-user-select: text; }
 
-/* Cover band */
-.qa-cover { background: var(--accent-strong); color: var(--on-accent); padding: var(--space-6) var(--space-4) var(--space-5);
-            display: grid; gap: var(--space-3); border-bottom: 2px solid var(--gold-500); }
-.qa-cover .qs-skyline { height: 56px; }
-.qa-cover .t-display-l { margin: 0; }
+/* Toolbar: the game name and Save as PDF, sticky so the button is always at hand */
+.qa-toolbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
+              gap: var(--space-3); padding: var(--space-2) var(--space-4); background: var(--accent-strong);
+              color: var(--on-accent); border-bottom: 1px solid var(--gold-500); }
+.qa-toolbar__title { font: 700 15px/20px var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qa-toolbar .qa-save { min-height: 40px; padding: 0 var(--space-4); font-size: 15px; flex: none; }
+.qa-end__save { display: flex; justify-content: center; }
+
+/* ---------- Phone layout ---------- */
+.qa-doc { display: grid; gap: var(--space-6); padding-bottom: var(--space-6); }
+.qa-page { display: grid; gap: var(--space-3); }
+.qa-title { margin: 0; }
+.qa-foot { display: none; }
+
+.qa-sheet--cover .qa-page { background: var(--accent-strong); color: var(--on-accent);
+                            padding: var(--space-6) var(--space-4) var(--space-4); border-bottom: 2px solid var(--gold-500); }
+.qa-sheet--cover .qs-skyline { height: 56px; }
 .qa-facts { list-style: none; margin: var(--space-1) 0 0; padding: 0; display: flex; flex-wrap: wrap;
             gap: var(--space-2) var(--space-4); font: 600 15px/20px var(--font-sans); color: var(--gold-300); }
 .qa-facts li { display: inline-flex; align-items: center; gap: var(--space-2); }
 .qa-facts svg { width: 18px; height: 18px; flex: none; }
+.qa-host { margin-top: var(--space-3); color: var(--ink); }
 
-/* Save as PDF (print dialog) on the cover and in the closing band */
-.qa-save { display: grid; justify-items: start; gap: var(--space-1); margin-top: var(--space-2); }
-.qa-save__hint { margin: 0; font: 400 13px/18px var(--font-sans); opacity: 0.8; }
-.qa-end .qa-save { justify-items: center; }
-
-/* Chapters */
-.qa-main { padding: var(--space-4); display: grid; gap: var(--space-6); }
-.qa-chapter { display: grid; gap: var(--space-3); }
-.qa-chapter__title { margin: 0; }
-.qa-photo { margin: 0; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-raised);
-            box-shadow: var(--shadow-raised); }
+.qa-sheet--chapter .qa-page { padding: 0 var(--space-4); }
+.qa-chapter__head { display: grid; gap: var(--space-2); }
+.qa-photo { margin: 0; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface-raised); box-shadow: var(--shadow-raised); }
 .qa-photo img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--surface-sunken); }
 .qa-photo figcaption { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4);
                        font: 600 13px/18px var(--font-sans); color: var(--ink-muted); }
 .qa-photo figcaption svg { width: 16px; height: 16px; flex: none; }
-.qa-photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-.qa-photo--small img { aspect-ratio: 1 / 1; }
-.qa-photo--small figcaption { padding: var(--space-1) var(--space-3); font-size: 12px; }
-.qa-riddle { margin: 0; padding: var(--space-3) var(--space-4); border-left: 4px solid var(--gold-500);
-             background: var(--gold-100); border-radius: 0 var(--radius-md) var(--radius-md) 0; display: grid; gap: var(--space-2); }
+.qa-photo-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.qa-photo-row .qa-photo img { aspect-ratio: 1 / 1; }
+.qa-photo-row .qa-photo figcaption { padding: var(--space-1) var(--space-3); font-size: 12px; }
+.qa-riddle { margin: 0; padding: var(--space-3) var(--space-4); border-left: 4px solid var(--gold-500); background: var(--gold-100);
+             border-radius: 0 var(--radius-md) var(--radius-md) 0; display: grid; gap: var(--space-2); }
 .qa-riddle .t-body { font-style: italic; }
-.qa-story { gap: var(--space-2); }
+.qa-story { background: var(--surface-raised); border-radius: var(--radius-lg); box-shadow: var(--shadow-raised);
+            padding: var(--space-4); display: grid; gap: var(--space-2); }
+.qa-story__text { display: grid; gap: var(--space-3); }
 
-/* Closing band */
-.qa-end { display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-6) 0 var(--space-5);
-          text-align: center; color: var(--ink-muted); border-top: 2px solid var(--gold-500); }
-.qa-end .qs-hero__kicker { color: var(--gold-700); }
+.qa-sheet--end .qa-page { padding: var(--space-5) var(--space-4) 0; justify-items: center; text-align: center;
+                          border-top: 2px solid var(--gold-500); margin: 0 var(--space-4); }
+.qa-sheet--end .qs-hero__kicker { color: var(--gold-700); }
+.qa-end__date { color: var(--ink-muted); }
+.qa-contact { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); margin: var(--space-2) 0; }
+.qa-contact img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: var(--radius-sm); background: var(--surface-sunken); }
 
-@media (min-width: 640px) {
-  .qa-cover { padding: var(--space-7) var(--space-6) var(--space-6); }
-  .qa-main { padding: var(--space-6); }
+/* ---------- Sheet mode: desktop and print ---------- */
+@media print, (min-width: 900px) {
+  .qa-doc { padding: var(--space-5) var(--space-4) var(--space-6); gap: var(--space-5); justify-items: center; }
+  /* The sheet is the query container; its page uses cqw so that 1 "mm" is 1/210 of the sheet's width */
+  .qa-sheet { container-type: inline-size; width: 210mm; max-width: 100%; box-sizing: border-box; display: flex;
+              background: var(--surface-raised); box-shadow: var(--shadow-raised); }
+  .qa-page { --mm: 0.47619cqw; position: relative; flex: 1 1 auto; box-sizing: border-box; min-height: calc(296.5 * var(--mm));
+             padding: calc(16 * var(--mm)) calc(16 * var(--mm)) calc(20 * var(--mm)); margin: 0; border: 0; border-radius: 0;
+             display: flex; flex-direction: column; align-items: stretch; justify-items: start; text-align: left;
+             gap: calc(4.5 * var(--mm)); font-size: calc(3.5 * var(--mm)); line-height: 1.45; }
+  .qa-page .t-body { font-size: calc(3.5 * var(--mm)); line-height: 1.5; }
+  .qa-page .t-display-l { font-size: calc(9 * var(--mm)); line-height: 1.08; }
+  .qa-page .qs-hero__kicker { font-size: calc(2.8 * var(--mm)); line-height: 1.3; }
+  .qa-page .qs-eyebrow { font-size: calc(2.6 * var(--mm)); line-height: 1.3; padding: calc(0.9 * var(--mm)) calc(2.4 * var(--mm)); gap: calc(1.2 * var(--mm)); }
+  .qa-page .qs-eyebrow svg { width: calc(3.2 * var(--mm)); height: calc(3.2 * var(--mm)); }
+  .qa-page .qs-team { align-self: flex-start; font-size: calc(3.6 * var(--mm)); line-height: 1.3; padding: calc(1.2 * var(--mm)) calc(2.8 * var(--mm)); gap: calc(1.6 * var(--mm)); }
+  /* The phone rules for these two sheets set their own padding; restate the page margins for A4 */
+  .qa-sheet--chapter .qa-page { padding: calc(16 * var(--mm)) calc(16 * var(--mm)) calc(20 * var(--mm)); }
+  .qa-sheet--end .qa-page { padding: calc(28 * var(--mm)) calc(16 * var(--mm)) calc(20 * var(--mm)); }
+  .qa-page .qs-team svg { width: calc(4.2 * var(--mm)); height: calc(4.2 * var(--mm)); }
+  .qa-page .qs-card { padding: calc(5 * var(--mm)); gap: calc(2.5 * var(--mm)); border-radius: calc(3 * var(--mm)); }
+  .qa-page .qs-version { font-size: calc(2.6 * var(--mm)); }
+
+  /* Cover: full-bleed patina page, facts one per line, the host's message at the foot of the page */
+  .qa-sheet--cover .qa-page { padding-top: calc(28 * var(--mm)); border-bottom: 0; gap: calc(5 * var(--mm)); }
+  .qa-sheet--cover .qs-skyline { height: calc(42 * var(--mm)); margin-bottom: calc(6 * var(--mm)); }
+  .qa-sheet--cover .t-display-l { font-size: calc(15 * var(--mm)); max-width: calc(150 * var(--mm)); }
+  .qa-facts { flex-direction: column; gap: calc(2.5 * var(--mm)); margin-top: calc(4 * var(--mm)); font-size: calc(3.8 * var(--mm)); line-height: 1.3; }
+  .qa-facts svg { width: calc(4.6 * var(--mm)); height: calc(4.6 * var(--mm)); }
+  .qa-facts li { gap: calc(2.5 * var(--mm)); }
+  .qa-host { margin-top: auto; }
+
+  /* Chapter: head, the photo, the riddle, the story in two columns, a running foot */
+  .qa-chapter__head { display: flex; align-items: flex-end; justify-content: space-between; gap: calc(6 * var(--mm)); }
+  .qa-chapter__head .qs-eyebrow { order: 2; flex: none; margin-bottom: calc(1 * var(--mm)); }
+  .qa-photo { border-radius: calc(3 * var(--mm)); box-shadow: none; border: 1px solid var(--line); }
+  .qa-photo--main img { aspect-ratio: auto; height: calc(84 * var(--mm)); }
+  .qa-photo-row { grid-template-columns: repeat(3, 1fr); gap: calc(4 * var(--mm)); }
+  .qa-photo-row .qa-photo img { aspect-ratio: auto; height: calc(34 * var(--mm)); }
+  .qa-photo figcaption { font-size: calc(2.6 * var(--mm)); line-height: 1.3; padding: calc(1.5 * var(--mm)) calc(3 * var(--mm)); gap: calc(1.5 * var(--mm)); }
+  .qa-photo-row .qa-photo figcaption { font-size: calc(2.4 * var(--mm)); padding: calc(1 * var(--mm)) calc(2.4 * var(--mm)); }
+  .qa-photo figcaption svg { width: calc(3.2 * var(--mm)); height: calc(3.2 * var(--mm)); }
+  .qa-riddle { padding: calc(3.5 * var(--mm)) calc(5 * var(--mm)); border-left-width: calc(1.2 * var(--mm)); gap: calc(2 * var(--mm)); border-radius: 0 calc(2.5 * var(--mm)) calc(2.5 * var(--mm)) 0; }
+  /* Story and riddle in small print (≈ 8.5 pt), the story in two columns: a chapter fits one A4 page */
+  .qa-riddle .t-body { font-size: calc(3 * var(--mm)); line-height: 1.4; }
+  .qa-story { box-shadow: none; padding: 0; gap: calc(2.5 * var(--mm)); background: transparent; }
+  .qa-story__text { display: block; column-count: 2; column-gap: calc(8 * var(--mm)); }
+  .qa-story__text .t-body { margin: 0 0 calc(2.5 * var(--mm)); font-size: calc(3 * var(--mm)); line-height: 1.4; }
+  .qa-foot { display: flex; justify-content: space-between; position: absolute; left: calc(16 * var(--mm)); right: calc(16 * var(--mm)); bottom: calc(8 * var(--mm));
+             font: 600 calc(2.6 * var(--mm)) / 1.3 var(--font-sans); color: var(--ink-muted); letter-spacing: 0.04em; }
+
+  /* The end: every photo as a contact sheet */
+  .qa-sheet--end .qa-page { margin: 0; border-top: 0; align-items: center; text-align: center; }
+  .qa-contact { grid-template-columns: repeat(4, 1fr); gap: calc(3 * var(--mm)); margin: calc(6 * var(--mm)) 0; }
+  .qa-contact img { border-radius: calc(2 * var(--mm)); }
+  .qa-end__save { margin-top: auto; }
 }
 
-/* "Save as PDF": A4, the cover on its own page, one chapter per page, bands and chips keep their colours */
-@page { size: A4; margin: 14mm; }
+/* ---------- Print: one sheet per A4 page, no browser header or footer, colours kept ---------- */
+@page { size: A4; margin: 0; }
 @media print {
-  html, body { background: var(--surface-raised); }
-  .qa { max-width: none; min-height: 0; background: var(--surface-raised); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .qa-cover { break-after: page; border-radius: var(--radius-lg); }
-  .qa-chapter { break-before: page; }
-  .qa-photo, .qa-riddle, .qs-card { break-inside: avoid; }
-  .qa-photo, .qs-card { box-shadow: none; border: 1px solid var(--line); }
-  .qa-photo img { aspect-ratio: auto; max-height: 120mm; }
-  .qa-end { break-before: avoid; }
-  .qa-save, .qs-version { display: none; }
+  html, body, .qa { background: var(--surface-raised); min-height: 0; }
+  .qa { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .qa-toolbar, .qa-end__save, .qs-version { display: none; }
+  .qa-doc { display: block; padding: 0; }
+  .qa-sheet { width: 210mm; max-width: none; box-shadow: none; break-after: page; }
+  .qa-sheet:last-child { break-after: auto; }
+  .qa-photo, .qa-riddle, .qa-host, .qa-contact { break-inside: avoid; }
 }
