@@ -82,7 +82,16 @@ it("closes with a contact sheet of every photo and numbered running feet", () =>
   expect(feet[2]).toHaveTextContent("4 / 4");
 });
 
-it("offers Save as PDF in the toolbar and at the end, which opens the print dialog", async () => {
+it("downloads the stored PDF when the album has one", () => {
+  render(<AlbumScreen album={album} pdfUrl="/api/play/t/album.pdf" />);
+  const links = screen.getAllByRole("link", { name: "Download PDF" });
+  expect(links).toHaveLength(2);
+  expect(links[0]).toHaveAttribute("href", "/api/play/t/album.pdf");
+  expect(links[0]).toHaveAttribute("download");
+  expect(screen.queryByRole("button", { name: "Save as PDF" })).not.toBeInTheDocument();
+});
+
+it("falls back to Save as PDF (the print dialog) without a stored PDF, as in the preview", async () => {
   const print = vi.spyOn(window, "print").mockImplementation(() => {});
   render(<AlbumScreen album={album} />);
   const buttons = screen.getAllByRole("button", { name: "Save as PDF" });

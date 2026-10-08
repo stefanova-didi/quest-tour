@@ -13,8 +13,9 @@ import type { Album, AlbumChapter, AlbumPhoto } from "./types";
  *  photo and what the place is, in two columns; no riddles) and a closing sheet with every photo. On a
  *  desktop and in the PDF the sheets are true A4 pages; on a phone the same sheets flow as cards, because
  *  A4 type shrunk to a phone's width would not be readable. "Save as PDF" prints the A4 pages. */
-export function AlbumScreen({ album, language = "en", onLanguageChange = () => {} }: {
+export function AlbumScreen({ album, language = "en", onLanguageChange = () => {}, pdfUrl }: {
   album: Album; language?: string; onLanguageChange?(lang: string): void;
+  pdfUrl?: string;   // the stored PDF (GET /api/play/{token}/album.pdf); without it, the print dialog
 }) {
   const tz = album.time_zone;
   const pages = album.chapters.length + 2;
@@ -32,7 +33,7 @@ export function AlbumScreen({ album, language = "en", onLanguageChange = () => {
         <span className="qa-toolbar__title">{album.game}</span>
         <div className="qa-toolbar__tools">
           <LanguageToggle languages={languages} selected={language} onSelect={onLanguageChange} />
-          <SavePdfButton />
+          <SavePdfButton pdfUrl={pdfUrl} />
         </div>
       </div>
       <article className="qa-doc" aria-label={`${album.team} – ${album.game}`}>
@@ -78,7 +79,7 @@ export function AlbumScreen({ album, language = "en", onLanguageChange = () => {
                 ))}
               </div>
             )}
-            <div className="qa-end__save"><SavePdfButton /></div>
+            <div className="qa-end__save"><SavePdfButton pdfUrl={pdfUrl} /></div>
             <AppVersion />
             <Foot album={album} page={pages} pages={pages} />
           </div>
@@ -103,10 +104,17 @@ function Facts({ album, light = false }: { album: Album; light?: boolean }) {
   );
 }
 
-/** "Save as PDF": the browser's print dialog with the album's print stylesheet (A4, one sheet per page, no
- *  browser header or footer). Every phone and desktop browser offers "Save as PDF" there, so the team gets
- *  a file without the server rendering one; a server-made PDF can replace this later. */
-function SavePdfButton() {
+/** The PDF: a real album is rendered and stored on the server (also kept for the host), so this is a
+ *  download link. The preview has no server album and falls back to the browser's print dialog with the
+ *  album's print stylesheet (A4, one sheet per page, no browser header or footer). */
+function SavePdfButton({ pdfUrl }: { pdfUrl?: string }) {
+  if (pdfUrl) {
+    return (
+      <a className="qc-btn qc-btn--gold qa-save" href={pdfUrl} download>
+        <Icon name="download" />Download PDF
+      </a>
+    );
+  }
   return (
     <button type="button" className="qc-btn qc-btn--gold qa-save" onClick={() => window.print()}>
       <Icon name="download" />Save as PDF

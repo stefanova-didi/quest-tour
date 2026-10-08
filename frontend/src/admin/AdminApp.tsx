@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AdminLayout } from "./components/AdminLayout";
+import { AlbumsScreen } from "./screens/AlbumsScreen";
 import { Dashboard } from "./screens/Dashboard";
 import { GamesScreen } from "./screens/GamesScreen";
 import { LandmarksScreen } from "./screens/LandmarksScreen";
@@ -39,6 +40,9 @@ export function AdminApp({ path }: { path: string }) {
       break;
     case "photos":
       screen = <PhotosScreen />;
+      break;
+    case "albums":
+      screen = <AlbumsScreen />;
       break;
     default:
       screen = <AdminNotFound />;

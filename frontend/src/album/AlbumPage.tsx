@@ -43,7 +43,9 @@ export function AlbumPage({ token }: { token: string }) {
   if (preview) return <AlbumScreen album={MOCK_ALBUM} language={language} onLanguageChange={setLanguage} />;
   switch (view.kind) {
     case "loading": return <LoadingScreen offline={false} />;
-    case "ready": return <AlbumScreen album={view.album} language={language} onLanguageChange={setLanguage} />;
+    case "ready":
+      return <AlbumScreen album={view.album} language={language} onLanguageChange={setLanguage}
+                          pdfUrl={`/api/play/${encodeURIComponent(token)}/album.pdf`} />;
     case "invalid": return <LinkNotValidScreen info={view.info} />;
     case "not_found": return <NotFoundScreen title="Album not found" />;
     case "not_ready":

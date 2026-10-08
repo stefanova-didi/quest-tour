@@ -29,6 +29,7 @@ locals {
     AZURE_STORAGE_ACCOUNT_URL      = local.storage_url
     PHOTOS_CONTAINER               = azurerm_storage_container.photos.name
     IMAGES_CONTAINER               = azurerm_storage_container.images.name
+    ALBUMS_CONTAINER               = azurerm_storage_container.albums.name
     STATIC_DIR                     = "static"
   }
 }
