@@ -59,7 +59,7 @@ export function AlbumScreen({ album }: { album: Album }) {
             {allPhotos.length > 0 && (
               <div className="qa-contact" aria-label="All the team's photos">
                 {allPhotos.map(({ photo, chapter }) => (
-                  <img key={photo.url} src={photo.url} loading="lazy"
+                  <img key={photo.url} src={photo.url}
                        alt={`${album.team} at ${chapter.landmark}, ${formatTime(photo.taken_at, tz)}`} />
                 ))}
               </div>
@@ -134,7 +134,7 @@ function Photo({ photo, chapter, album, main = false }: {
   const when = formatTime(photo.taken_at, album.time_zone);
   return (
     <figure className={main ? "qa-photo qa-photo--main" : "qa-photo"}>
-      <img src={photo.url} alt={`${album.team} at ${chapter.landmark}, ${when}`} loading="lazy" />
+      <img src={photo.url} alt={`${album.team} at ${chapter.landmark}, ${when}`} />
       <figcaption><Icon name="camera" />Team photo · {when}</figcaption>
     </figure>
   );
