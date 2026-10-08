@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import type { GameState } from "../api/types";
 import { AppVersion } from "../components/AppVersion";
+import { LanguageToggle } from "../components/LanguageToggle";
 import { WelcomeSkyline } from "../components/art";
 import { ConfirmSheet } from "../components/ConfirmSheet";
 import { ConnectionBanner } from "../components/ConnectionBanner";
@@ -10,8 +11,9 @@ import { Paragraphs } from "../components/Paragraphs";
 import { Toast } from "../components/Toast";
 import { formatHours, formatPenalty } from "../lib/format";
 
-export function WelcomeScreen({ state, frame, onStart }: {
-  state: GameState; frame: FrameProps; onStart(): Promise<unknown> | void;
+export function WelcomeScreen({ state, frame, language, onLanguageChange, onStart }: {
+  state: GameState; frame: FrameProps; language: string; onLanguageChange(lang: string): void;
+  onStart(): Promise<unknown> | void;
 }) {
   const { game } = state;
   const [confirming, setConfirming] = useState(false);
@@ -40,6 +42,7 @@ export function WelcomeScreen({ state, frame, onStart }: {
           <WelcomeSkyline />
           <p className="qs-hero__kicker">A city quest in {game.task_count} riddles</p>
           <h1 className="t-display-l">{game.name}</h1>
+          <LanguageToggle languages={game.available_languages} selected={language} onSelect={onLanguageChange} />
         </section>
         <main className="qs-main">
           <div className="qs-card"><Paragraphs text={game.intro} /></div>

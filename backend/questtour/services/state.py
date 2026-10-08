@@ -1,4 +1,5 @@
 import math
+from collections.abc import Sequence
 from datetime import datetime, timedelta
 
 from sqlalchemy.orm import Session
@@ -14,7 +15,7 @@ from questtour.api.schemas import (
     TaskOut,
     TeamOut,
 )
-from questtour.models import Assignment, Game, GameRun, RunTask
+from questtour.models import Assignment, Game, GameRun, GameTask, RunTask
 from questtour.services.game import (
     COMPASS_PENALTY_MINUTES,
     HINT_PENALTIES,
@@ -31,6 +32,7 @@ from questtour.services.game import (
     run_status,
     total_seconds,
 )
+from questtour.services.i18n import pick_text
 from questtour.services.leaderboard import leaderboard_rows
 
 
@@ -51,17 +53,32 @@ def run_phase(run: GameRun, assignment: Assignment, now: datetime) -> str:
     return "photo" if task.photo_count == 0 else "info"
 
 
-def build_game(game: Game, task_count: int) -> GameOut:
+def build_game(game: Game, tasks: Sequence[GameTask | RunTask]) -> GameOut:
+    languages = {
+        code
+        for task in tasks
+        if (landmark := getattr(task, "landmark", None))
+        for col in (
+            landmark.name_i18n,
+            landmark.task_text_i18n,
+            landmark.hint1_i18n,
+            landmark.hint2_i18n,
+            landmark.info_text_i18n,
+        )
+        if col
+        for code in col
+    }
     return GameOut(
         name=game.name,
         intro=game.intro,
-        task_count=task_count,
+        task_count=len(tasks),
         time_zone=game.time_zone,
         max_duration_minutes=game.max_duration_minutes,
         hint_penalties=[HINT_PENALTIES[1], HINT_PENALTIES[2]],
         reveal_after_attempts=game.reveal_after_attempts,
         reveal_after_minutes=game.reveal_after_minutes,
         reveal_penalty_minutes=game.reveal_penalty_minutes,
+        available_languages=sorted(languages),
     )
 
 
@@ -87,9 +104,9 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
     landmark = task.landmark
     completed = task.completed_at is not None
     hints: list[HintOut] = []
-    for number, text, opened_at in (
-        (1, landmark.hint1, task.hint1_at),
-        (2, landmark.hint2, task.hint2_at),
+    for number, text, i18n, opened_at in (
+        (1, landmark.hint1, landmark.hint1_i18n, task.hint1_at),
+        (2, landmark.hint2, landmark.hint2_i18n, task.hint2_at),
     ):
         if not text and opened_at is None:
             continue
@@ -100,7 +117,8 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
                 penalty_minutes=HINT_PENALTIES[number],
                 opened=opened,
                 available=not opened and not completed and (number == 1 or task.hint1_at is not None),
-                text=(text or "") if opened else None,  # unopened hint text never leaves the server
+                text=(pick_text(text or "", i18n, "en") if opened else None),  # unopened hint text never leaves the server
+                text_i18n=(i18n or {}) if opened else {},
             )
         )
     unlocked = not completed and reveal_unlocked(task, game, now, instant=instant)
@@ -119,6 +137,7 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
     return TaskOut(
         number=task.position + 1,
         text=landmark.task_text,
+        text_i18n=landmark.task_text_i18n or {},
         picture_url=image_url(landmark.task_image),
         hints=hints,
         wrong_attempts=task.wrong_attempts,
@@ -129,7 +148,9 @@ def build_task(task: RunTask, game: Game, now: datetime, *, instant: bool = Fals
         reveal_penalty_minutes=task.reveal_penalty_minutes,
         landmark=LandmarkOut(
             name=landmark.name,
+            name_i18n=landmark.name_i18n or {},
             info=landmark.info_text,
+            info_i18n=landmark.info_text_i18n or {},
             picture_url=image_url(landmark.info_image),
         )
         if completed
@@ -172,7 +193,7 @@ def build_state(
             status="not_started",
             phase=None,
             position=0,
-            game=build_game(game, len(game.tasks)),
+            game=build_game(game, game.tasks),
             team=TeamOut(name=team.name),
             clock=None,
             task=None,
@@ -187,7 +208,7 @@ def build_state(
         status=run_status(run),
         phase=phase,
         position=run.current_position,
-        game=build_game(game, len(run.tasks)),
+        game=build_game(game, run.tasks),
         team=TeamOut(name=team.name),
         clock=build_clock(run, assignment, now),
         task=build_task(task, game, now, instant=service) if task is not None else None,

@@ -9,23 +9,28 @@ import type { Landmark, LandmarkInput } from "../types";
 type LandmarkForm = {
   key: string;
   name: string;
+  name_i18n: Record<string, string>;
   task: string;
+  task_i18n: Record<string, string>;
   accepted_answers: string[];
   hint1: string;
+  hint1_i18n: Record<string, string>;
   hint2: string;
+  hint2_i18n: Record<string, string>;
   tourist_info: string;
+  tourist_info_i18n: Record<string, string>;
   lat: string;
   lon: string;
 };
 
 const LANDMARK_FIELDS = [
   { name: "key", label: "Key", type: "text" as const, required: true },
-  { name: "name", label: "Name", type: "text" as const, required: true },
-  { name: "task", label: "Task", type: "textarea" as const, required: true, rows: 5 },
+  { name: "name", i18nName: "name_i18n", label: "Name", type: "i18n-text" as const, required: true },
+  { name: "task", i18nName: "task_i18n", label: "Task", type: "i18n-textarea" as const, required: true, rows: 5 },
   { name: "accepted_answers", label: "Accepted answers", type: "list" as const },
-  { name: "hint1", label: "Hint 1", type: "text" as const },
-  { name: "hint2", label: "Hint 2", type: "text" as const },
-  { name: "tourist_info", label: "Tourist info", type: "textarea" as const, rows: 5 },
+  { name: "hint1", i18nName: "hint1_i18n", label: "Hint 1", type: "i18n-text" as const },
+  { name: "hint2", i18nName: "hint2_i18n", label: "Hint 2", type: "i18n-text" as const },
+  { name: "tourist_info", i18nName: "tourist_info_i18n", label: "Tourist info", type: "i18n-textarea" as const, rows: 5 },
   { name: "lat", label: "Latitude", type: "text" as const },
   { name: "lon", label: "Longitude", type: "text" as const },
 ];
@@ -34,11 +39,16 @@ function emptyForm(): LandmarkForm {
   return {
     key: "",
     name: "",
+    name_i18n: {},
     task: "",
+    task_i18n: {},
     accepted_answers: [],
     hint1: "",
+    hint1_i18n: {},
     hint2: "",
+    hint2_i18n: {},
     tourist_info: "",
+    tourist_info_i18n: {},
     lat: "",
     lon: "",
   };
@@ -48,14 +58,23 @@ function landmarkToForm(lm: Landmark): LandmarkForm {
   return {
     key: lm.key,
     name: lm.name,
+    name_i18n: lm.name_i18n ?? {},
     task: lm.task,
+    task_i18n: lm.task_i18n ?? {},
     accepted_answers: lm.accepted_answers,
     hint1: lm.hint1 ?? "",
+    hint1_i18n: lm.hint1_i18n ?? {},
     hint2: lm.hint2 ?? "",
+    hint2_i18n: lm.hint2_i18n ?? {},
     tourist_info: lm.tourist_info,
+    tourist_info_i18n: lm.tourist_info_i18n ?? {},
     lat: lm.coordinates?.lat.toString() ?? "",
     lon: lm.coordinates?.lon.toString() ?? "",
   };
+}
+
+function stripBlankEntries(map: Record<string, string>): Record<string, string> {
+  return Object.fromEntries(Object.entries(map).filter(([, v]) => v.trim() !== ""));
 }
 
 function formToLandmark(form: LandmarkForm): LandmarkInput {
@@ -64,11 +83,16 @@ function formToLandmark(form: LandmarkForm): LandmarkInput {
   return {
     key: form.key,
     name: form.name,
+    name_i18n: stripBlankEntries(form.name_i18n),
     task: form.task,
+    task_i18n: stripBlankEntries(form.task_i18n),
     accepted_answers: form.accepted_answers,
     hint1: form.hint1.trim() || null,
+    hint1_i18n: stripBlankEntries(form.hint1_i18n),
     hint2: form.hint2.trim() || null,
+    hint2_i18n: stripBlankEntries(form.hint2_i18n),
     tourist_info: form.tourist_info,
+    tourist_info_i18n: stripBlankEntries(form.tourist_info_i18n),
     coordinates:
       lat !== null && lon !== null && !Number.isNaN(lat) && !Number.isNaN(lon)
         ? { lat, lon }

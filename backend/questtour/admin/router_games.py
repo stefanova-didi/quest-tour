@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import selectinload
 
 from questtour.admin.crud import get_admin_host_id, handle_integrity, require_fresh
 from questtour.admin.errors import AdminValidationError, FieldError
@@ -23,6 +24,19 @@ router = APIRouter(prefix="/games", tags=["admin-games"])
 
 
 def _game_out(game: Game) -> GameOut:
+    languages = {
+        code
+        for t in game.tasks
+        for col in (
+            t.landmark.name_i18n,
+            t.landmark.task_text_i18n,
+            t.landmark.hint1_i18n,
+            t.landmark.hint2_i18n,
+            t.landmark.info_text_i18n,
+        )
+        if col
+        for code in col
+    }
     return GameOut(
         id=game.id,
         key=game.key,
@@ -37,6 +51,7 @@ def _game_out(game: Game) -> GameOut:
         ),
         updated_at=game.updated_at,
         task_landmark_ids=[t.landmark_id for t in game.tasks],
+        available_languages=sorted(languages),
     )
 
 
@@ -46,7 +61,12 @@ def list_games(
     admin: Annotated[AdminSession, Depends(require_admin)],
     host_id: str = Depends(get_admin_host_id),
 ):
-    games = session.scalars(select(Game).where(Game.host_id == host_id).order_by(Game.name)).all()
+    games = session.scalars(
+        select(Game)
+        .where(Game.host_id == host_id)
+        .order_by(Game.name)
+        .options(selectinload(Game.tasks).selectinload(GameTask.landmark))
+    ).all()
     return [_game_out(g) for g in games]
 
 
@@ -85,7 +105,11 @@ def get_game(
     admin: Annotated[AdminSession, Depends(require_admin)],
     host_id: str = Depends(get_admin_host_id),
 ):
-    game = session.get(Game, id)
+    game = session.scalars(
+        select(Game)
+        .where(Game.id == id)
+        .options(selectinload(Game.tasks).selectinload(GameTask.landmark))
+    ).first()
     if game is None or game.host_id != host_id:
         raise HTTPException(status_code=404)
     return _game_out(game)

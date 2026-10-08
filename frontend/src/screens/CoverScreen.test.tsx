@@ -6,24 +6,38 @@ import { makeState } from "../test/fixtures";
 import { CoverScreen } from "./CoverScreen";
 
 const frame = { header: null, offline: false, notice: null, onNoticeDone: () => {} };
-const notStarted = () => makeState({ phase: null, status: "not_started", clock: null, task: null });
+function notStarted() {
+  const state = makeState({ phase: null, status: "not_started", clock: null, task: null });
+  return { ...state, game: { ...state.game, available_languages: ["de", "sr"] } };
+}
+
+function renderCover(props: { onLanguageChange?: (lang: string) => void; onContinue?: () => void } = {}) {
+  return render(
+    <CoverScreen state={notStarted()} frame={frame} language="en"
+                 onLanguageChange={props.onLanguageChange ?? vi.fn()}
+                 onContinue={props.onContinue ?? vi.fn()} />,
+  );
+}
 
 it("shows the game name, the riddle count and the team", () => {
-  render(<CoverScreen state={notStarted()} frame={frame} onContinue={vi.fn()} />);
+  renderCover();
   expect(screen.getByRole("heading", { name: "Sofia Old Town Quest" })).toBeInTheDocument();
   expect(screen.getByText("A city quest in 8 riddles")).toBeInTheDocument();
   expect(screen.getByText("Welcome, The Explorers")).toBeInTheDocument();
 });
 
 it("shows the running version in the footer (issue #29)", () => {
-  render(<CoverScreen state={notStarted()} frame={frame} onContinue={vi.fn()} />);
+  renderCover();
   expect(screen.getByRole("contentinfo")).toHaveTextContent(versionLabel(APP_VERSION));
 });
 
-it("has one button, which continues to the Welcome page", async () => {
+it("offers the language menu and continues to the Welcome page", async () => {
+  const onLanguageChange = vi.fn();
   const onContinue = vi.fn();
-  render(<CoverScreen state={notStarted()} frame={frame} onContinue={onContinue} />);
-  expect(screen.getAllByRole("button")).toHaveLength(1);
+  renderCover({ onLanguageChange, onContinue });
+  await userEvent.click(screen.getByRole("button", { name: "Language, EN" }));
+  await userEvent.click(screen.getByRole("option", { name: "DE" }));
+  expect(onLanguageChange).toHaveBeenCalledWith("de");
   await userEvent.click(screen.getByRole("button", { name: "How it works" }));
   expect(onContinue).toHaveBeenCalledTimes(1);
 });

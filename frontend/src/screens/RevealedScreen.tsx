@@ -2,10 +2,12 @@ import type { GameState } from "../api/types";
 import { GameFrame, type FrameProps } from "../components/GameFrame";
 import { Icon } from "../components/Icon";
 import { formatPenalty } from "../lib/format";
+import { pickText } from "../lib/i18n";
 
-export function RevealedScreen({ state, frame, onContinue }: { state: GameState; frame: FrameProps; onContinue(): void }) {
+export function RevealedScreen({ state, frame, language, onContinue }: { state: GameState; frame: FrameProps; language: string; onContinue(): void }) {
   const task = state.task!;
-  const landmarkName = task.landmark?.name ?? "the landmark";
+  const landmarkName = pickText(task.landmark?.name ?? "the landmark", task.landmark?.name_i18n, language);
+  const recap = pickText(task.text, task.text_i18n, language);
   return (
     <GameFrame
       frame={frame}
@@ -28,7 +30,7 @@ export function RevealedScreen({ state, frame, onContinue }: { state: GameState;
       <p className="t-body">Head there now – a team photo at {landmarkName} unlocks the next riddle.</p>
       <div className="qs-group" style={{ gap: 8 }}>
         <p className="qs-eyebrow qs-eyebrow--muted"><Icon name="riddle" />The riddle was</p>
-        <p className="t-body t-muted">{task.text}</p>
+        <p className="t-body t-muted">{recap}</p>
       </div>
     </GameFrame>
   );

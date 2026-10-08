@@ -87,8 +87,11 @@ def apply_config(
     for lc in cfg.landmarks:
         landmarks[lc.id] = _upsert(
             session, Landmark, host_id, lc.id, name=lc.name, task_text=lc.task,
+            name_i18n=lc.name_i18n, task_text_i18n=lc.task_i18n,
+            hint1_i18n=lc.hint1_i18n, hint2_i18n=lc.hint2_i18n,
             task_image=image(lc.task_picture), accepted_answers=list(lc.accepted_answers),
             hint1=lc.hint1, hint2=lc.hint2, info_text=lc.tourist_info,
+            info_text_i18n=lc.tourist_info_i18n,
             info_image=image(lc.tourist_info_picture),
             coordinates_lat=lc.coordinates.lat if lc.coordinates else None,
             coordinates_lon=lc.coordinates.lon if lc.coordinates else None,

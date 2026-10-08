@@ -35,12 +35,17 @@ class Landmark(Timestamped, Base):
     host_id: Mapped[str] = mapped_column(String(64))
     key: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(200))
+    name_i18n: Mapped[dict[str, str] | None] = mapped_column(JSON)
     task_text: Mapped[str] = mapped_column(Text)
+    task_text_i18n: Mapped[dict[str, str] | None] = mapped_column(JSON)
     task_image: Mapped[str | None] = mapped_column(String(200))  # blob name in images container
     accepted_answers: Mapped[list[str]] = mapped_column(JSON)  # [0] = answer shown on reveal
     hint1: Mapped[str | None] = mapped_column(Text)
+    hint1_i18n: Mapped[dict[str, str] | None] = mapped_column(JSON)
     hint2: Mapped[str | None] = mapped_column(Text)
+    hint2_i18n: Mapped[dict[str, str] | None] = mapped_column(JSON)
     info_text: Mapped[str] = mapped_column(Text)
+    info_text_i18n: Mapped[dict[str, str] | None] = mapped_column(JSON)
     info_image: Mapped[str | None] = mapped_column(String(200))
     coordinates_lat: Mapped[float | None] = mapped_column(Float)
     coordinates_lon: Mapped[float | None] = mapped_column(Float)

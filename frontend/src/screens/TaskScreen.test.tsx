@@ -12,7 +12,7 @@ afterEach(() => {
 
 it("confirms the hint penalty before opening it", async () => {
   const onHint = vi.fn().mockResolvedValue("ok");
-  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={vi.fn()} onHint={onHint} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   await userEvent.click(screen.getByRole("button", { name: /Hint 1/ }));
   expect(screen.getByRole("dialog", { name: "Open hint 1?" })).toBeInTheDocument();
@@ -22,7 +22,7 @@ it("confirms the hint penalty before opening it", async () => {
 
 it("shows 'Not quite – try again' and keeps the typed text", async () => {
   const onAnswer = vi.fn().mockResolvedValue("wrong");
-  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={onAnswer} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   await userEvent.type(screen.getByLabelText("Your answer"), "Saint Sofia Church");
   await userEvent.click(screen.getByRole("button", { name: "Submit" }));
@@ -31,11 +31,11 @@ it("shows 'Not quite – try again' and keeps the typed text", async () => {
 });
 
 it("keeps reveal locked until unlocked, then uses the danger confirm", async () => {
-  const { rerender } = render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame}
+  const { rerender } = render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame} language="en"
                                           onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   expect(screen.getByRole("button", { name: /Reveal answer/ })).toBeDisabled();
   rerender(<TaskScreen state={makeState({ task: makeTask({ reveal_unlocked: true, reveal_unlocks_in_seconds: null }) })}
-                       receivedAt={Date.now()} frame={frame} onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
+                       receivedAt={Date.now()} frame={frame} language="en" onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   await userEvent.click(screen.getByRole("button", { name: /Give up and reveal answer/ }));
   expect(screen.getByRole("button", { name: "Reveal" })).toHaveClass("qc-btn--danger");
 });
@@ -43,10 +43,10 @@ it("keeps reveal locked until unlocked, then uses the danger confirm", async () 
 it("shows an opened hint's text and does not submit an empty answer", async () => {
   const onAnswer = vi.fn();
   const task = makeTask({ hints: [
-    { number: 1, penalty_minutes: 10, available: false, opened: true, text: "Look for the golden domes." },
-    { number: 2, penalty_minutes: 15, available: true, opened: false, text: null },
+    { number: 1, penalty_minutes: 10, available: false, opened: true, text: "Look for the golden domes.", text_i18n: {} },
+    { number: 2, penalty_minutes: 15, available: true, opened: false, text: null, text_i18n: {} },
   ] });
-  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={onAnswer} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   expect(screen.getByText("Look for the golden domes.")).toBeInTheDocument();
   await userEvent.click(screen.getByRole("button", { name: "Submit" }));
@@ -56,7 +56,7 @@ it("shows an opened hint's text and does not submit an empty answer", async () =
 it("confirms the compass penalty before opening it", async () => {
   const onCompass = vi.fn().mockResolvedValue("ok");
   const task = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
-  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={onCompass} />);
   await userEvent.click(screen.getByRole("button", { name: /Compass/ }));
   expect(screen.getByRole("dialog", { name: "Open compass?" })).toBeInTheDocument();
@@ -69,7 +69,7 @@ it("requests iOS device-orientation permission before opening the compass", asyn
   vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
   const onCompass = vi.fn().mockResolvedValue("ok");
   const task = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
-  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={onCompass} />);
   await userEvent.click(screen.getByRole("button", { name: /Compass/ }));
   await userEvent.click(screen.getByRole("button", { name: "Open compass" }));
@@ -85,7 +85,7 @@ it("still opens the compass when the iOS permission is denied", async () => {
   vi.stubGlobal("DeviceOrientationEvent", { requestPermission });
   const onCompass = vi.fn().mockResolvedValue("ok");
   const task = makeTask({ compass: { opened: false, lat: 42.7, lon: 23.3, penalty_minutes: 5 } });
-  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={onCompass} />);
   await userEvent.click(screen.getByRole("button", { name: /Compass/ }));
   await userEvent.click(screen.getByRole("button", { name: "Open compass" }));
@@ -93,7 +93,39 @@ it("still opens the compass when the iOS permission is denied", async () => {
 });
 
 it("hides the compass button when no compass is available", () => {
-  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame}
+  render(<TaskScreen state={makeState()} receivedAt={Date.now()} frame={frame} language="de"
                      onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
   expect(screen.queryByRole("button", { name: /Compass/ })).not.toBeInTheDocument();
+});
+
+it("renders the riddle in the chosen language when a translation exists", () => {
+  const task = makeTask({ text: "Base riddle", text_i18n: { de: "German riddle" } });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
+  expect(screen.getByText("German riddle")).toBeInTheDocument();
+});
+
+it("falls back to the base riddle when the chosen language is missing", () => {
+  const task = makeTask({ text: "Base riddle", text_i18n: { sr: "Serbian riddle" } });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
+  expect(screen.getByText("Base riddle")).toBeInTheDocument();
+});
+
+it("renders an opened hint in the chosen language when a translation exists", () => {
+  const task = makeTask({ hints: [
+    { number: 1, penalty_minutes: 10, available: false, opened: true, text: "Base hint", text_i18n: { de: "German hint" } },
+  ] });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
+  expect(screen.getByText("German hint")).toBeInTheDocument();
+});
+
+it("falls back to the base hint text when the chosen language is missing", () => {
+  const task = makeTask({ hints: [
+    { number: 1, penalty_minutes: 10, available: false, opened: true, text: "Base hint", text_i18n: { sr: "Serbian hint" } },
+  ] });
+  render(<TaskScreen state={makeState({ task })} receivedAt={Date.now()} frame={frame} language="de"
+                     onAnswer={vi.fn()} onHint={vi.fn()} onReveal={vi.fn()} onCompass={vi.fn().mockResolvedValue("ok")} />);
+  expect(screen.getByText("Base hint")).toBeInTheDocument();
 });

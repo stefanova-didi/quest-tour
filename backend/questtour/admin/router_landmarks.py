@@ -39,11 +39,16 @@ def create_landmark(
         host_id=host_id,
         key=data.key,
         name=data.name,
+        name_i18n=data.name_i18n,
         task_text=data.task,
+        task_text_i18n=data.task_i18n,
         accepted_answers=data.accepted_answers,
         hint1=data.hint1,
+        hint1_i18n=data.hint1_i18n,
         hint2=data.hint2,
+        hint2_i18n=data.hint2_i18n,
         info_text=data.tourist_info,
+        info_text_i18n=data.tourist_info_i18n,
         coordinates_lat=data.coordinates.lat if data.coordinates else None,
         coordinates_lon=data.coordinates.lon if data.coordinates else None,
     )
@@ -84,11 +89,16 @@ def update_landmark(
     _validate_landmark(data)
     lm.key = data.key
     lm.name = data.name
+    lm.name_i18n = data.name_i18n
     lm.task_text = data.task
+    lm.task_text_i18n = data.task_i18n
     lm.accepted_answers = data.accepted_answers
     lm.hint1 = data.hint1
+    lm.hint1_i18n = data.hint1_i18n
     lm.hint2 = data.hint2
+    lm.hint2_i18n = data.hint2_i18n
     lm.info_text = data.tourist_info
+    lm.info_text_i18n = data.tourist_info_i18n
     lm.coordinates_lat = data.coordinates.lat if data.coordinates else None
     lm.coordinates_lon = data.coordinates.lon if data.coordinates else None
     try:

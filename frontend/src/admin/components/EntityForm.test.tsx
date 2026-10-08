@@ -11,12 +11,21 @@ type TestEntity = {
   tags: string[];
 };
 
+type I18nEntity = {
+  name: string;
+  name_i18n: Record<string, string>;
+};
+
 const fields = [
   { name: "key", label: "Key", type: "text" as const, required: true },
   { name: "name", label: "Name", type: "text" as const },
   { name: "count", label: "Count", type: "number" as const },
   { name: "notes", label: "Notes", type: "textarea" as const },
   { name: "tags", label: "Tags", type: "list" as const },
+];
+
+const i18nFields = [
+  { name: "name", i18nName: "name_i18n", label: "Name", type: "i18n-text" as const, required: true },
 ];
 
 const initial: TestEntity = {
@@ -34,6 +43,7 @@ describe("EntityForm", () => {
   beforeEach(() => {
     onSubmit.mockReset();
     onDirtyChange.mockReset();
+    vi.unstubAllGlobals();
   });
 
   it("renders all field types", () => {
@@ -183,5 +193,117 @@ describe("EntityForm", () => {
     await waitFor(() => {
       expect(screen.getAllByRole("textbox").length).toBe(1);
     });
+  });
+
+  it("renders i18n fields and adds a language", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("prompt", vi.fn(() => "de"));
+    render(
+      <EntityForm
+        fields={i18nFields}
+        initial={{ name: "Base", name_i18n: {} }}
+        onSubmit={onSubmit}
+        submitLabel="Save"
+      />,
+    );
+
+    expect(screen.getByLabelText("Name")).toHaveValue("Base");
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    expect(screen.getByRole("button", { name: "DE" })).toBeInTheDocument();
+
+    vi.unstubAllGlobals();
+  });
+
+  it("submits base string and i18n map", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("prompt", vi.fn(() => "de"));
+    render(
+      <EntityForm
+        fields={i18nFields}
+        initial={{ name: "Base", name_i18n: {} }}
+        onSubmit={onSubmit}
+        submitLabel="Save"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    await user.type(screen.getByPlaceholderText("Name (de)"), "German name");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: "Base",
+        name_i18n: { de: "German name" },
+      });
+    });
+
+    vi.unstubAllGlobals();
+  });
+
+  it("rejects the reserved base language code 'en'", async () => {
+    const user = userEvent.setup();
+    const alert = vi.fn();
+    vi.stubGlobal("prompt", vi.fn(() => "en"));
+    vi.stubGlobal("alert", alert);
+    render(
+      <EntityForm
+        fields={i18nFields}
+        initial={{ name: "Base", name_i18n: {} }}
+        onSubmit={onSubmit}
+        submitLabel="Save"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    expect(alert).toHaveBeenCalledWith("'en' is reserved for the base language.");
+    expect(screen.getAllByRole("button", { name: "EN" })).toHaveLength(1);  // only the base tab
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    vi.unstubAllGlobals();
+  });
+
+  it("removes empty translation keys from the map", async () => {
+    const user = userEvent.setup();
+    render(
+      <EntityForm
+        fields={i18nFields}
+        initial={{ name: "Base", name_i18n: { de: "German name" } }}
+        onSubmit={onSubmit}
+        submitLabel="Save"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "DE" }));
+    await user.clear(screen.getByPlaceholderText("Name (de)"));
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: "Base",
+        name_i18n: {},
+      });
+    });
+  });
+
+  it("validates required base field regardless of active language", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("prompt", vi.fn(() => "de"));
+    render(
+      <EntityForm
+        fields={i18nFields}
+        initial={{ name: "", name_i18n: {} }}
+        onSubmit={onSubmit}
+        submitLabel="Save"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "+ Add language" }));
+    await user.type(screen.getByPlaceholderText("Name (de)"), "German name");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Name is required")).toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+
+    vi.unstubAllGlobals();
   });
 });

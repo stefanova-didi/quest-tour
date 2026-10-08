@@ -2,9 +2,9 @@ from datetime import datetime
 from typing import Literal
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
-from questtour.models import Assignment, GameRun
+from questtour.models import Assignment, Game, GameRun, GameTask
 from questtour.services.game import is_service
 from questtour.tokens import hash_token
 
@@ -28,7 +28,14 @@ class LinkNotValid(Exception):
 
 
 def find_assignment(session: Session, token: str, *, lock: bool = False) -> Assignment:
-    stmt = select(Assignment).where(Assignment.token_hash == hash_token(token))
+    stmt = (
+        select(Assignment)
+        .where(Assignment.token_hash == hash_token(token))
+        .options(
+            selectinload(Assignment.team),
+            selectinload(Assignment.game).selectinload(Game.tasks).selectinload(GameTask.landmark),
+        )
+    )
     if lock:
         stmt = stmt.with_for_update()
     assignment = session.scalars(stmt).one_or_none()

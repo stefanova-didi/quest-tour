@@ -193,3 +193,86 @@ def test_assignment_cfg_extends_base_and_adds_token():
             valid_until="2026-10-02T00:00:00+02:00",
             token="short",
         )
+
+
+def test_landmark_base_cfg_i18n_round_trip():
+    cfg = LandmarkBaseCfg(
+        id="pond",
+        name="Lily Pond",
+        name_i18n={"de": "Seerosenteich"},
+        task="Find it",
+        task_i18n={"de": "Finde es"},
+        accepted_answers=["1879"],
+        hint1="hint",
+        hint1_i18n={"de": "Hinweis"},
+        hint2="hint2",
+        hint2_i18n={"de": "Hinweis 2"},
+        tourist_info="Info",
+        tourist_info_i18n={"de": "Information"},
+    )
+    assert cfg.name_i18n == {"de": "Seerosenteich"}
+    assert cfg.task_i18n == {"de": "Finde es"}
+    assert cfg.hint1_i18n == {"de": "Hinweis"}
+    assert cfg.hint2_i18n == {"de": "Hinweis 2"}
+    assert cfg.tourist_info_i18n == {"de": "Information"}
+
+
+def test_landmark_base_cfg_rejects_en_i18n_key():
+    with pytest.raises(ValidationError, match="'en' is not allowed"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            name_i18n={"en": "A"},
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+        )
+
+
+def test_landmark_base_cfg_rejects_blank_i18n_value():
+    with pytest.raises(ValidationError, match="is blank"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            name_i18n={"de": "   "},
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+        )
+
+
+def test_landmark_base_cfg_rejects_bad_language_code():
+    with pytest.raises(ValidationError, match="invalid language code"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            name_i18n={"German": "A"},
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+        )
+
+
+def test_landmark_base_cfg_rejects_hint1_i18n_without_hint1():
+    with pytest.raises(ValidationError, match="hint1_i18n requires hint1"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+            hint1_i18n={"de": "Hinweis"},
+        )
+
+
+def test_landmark_base_cfg_rejects_hint2_i18n_without_hint2():
+    with pytest.raises(ValidationError, match="hint2_i18n requires hint2"):
+        LandmarkBaseCfg(
+            id="a",
+            name="A",
+            task="T",
+            accepted_answers=["x"],
+            tourist_info="I",
+            hint1="h1",
+            hint2_i18n={"de": "Hinweis 2"},
+        )
