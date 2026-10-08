@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import type { GameState } from "../api/types";
+import { AppVersion } from "../components/AppVersion";
 import { WelcomeSkyline } from "../components/art";
 import { ConfirmSheet } from "../components/ConfirmSheet";
 import { ConnectionBanner } from "../components/ConnectionBanner";
@@ -62,6 +63,7 @@ export function WelcomeScreen({ state, frame, onStart }: {
         <div className="qs-actions">
           <button type="button" className="qc-btn qc-btn--primary qc-btn--block" onClick={() => setConfirming(true)}>Start the quest</button>
           <p className="t-caption" style={{ textAlign: "center" }}>You'll confirm before the clock starts.</p>
+          <AppVersion />
         </div>
       </div>
       {frame.notice && <Toast message={frame.notice} onDone={frame.onNoticeDone} />}

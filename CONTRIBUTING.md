@@ -139,6 +139,23 @@ All of these must pass. There is no staging environment; `main` is what gets dep
 4. PRs target `main`. A reviewer checks spec compliance, layering (`api/` → `services/` → data),
    and that both suites pass.
 
+## Releasing
+
+Every merge to `main` deploys, so a release is a name for the state of `main` at a point in time:
+an annotated tag `vMAJOR.MINOR.PATCH` on a `main` commit.
+
+```bash
+git checkout main && git pull
+git tag -a v1.2.0 -m "v1.2.0"
+git push origin v1.2.0
+```
+
+Pushing the tag runs the *Release* workflow, which publishes a GitHub Release with generated notes
+and deploys exactly that tag, so the footer and `GET /api/health` report `v1.2.0` rather than the
+`v1.1.0-7-gabc1234` build number the merge before it produced. Bump MAJOR for a change players or
+hosts must adapt to, MINOR for new features, PATCH for fixes. Tag only on `main`; the workflow
+refuses a tag it cannot reach from there.
+
 ## Where to ask questions
 
 The specs are authoritative — start there. For anything the specs don't cover, open an issue or

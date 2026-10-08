@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { APP_VERSION, versionLabel } from "../../lib/version";
 import { AdminLayout } from "./AdminLayout";
 import { adminApi } from "../api";
 
@@ -23,6 +24,11 @@ describe("AdminLayout", () => {
   it("renders a Logout button", () => {
     render(<AdminLayout active="dashboard">Content</AdminLayout>);
     expect(screen.getByRole("button", { name: "Logout" })).toBeInTheDocument();
+  });
+
+  it("shows the running version at the foot of the sidebar (issue #29)", () => {
+    render(<AdminLayout active="dashboard">Content</AdminLayout>);
+    expect(screen.getByRole("contentinfo")).toHaveTextContent(versionLabel(APP_VERSION));
   });
 
   it("calls logout and redirects to login when Logout is clicked", async () => {

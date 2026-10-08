@@ -1,4 +1,5 @@
 import type { GameState } from "../api/types";
+import { AppVersion } from "../components/AppVersion";
 import { HourglassArt } from "../components/art";
 import { ConnectionBanner } from "../components/ConnectionBanner";
 import type { FrameProps } from "../components/GameFrame";
@@ -40,6 +41,7 @@ export function TimesUpScreen({ state, frame }: { state: GameState; frame: Frame
             <p className="qs-eyebrow qs-eyebrow--gold" id="host-label"><Icon name="gift" />From your host</p>
             <Paragraphs text={results.exit_message} />
           </section>
+          <AppVersion />
         </main>
       </div>
       {frame.notice && <Toast message={frame.notice} onDone={frame.onNoticeDone} />}
