@@ -21,6 +21,7 @@ from questtour.services.game import (
     HINT_PENALTIES,
     TIMED_OUT,
     WARNING_SECONDS,
+    active_seconds,
     apply_time_limits,
     current_task,
     effective_deadline,
@@ -83,14 +84,18 @@ def build_game(game: Game, tasks: Sequence[GameTask | RunTask]) -> GameOut:
 
 
 def build_clock(run: GameRun, assignment: Assignment, now: datetime) -> ClockOut:
-    running = run.end_reason is None
+    task = current_task(run)
+    # The clock freezes on the photo/landmark screens: the pause between completing the current
+    # task and showing the next one is not active time (R-7), so `running` goes false there.
+    running = run.end_reason is None and task is not None and task.completed_at is None
     remaining = None
-    if running and not is_service(assignment):  # R-25: service runs have no deadline
-        end_at, _ = effective_deadline(run, assignment)
-        # Rounded UP: 0 only once the deadline has passed (and then apply_time_limits has already ended
+    if run.end_reason is None and not is_service(assignment):  # R-25: service runs have no deadline
+        budget, _ = effective_deadline(run, assignment)
+        # Rounded UP: 0 only once the budget is spent (and then apply_time_limits has already ended
         # the run). Flooring would send `running: true, remaining_seconds: 0` during the last second, and
         # GameHeader would re-request on every response until the deadline (§10.1 onTimeUp).
-        remaining = max(0, math.ceil((end_at - now).total_seconds()))
+        # During a pause active_seconds stands still, so the countdown freezes with the clock.
+        remaining = max(0, math.ceil(budget - active_seconds(run, now)))
     return ClockOut(
         elapsed_seconds=elapsed_seconds(run, now),
         running=running,

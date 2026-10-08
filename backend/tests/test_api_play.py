@@ -576,8 +576,8 @@ def test_every_action_after_timeout_is_game_over(client, seed, clock, path, body
 
 def test_photo_after_timeout_is_game_over(client, seed, clock):
     t = seed.token
-    complete_first(client, t)
-    clock.advance(minutes=241)
+    client.post(f"/api/play/{t}/start")
+    clock.advance(minutes=241)                     # active time, so the run does time out
     assert upload(client, t).json()["outcome"] == "game_over"
 
 

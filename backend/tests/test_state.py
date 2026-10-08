@@ -144,6 +144,28 @@ def test_clock_uses_window_close_when_earlier(session, assignment, run, clock):
     assert build_clock(run, assignment, clock.now).remaining_seconds == 30 * 60
 
 
+def test_clock_freezes_while_the_task_is_completed(session, assignment, run, clock):
+    clock.advance(minutes=5)
+    rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
+    clock.advance(minutes=3)                       # photo/landmark screens: the clock is stopped
+    out = build_clock(run, assignment, clock.now)
+    assert (out.running, out.elapsed_seconds, out.remaining_seconds) == (
+        False, 5 * 60, (240 - 5) * 60,
+    )
+    clock.advance(minutes=4)                       # still frozen: the pause costs nothing
+    out = build_clock(run, assignment, clock.now)
+    assert (out.running, out.elapsed_seconds, out.remaining_seconds) == (
+        False, 5 * 60, (240 - 5) * 60,
+    )
+    run.tasks[0].photo_count += 1
+    rules.advance(run, 0, clock.now)               # the next riddle restarts the clock
+    clock.advance(minutes=1)
+    out = build_clock(run, assignment, clock.now)
+    assert (out.running, out.elapsed_seconds, out.remaining_seconds) == (
+        True, 6 * 60, (240 - 6) * 60,
+    )
+
+
 def test_task_never_leaks_unopened_hint_text_or_landmark(session, assignment, run, clock):
     task = build_task(run.tasks[0], assignment.game, clock.now)
     assert task.number == 1

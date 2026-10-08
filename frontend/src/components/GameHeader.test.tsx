@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { expect, it, vi } from "vitest";
 import { GameHeader } from "./GameHeader";
@@ -28,6 +28,24 @@ it("asks the server once when the local countdown reaches zero", () => {
   const { rerender } = render(<GameHeader clock={clock} position={1} taskCount={8} receivedAt={5} onTimeUp={onTimeUp} {...common} />);
   rerender(<GameHeader clock={clock} position={1} taskCount={8} receivedAt={5} onTimeUp={onTimeUp} {...common} />);
   expect(onTimeUp).toHaveBeenCalledTimes(1);
+});
+
+it("freezes both clocks while the server says the run is paused", () => {
+  vi.useFakeTimers();
+  try {
+    vi.setSystemTime(new Date("2026-10-14T08:00:00Z"));
+    const clock = { ...base, running: false, elapsed_seconds: 300, remaining_seconds: 900 };
+    const receivedAt = Date.now();
+    const props = { clock, position: 1, taskCount: 8, receivedAt, onTimeUp: () => {}, ...common };
+    const { rerender } = render(<GameHeader {...props} />);
+    expect(screen.getByText("00:05:00")).toBeInTheDocument();
+    act(() => { vi.advanceTimersByTime(10_000); });
+    rerender(<GameHeader {...props} />);
+    expect(screen.getByText("00:05:00")).toBeInTheDocument();   // no drift while paused
+    expect(screen.getByRole("banner")).not.toHaveClass("qc-header--warning");
+  } finally {
+    vi.useRealTimers();
+  }
 });
 
 it("renders the language menu with available languages", async () => {
