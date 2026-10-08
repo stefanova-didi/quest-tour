@@ -60,6 +60,18 @@ def test_settings_splits_admin_dev_emails_from_string():
     assert settings.admin_dev_emails == ["a@example.com", "b@example.com"]
 
 
+def test_settings_splits_admin_dev_emails_from_env(monkeypatch):
+    # The env/.env source must honor the documented comma-separated format too,
+    # not only values passed as init arguments.
+    monkeypatch.setenv("ADMIN_DEV_EMAILS", "a@example.com,b@example.com")
+    settings = Settings(
+        _env_file=None,
+        database_url="sqlite://",
+        public_base_url="http://test",
+    )
+    assert settings.admin_dev_emails == ["a@example.com", "b@example.com"]
+
+
 def test_create_app_exposes_seed_error_and_session_middleware(
     settings, session_factory, blob_store, clock
 ):

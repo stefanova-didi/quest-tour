@@ -1,9 +1,9 @@
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -37,7 +37,9 @@ class Settings(BaseSettings):
     admin_entra_redirect_uri: str | None = None
     admin_entra_group_object_id: str | None = None
 
-    admin_dev_emails: list[str] = []
+    # NoDecode: the env source hands the raw string to _split_admin_dev_emails
+    # (comma-separated per .env.example) instead of JSON-decoding it first.
+    admin_dev_emails: Annotated[list[str], NoDecode] = []
     config_dir: Path = Path("config")
 
     @field_validator("admin_session_secret")
