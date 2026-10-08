@@ -41,13 +41,15 @@ No brand identity is defined yet. Propose a visual direction (colour palette, ty
 - **Language pill** (only when the game has translations, issue #6): a ghost pill with a globe and the language code (`EN`) at the right end of the top row. It opens a bottom sheet that lists the languages by their own names (`English`, `Deutsch`, `Srpski`) with the current one ticked; a tap picks and closes. The cover and the welcome hero, which have no header, carry the same pill in the same top-right corner, so the control never moves between screens. Finish and Time is up have nothing to translate and no pill.
 
 **Team album** (design draft, outside the game): the surprise the host shares with a team after the game
-(requirements §1, R-10), at `/album/{token}`. One long page, not a game screen: a patina cover with the
-skyline, "Team album", the game name, the team chip and the facts of the day (date, landmarks reached, total
-time, place), then the host's message, then one chapter per landmark reached – `Landmark 3 of 6 · 11:42`,
-the landmark name, the team photo(s) with the time they were taken (first one large, the rest in a
-two-up grid), the riddle the team solved as a gold quote, and the landmark's story as a card – and a closing
-band. Text may be selected and copied here. It reads as a 640px column on a desktop and prints one chapter
-per page. Until the album API exists, `/album/preview` renders a mock album with dummy photos.
+(requirements §1, R-10), at `/album/{token}`. An A4 document, not a game screen: a patina cover sheet with
+the skyline, "Team album", the game name, the team chip, the facts of the day (date, landmarks reached, total
+time, place) and the host's message; one sheet per landmark reached – `Landmark 3 of 6 · 11:42`, the
+landmark name, the team photo(s) with the time they were taken (first one large, the rest in a row of three)
+and what the place is, in two columns of small print (the riddles are not repeated); and a closing sheet with
+a contact sheet of every photo. Pages keep 20 mm margins (24 mm at the foot) so no printer cuts the text.
+On a desktop the sheets show as true A4 pages; on a phone they flow as cards. Text may be selected and
+copied. "Save as PDF" opens the print dialog with A4 pages and no browser header. Until the album API
+exists, `/album/preview` renders a mock album with dummy photos.
 
 **Connection banner** (any screen, R-23): a slim banner `No connection – retrying…`, which disappears automatically when the connection is back.
 

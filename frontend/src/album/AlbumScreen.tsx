@@ -8,7 +8,7 @@ import type { Album, AlbumChapter, AlbumPhoto } from "./types";
 
 /** The team album (design draft): a keepsake the host shares after the game, laid out as an A4 document.
  *  A cover sheet (the facts of the day and the host's message), one sheet per landmark reached (the team
- *  photo, the riddle solved and the story in two columns) and a closing sheet with every photo. On a
+ *  photo and what the place is, in two columns; no riddles) and a closing sheet with every photo. On a
  *  desktop and in the PDF the sheets are true A4 pages; on a phone the same sheets flow as cards, because
  *  A4 type shrunk to a phone's width would not be readable. "Save as PDF" prints the A4 pages. */
 export function AlbumScreen({ album }: { album: Album }) {
@@ -28,14 +28,7 @@ export function AlbumScreen({ album }: { album: Album }) {
             <p className="qs-hero__kicker">Team album</p>
             <h1 className="t-display-l qa-title">{album.game}</h1>
             <span className="qs-team"><Icon name="team" />{album.team}</span>
-            <ul className="qa-facts" aria-label="The day in numbers">
-              <li><Icon name="calendar" />{formatDateFull(album.played_on, tz)}</li>
-              <li><Icon name="flag" />{album.chapters.length} of {album.task_count} landmarks</li>
-              {album.total_seconds !== null && <li><Icon name="clock" />{formatHms(album.total_seconds)}</li>}
-              {album.rank !== null && (
-                <li><Icon name="trophy" />{album.shared_rank ? "Shared " : ""}{ordinal(album.rank)} place</li>
-              )}
-            </ul>
+            <Facts album={album} />
             <section className="qs-card qs-host-card qa-host" aria-label="From your host">
               <p className="qs-eyebrow qs-eyebrow--gold"><Icon name="gift" />From your host</p>
               <Paragraphs text={album.host_message} />
@@ -47,11 +40,22 @@ export function AlbumScreen({ album }: { album: Album }) {
           <ChapterSheet key={chapter.number} chapter={chapter} album={album} page={i + 2} pages={pages} />
         ))}
 
+        {/* The closing sheet is a summary that stands on its own when only the last page is printed */}
         <section className="qa-sheet qa-sheet--end" aria-label="The end">
           <div className="qa-page">
             <p className="qs-hero__kicker">The end</p>
             <h2 className="t-display-l qa-title">{album.team}</h2>
-            <p className="t-body qa-end__date">{formatDateFull(album.played_on, tz)} · {album.game}</p>
+            <p className="t-body qa-end__date">{album.game}</p>
+            <Facts album={album} light />
+            <ol className="qa-route" aria-label="The route">
+              {album.chapters.map((chapter) => (
+                <li key={chapter.number}>
+                  <span className="qa-route__no">{chapter.number}</span>
+                  <span className="qa-route__name">{chapter.landmark}</span>
+                  <span className="qa-route__time">{formatTime(chapter.reached_at, tz)}</span>
+                </li>
+              ))}
+            </ol>
             {allPhotos.length > 0 && (
               <div className="qa-contact" aria-label="All the team's photos">
                 {allPhotos.map(({ photo, chapter }) => (
@@ -67,6 +71,21 @@ export function AlbumScreen({ album }: { album: Album }) {
         </section>
       </article>
     </div>
+  );
+}
+
+/** The facts of the day: date, landmarks reached, total time and place (the last two only for a finished run). */
+function Facts({ album, light = false }: { album: Album; light?: boolean }) {
+  const tz = album.time_zone;
+  return (
+    <ul className={light ? "qa-facts qa-facts--light" : "qa-facts"} aria-label="The day in numbers">
+      <li><Icon name="calendar" />{formatDateFull(album.played_on, tz)}</li>
+      <li><Icon name="flag" />{album.chapters.length} of {album.task_count} landmarks</li>
+      {album.total_seconds !== null && <li><Icon name="clock" />{formatHms(album.total_seconds)}</li>}
+      {album.rank !== null && (
+        <li><Icon name="trophy" />{album.shared_rank ? "Shared " : ""}{ordinal(album.rank)} place</li>
+      )}
+    </ul>
   );
 }
 
@@ -99,12 +118,8 @@ function ChapterSheet({ chapter, album, page, pages }: { chapter: AlbumChapter; 
             {rest.map((photo) => <Photo key={photo.url} photo={photo} chapter={chapter} album={album} />)}
           </div>
         )}
-        <blockquote className="qa-riddle">
-          <p className="qs-eyebrow"><Icon name="riddle" />The riddle you solved</p>
-          <Paragraphs text={chapter.riddle} />
-        </blockquote>
-        <section className="qa-story" aria-label={`The story of ${chapter.landmark}`}>
-          <p className="qs-eyebrow qs-eyebrow--gold"><Icon name="bulb" />The story</p>
+        <section className="qa-story" aria-label={`About ${chapter.landmark}`}>
+          <p className="qs-eyebrow qs-eyebrow--gold"><Icon name="bulb" />About this place</p>
           <div className="qa-story__text"><Paragraphs text={chapter.story} /></div>
         </section>
         <Foot album={album} page={page} pages={pages} />

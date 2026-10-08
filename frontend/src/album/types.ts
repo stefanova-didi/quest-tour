@@ -10,7 +10,6 @@ export interface AlbumPhoto {
 export interface AlbumChapter {
   number: number;              // 1-based task number
   landmark: string;
-  riddle: string;
   story: string;               // the landmark's tourist info, paragraphs separated by blank lines
   reached_at: string;          // when the team solved the riddle (ISO-8601, UTC)
   photos: AlbumPhoto[];

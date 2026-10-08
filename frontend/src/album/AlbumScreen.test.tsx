@@ -11,10 +11,10 @@ const album: Album = {
   played_on: "2026-10-03T07:30:00Z", task_count: 6, total_seconds: 10710, rank: 2, shared_rank: false,
   host_message: "Thank you for exploring Sofia with us!\n\nHere is your journey.",
   chapters: [
-    { number: 1, landmark: "Lily Pond", riddle: "Count the frogs.", story: "Laid out by Daniel Neff.\n\nKnown as the Fish Pond.",
+    { number: 1, landmark: "Lily Pond", story: "Laid out by Daniel Neff.\n\nKnown as the Fish Pond.",
       reached_at: "2026-10-03T07:58:00Z",
       photos: [{ url: "https://example.test/lily-1.jpg", taken_at: "2026-10-03T08:02:00Z" }] },
-    { number: 2, landmark: "Eagles' Bridge", riddle: "Who guards the bridge?", story: "Built in 1891.",
+    { number: 2, landmark: "Eagles' Bridge", story: "Built in 1891.",
       reached_at: "2026-10-03T08:22:00Z",
       photos: [
         { url: "https://example.test/bridge-1.jpg", taken_at: "2026-10-03T08:26:00Z" },
@@ -37,7 +37,7 @@ it("opens with the game, the team and the facts of the day", () => {
   expect(screen.getByText("Thank you for exploring Sofia with us!")).toBeInTheDocument();
 });
 
-it("tells one chapter per landmark: time reached, photos with captions, riddle and story", () => {
+it("tells one chapter per landmark: time reached, photos with captions and what the place is, no riddle", () => {
   render(<AlbumScreen album={album} />);
   const chapter = screen.getByRole("region", { name: "Eagles' Bridge" });
   expect(chapter).toHaveTextContent("Landmark 2 of 6 · 11:22");
@@ -45,16 +45,31 @@ it("tells one chapter per landmark: time reached, photos with captions, riddle a
   expect(photos).toHaveLength(3);
   expect(photos[0]).toHaveAttribute("alt", "The Explorers at Eagles' Bridge, 11:26");
   expect(within(chapter).getAllByText(/Team photo · /)).toHaveLength(3);
-  expect(within(chapter).getByText("Who guards the bridge?")).toBeInTheDocument();
+  expect(within(chapter).getByText("About this place")).toBeInTheDocument();
   expect(within(chapter).getByText("Built in 1891.")).toBeInTheDocument();
+  expect(screen.queryByText(/riddle/i)).not.toBeInTheDocument();
   expect(screen.getByRole("region", { name: "Lily Pond" })).toHaveTextContent("Known as the Fish Pond.");
 });
 
 it("leaves out the time and the place for a run that ended unfinished", () => {
   render(<AlbumScreen album={{ ...album, total_seconds: null, rank: null }} />);
-  const facts = screen.getByRole("list", { name: "The day in numbers" });
-  expect(facts).not.toHaveTextContent("02:58:30");
-  expect(facts).not.toHaveTextContent("place");
+  for (const facts of screen.getAllByRole("list", { name: "The day in numbers" })) {
+    expect(facts).toHaveTextContent("2 of 6 landmarks");
+    expect(facts).not.toHaveTextContent("02:58:30");
+    expect(facts).not.toHaveTextContent("place");
+  }
+});
+
+it("ends with a summary that stands alone: the facts again and the route with times", () => {
+  render(<AlbumScreen album={album} />);
+  const end = screen.getByRole("region", { name: "The end" });
+  expect(within(end).getByRole("list", { name: "The day in numbers" })).toHaveTextContent("Saturday, 3 October 2026");
+  expect(within(end).getByRole("list", { name: "The day in numbers" })).toHaveTextContent("2nd place");
+  const route = within(end).getByRole("list", { name: "The route" });
+  const stops = within(route).getAllByRole("listitem");
+  expect(stops).toHaveLength(2);
+  expect(stops[0]).toHaveTextContent("1Lily Pond10:58");
+  expect(stops[1]).toHaveTextContent("2Eagles' Bridge11:22");
 });
 
 it("closes with a contact sheet of every photo and numbered running feet", () => {

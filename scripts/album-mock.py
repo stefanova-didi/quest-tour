@@ -1,4 +1,4 @@
-"""Generate frontend/src/album/mock.ts from the sample landmarks.yaml: real riddles and stories, dummy photos.
+"""Generate frontend/src/album/mock.ts from the sample landmarks.yaml: real landmark stories, dummy photos.
 
 usage, from backend/ (its venv has PyYAML):
   uv run python ../scripts/album-mock.py config/landmarks.yaml config/games.yaml ../frontend/src/album/mock.ts
@@ -36,7 +36,6 @@ for i, lm_id in enumerate(order):
     chapters.append({
         "number": i + 1,
         "landmark": lm["name"],
-        "riddle": " ".join(lm["task"].split()),
         "story": lm["tourist_info"].strip(),
         "reached_at": reached.isoformat().replace("+00:00", "Z"),
         "photos": photos,
@@ -58,8 +57,8 @@ album = {
 }
 
 body = json.dumps(album, ensure_ascii=False, indent=2)
-out = f'''// Generated from backend/config/landmarks.yaml and games.yaml for the album design draft: real riddles
-// and stories, a plausible Saturday-morning timeline, and dummy photos from picsum.photos (loaded only on
+out = f'''// Generated from backend/config/landmarks.yaml and games.yaml for the album design draft: the real landmark
+// stories, a plausible Saturday-morning timeline, and dummy photos from picsum.photos (loaded only on
 // the /album/preview page). Regenerate with scripts/album-mock.py; do not edit by hand.
 import type {{ Album }} from "./types";
 
