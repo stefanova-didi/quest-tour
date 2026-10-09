@@ -241,16 +241,10 @@ def test_time_limits_use_the_earlier_deadline(session, clock):
     )
     assignment = session.get(Assignment, seed.assignment_id)
     run = rules.start_run(session, assignment, clock.now)
-    assert rules.effective_deadline(run, assignment) == (
-        clock.now + timedelta(hours=1),
-        "window_closed",
-    )
+    assert rules.effective_deadline(run, assignment) == (60 * 60, "window_closed")
 
     assignment.valid_until = clock.now + timedelta(hours=10)
-    assert rules.effective_deadline(run, assignment) == (
-        clock.now + timedelta(hours=4),
-        "max_duration",
-    )
+    assert rules.effective_deadline(run, assignment) == (4 * 60 * 60, "max_duration")
 
 
 def test_apply_time_limits_ends_run_at_the_deadline(run, assignment, clock):
@@ -298,6 +292,63 @@ def test_compass_game_over_after_timeout(run, clock, assignment):
 def test_elapsed_seconds_while_playing(run, clock):
     assert rules.elapsed_seconds(run, clock.now + timedelta(seconds=90)) == 90
     assert rules.elapsed_seconds(run, clock.now - timedelta(seconds=5)) == 0
+
+
+def test_active_seconds_sums_intervals_and_skips_pauses(session, run, clock):
+    clock.advance(minutes=5)
+    rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
+    clock.advance(minutes=3)                       # photo screen: the clock is stopped
+    run.tasks[0].photo_count += 1
+    rules.advance(run, 0, clock.now)
+    clock.advance(minutes=2)
+    assert rules.active_seconds(run, clock.now) == 7 * 60
+    assert rules.elapsed_seconds(run, clock.now) == 7 * 60
+
+
+def test_active_seconds_caps_at_ended_at_for_a_timed_out_run(run, assignment, clock):
+    clock.advance(minutes=241)
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.ended_at == clock.now - timedelta(minutes=1)
+    assert rules.active_seconds(run, clock.now) == 240 * 60
+
+
+def test_total_seconds_counts_active_time_only(session, run, clock):
+    for position, answer in enumerate(["Alexander Nevsky", "Rotunda of St George", "Serdika"]):
+        clock.advance(minutes=10)
+        rules.submit_answer(session, run, position, answer, clock.now, None)
+        clock.advance(minutes=5)                   # savouring the story: free
+        run.tasks[position].photo_count += 1
+        rules.advance(run, position, clock.now)
+    assert rules.total_seconds(run) == 30 * 60
+
+
+def test_max_duration_counts_active_time_only(session, run, assignment, clock):
+    clock.advance(minutes=239)
+    rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
+    clock.advance(days=30)                         # parked on the photo screen: never times out
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.end_reason is None
+    run.tasks[0].photo_count += 1
+    rules.advance(run, 0, clock.now)               # the next riddle restarts the clock
+    clock.advance(minutes=2)
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.end_reason == "max_duration"
+    assert run.ended_at == run.tasks[1].shown_at + timedelta(minutes=1)
+
+
+def test_window_budget_counts_active_time_only(session, run, assignment, clock):
+    assignment.valid_until = clock.now + timedelta(hours=1)
+    clock.advance(minutes=59)
+    rules.submit_answer(session, run, 0, "Alexander Nevsky", clock.now, None)
+    clock.advance(days=30)                         # the window budget is not spent while paused
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.end_reason is None
+    run.tasks[0].photo_count += 1
+    rules.advance(run, 0, clock.now)
+    clock.advance(minutes=2)
+    rules.apply_time_limits(run, assignment, clock.now)
+    assert run.end_reason == "window_closed"
+    assert run.ended_at == run.tasks[1].shown_at + timedelta(minutes=1)
 
 
 def test_touch_device_records_first_and_last_seen(session, run, clock):

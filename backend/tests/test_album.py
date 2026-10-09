@@ -45,8 +45,8 @@ def test_album_collects_every_chapter_and_photo_of_a_finished_run(client, seed, 
     album = client.get(f"/api/play/{t}/album").json()
     assert album["game"] == "Sofia Old Town Quest" and album["team"] == "The Explorers"
     assert album["end_reason"] == "finished" and album["task_count"] == 3
-    # 3 × 10 min to each answer + 2 min of photos after the first two; the clock stops at the last answer
-    assert album["total_seconds"] == 34 * 60 and album["rank"] == 1 and album["shared_rank"] is False
+    # 3 × 10 min to each answer; the photo pauses between tasks cost nothing (R-7 active time)
+    assert album["total_seconds"] == 30 * 60 and album["rank"] == 1 and album["shared_rank"] is False
     assert album["host_message"] == "Thank you for exploring Sofia with us!"
     assert [c["number"] for c in album["chapters"]] == [1, 2, 3]
     first = album["chapters"][0]

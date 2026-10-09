@@ -45,10 +45,14 @@ def run_status(run: GameRun) -> str:
     return "finished" if run.end_reason == "finished" else "timed_out"
 
 
-def effective_deadline(run: GameRun, assignment: Assignment) -> tuple[datetime, str]:
-    by_duration = run.started_at + timedelta(minutes=assignment.game.max_duration_minutes)
-    if assignment.valid_until < by_duration:
-        return assignment.valid_until, "window_closed"
+def effective_deadline(run: GameRun, assignment: Assignment) -> tuple[int, str]:
+    """Active-time budgets (R-8): the run ends when its active time reaches the game's max
+    duration or the assignment's remaining window (valid_until - started_at), whichever is
+    smaller. Only solving time spends either budget; the pause between tasks is free."""
+    by_duration = assignment.game.max_duration_minutes * 60
+    by_window = max(0, int((assignment.valid_until - run.started_at).total_seconds()))
+    if by_window < by_duration:
+        return by_window, "window_closed"
     return by_duration, "max_duration"
 
 
@@ -58,13 +62,24 @@ def is_service(assignment: Assignment) -> bool:
 
 
 def apply_time_limits(run: GameRun, assignment: Assignment, now: datetime) -> None:
-    """R-8: called on every request; the end time is the deadline itself, not the request time.
+    """R-8: called on every request; the end time is the moment the budget was spent, not the
+    request time. A paused run (current task completed) never ends by time.
     Service runs (R-25) never end by time."""
     if run.end_reason is not None or is_service(assignment):
         return
-    end_at, reason = effective_deadline(run, assignment)
-    if now >= end_at:
-        run.ended_at, run.end_reason = end_at, reason
+    task = current_task(run)
+    if task is None or task.shown_at is None or task.completed_at is not None:
+        return                                       # nothing is on the clock: pauses are free
+    budget, reason = effective_deadline(run, assignment)
+    spent = sum(
+        (t.completed_at - t.shown_at).total_seconds()
+        for t in run.tasks
+        if t.shown_at is not None and t.completed_at is not None
+    )
+    left = budget - spent
+    if (now - task.shown_at).total_seconds() >= left:
+        run.ended_at = task.shown_at + timedelta(seconds=max(0, left))
+        run.end_reason = reason
         bump(run)
 
 
@@ -73,8 +88,23 @@ def bump(run: GameRun) -> None:
     run.version += 1
 
 
+def active_seconds(run: GameRun, now: datetime) -> int:
+    """Active riddle-solving time: the sum of per-task intervals shown_at → completed_at, the
+    still-open interval of the unfinished current task running to `ended_at` (or `now` while
+    the run is live). The pause between completing a task and showing the next one belongs to
+    no interval, so it counts toward nothing — no score, no deadline, no clock."""
+    total = 0.0
+    for task in run.tasks:
+        if task.shown_at is None:
+            continue
+        end = task.completed_at if task.completed_at is not None else run.ended_at or now
+        total += max(0, (end - task.shown_at).total_seconds())
+    return int(total)
+
+
 def elapsed_seconds(run: GameRun, now: datetime) -> int:
-    return max(0, int(((run.ended_at or now) - run.started_at).total_seconds()))
+    """Alias of active_seconds: every clock in the app runs on active time."""
+    return active_seconds(run, now)
 
 
 def penalty_minutes(run: GameRun) -> int:
@@ -90,9 +120,9 @@ def hints_used(run: GameRun) -> int:
 
 
 def total_seconds(run: GameRun) -> int:
-    """R-7: (finish - start) + penalties. Only meaningful for finished runs."""
+    """R-7: active riddle-solving time + penalties. Only meaningful for finished runs."""
     assert run.finished_at is not None
-    return int((run.finished_at - run.started_at).total_seconds()) + 60 * penalty_minutes(run)
+    return active_seconds(run, run.finished_at) + 60 * penalty_minutes(run)
 
 
 def reveal_unlocked(task: RunTask, game: Game, now: datetime, *, instant: bool = False) -> bool:
